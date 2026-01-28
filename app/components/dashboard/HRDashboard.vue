@@ -70,7 +70,7 @@ function getCycleStatusLabel(status: ReviewCycle['status']): string {
         <div class="flex items-center justify-between">
           <h3 class="font-semibold text-white">Active Review Cycles</h3>
           <NuxtLink
-            to="/reviews/cycles"
+            to="/reviews"
             class="text-sm text-primary-500 hover:text-primary-400 transition-colors"
           >
             View All →
