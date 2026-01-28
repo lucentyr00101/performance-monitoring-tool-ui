@@ -1,94 +1,155 @@
 <script setup lang="ts">
 import type { UserRole } from '~/types/auth'
+import type {
+  EmployeeDashboardData,
+  ManagerDashboardData,
+  HRDashboardData,
+  CSuiteDashboardData,
+  AdminDashboardData
+} from '~/types/dashboard'
 
 definePageMeta({
   middleware: 'auth'
 })
 
-const { user, userRole } = useAuth()
+const { user, userRole, userFullName } = useAuth()
+const dashboardStore = useDashboardStore()
 
-const roleLabels: Record<UserRole, string> = {
-  admin: 'Administrator',
-  hr: 'HR Manager',
-  manager: 'Manager',
-  employee: 'Employee',
-  csuite: 'Executive'
-}
+const { data, isLoading, error, lastRefreshedText } = storeToRefs(dashboardStore)
 
-const greeting = computed(() => {
-  const hour = new Date().getHours()
-  if (hour < 12) return 'Good morning'
-  if (hour < 18) return 'Good afternoon'
-  return 'Good evening'
+// Auto-refresh interval
+const REFRESH_INTERVAL = 5 * 60 * 1000 // 5 minutes
+let refreshTimer: ReturnType<typeof setInterval> | null = null
+
+// Fetch dashboard data on mount
+onMounted(async () => {
+  if (userRole.value) {
+    await dashboardStore.fetchDashboard(userRole.value as UserRole)
+  }
+  
+  // Set up auto-refresh
+  refreshTimer = setInterval(() => {
+    if (userRole.value) {
+      dashboardStore.refresh()
+    }
+  }, REFRESH_INTERVAL)
 })
 
-// Quick stats placeholder
-const stats = [
-  { label: 'Active Goals', value: '8', icon: 'i-heroicons-flag', color: 'primary' },
-  { label: 'Pending Reviews', value: '3', icon: 'i-heroicons-document-text', color: 'amber' },
-  { label: 'Team Members', value: '12', icon: 'i-heroicons-users', color: 'emerald' },
-  { label: 'Completion Rate', value: '85%', icon: 'i-heroicons-chart-bar', color: 'violet' }
-]
+// Clean up on unmount
+onUnmounted(() => {
+  if (refreshTimer) {
+    clearInterval(refreshTimer)
+  }
+})
+
+// Watch for role changes
+watch(userRole, async (newRole) => {
+  if (newRole) {
+    await dashboardStore.fetchDashboard(newRole as UserRole)
+  }
+})
+
+// Manual refresh handler
+async function handleRefresh() {
+  await dashboardStore.refresh()
+}
+
+// Type-safe computed data for each dashboard
+const employeeData = computed(() => data.value as EmployeeDashboardData | null)
+const managerData = computed(() => data.value as ManagerDashboardData | null)
+const hrData = computed(() => data.value as HRDashboardData | null)
+const csuiteData = computed(() => data.value as CSuiteDashboardData | null)
+const adminData = computed(() => data.value as AdminDashboardData | null)
+
+// Get user's first name for greeting
+const userName = computed(() => {
+  const emp = user.value?.employee as { firstName?: string; first_name?: string } | undefined
+  return emp?.firstName || emp?.first_name || userFullName.value?.split(' ')[0] || 'there'
+})
 </script>
 
 <template>
-  <div class="space-y-6">
-    <!-- Welcome header -->
-    <div class="flex items-center justify-between">
-      <div>
-        <h1 class="text-2xl font-bold text-white">
-          {{ greeting }}, {{ user?.employee?.first_name || 'User' }}!
-        </h1>
-        <p class="text-gray-400 mt-1">
-          Here's what's happening with your performance today.
-        </p>
+  <div>
+    <!-- Refresh bar -->
+    <div class="flex items-center justify-end gap-3 mb-4 text-sm text-gray-500">
+      <span v-if="lastRefreshedText">Last updated: {{ lastRefreshedText }}</span>
+      <UButton
+        icon="i-heroicons-arrow-path"
+        size="xs"
+        variant="ghost"
+        color="neutral"
+        :loading="isLoading"
+        @click="handleRefresh"
+      >
+        Refresh
+      </UButton>
+    </div>
+
+    <!-- Error state -->
+    <UCard v-if="error" class="bg-red-900/20 ring-red-800 mb-6">
+      <div class="flex items-center gap-4">
+        <UIcon name="i-heroicons-exclamation-triangle" class="w-8 h-8 text-red-500" />
+        <div class="flex-1">
+          <p class="text-white font-medium">Failed to load dashboard</p>
+          <p class="text-sm text-gray-400">{{ error }}</p>
+        </div>
+        <UButton color="primary" @click="handleRefresh">
+          Retry
+        </UButton>
       </div>
-      <UBadge :color="userRole === 'admin' ? 'red' : userRole === 'hr' ? 'amber' : 'primary'" size="lg">
-        {{ roleLabels[userRole as UserRole] || userRole }}
-      </UBadge>
-    </div>
+    </UCard>
 
-    <!-- Stats grid -->
-    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-      <UCard v-for="stat in stats" :key="stat.label" class="bg-gray-900 ring-gray-800">
-        <div class="flex items-center gap-4">
-          <div
-            class="w-12 h-12 rounded-lg flex items-center justify-center"
-            :class="`bg-${stat.color}-500/10`"
-          >
-            <UIcon :name="stat.icon" class="w-6 h-6" :class="`text-${stat.color}-500`" />
-          </div>
-          <div>
-            <p class="text-2xl font-bold text-white">{{ stat.value }}</p>
-            <p class="text-sm text-gray-400">{{ stat.label }}</p>
-          </div>
-        </div>
-      </UCard>
-    </div>
+    <!-- Role-specific dashboards -->
+    <template v-if="!error">
+      <!-- Employee Dashboard -->
+      <DashboardEmployeeDashboard
+        v-if="userRole === 'employee'"
+        :data="employeeData!"
+        :loading="isLoading"
+        :user-name="userName"
+        @refresh="handleRefresh"
+      />
 
-    <!-- Placeholder content -->
-    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
-      <UCard class="bg-gray-900 ring-gray-800">
-        <template #header>
-          <h3 class="font-semibold text-white">Recent Activity</h3>
-        </template>
-        <div class="text-center py-8 text-gray-500">
-          <UIcon name="i-heroicons-clock" class="w-12 h-12 mx-auto mb-3 opacity-50" />
-          <p>No recent activity</p>
-          <p class="text-sm">Your activity will appear here</p>
-        </div>
-      </UCard>
+      <!-- Manager Dashboard -->
+      <DashboardManagerDashboard
+        v-else-if="userRole === 'manager'"
+        :data="managerData!"
+        :loading="isLoading"
+        @refresh="handleRefresh"
+      />
 
-      <UCard class="bg-gray-900 ring-gray-800">
-        <template #header>
-          <h3 class="font-semibold text-white">Upcoming Deadlines</h3>
-        </template>
-        <div class="text-center py-8 text-gray-500">
-          <UIcon name="i-heroicons-calendar" class="w-12 h-12 mx-auto mb-3 opacity-50" />
-          <p>No upcoming deadlines</p>
-          <p class="text-sm">Your deadlines will appear here</p>
-        </div>
-      </UCard>
-    </div>
+      <!-- HR Dashboard -->
+      <DashboardHRDashboard
+        v-else-if="userRole === 'hr'"
+        :data="hrData!"
+        :loading="isLoading"
+        @refresh="handleRefresh"
+      />
+
+      <!-- C-Suite Dashboard -->
+      <DashboardCSuiteDashboard
+        v-else-if="userRole === 'csuite'"
+        :data="csuiteData!"
+        :loading="isLoading"
+        @refresh="handleRefresh"
+      />
+
+      <!-- Admin Dashboard -->
+      <DashboardAdminDashboard
+        v-else-if="userRole === 'admin'"
+        :data="adminData!"
+        :loading="isLoading"
+        @refresh="handleRefresh"
+      />
+
+      <!-- Fallback to Employee Dashboard for unknown roles -->
+      <DashboardEmployeeDashboard
+        v-else
+        :data="employeeData!"
+        :loading="isLoading"
+        :user-name="userName"
+        @refresh="handleRefresh"
+      />
+    </template>
   </div>
 </template>
