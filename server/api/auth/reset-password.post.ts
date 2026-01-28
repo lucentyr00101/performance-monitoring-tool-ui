@@ -40,10 +40,21 @@ export default defineEventHandler(async (event) => {
   // 4. Invalidate the reset token
   // 5. Optionally invalidate all existing sessions
 
-  // For mock, we just accept any token that starts with "mock_reset_token"
-  if (!token.startsWith('mock_reset_token')) {
+  // For mock, validate token format AND check mock expiration
+  // Token format: mock_reset_token_{timestamp}
+  if (!token.startsWith('mock_reset_token_')) {
     setResponseStatus(event, 400)
     return errorResponse('Invalid or expired reset token', 'INVALID_TOKEN', 400)
+  }
+
+  // Extract timestamp from token and check expiration (tokens valid for 1 hour)
+  const tokenParts = token.split('_')
+  const tokenTimestamp = parseInt(tokenParts[tokenParts.length - 1], 10)
+  const TOKEN_EXPIRY_MS = 60 * 60 * 1000 // 1 hour
+  
+  if (isNaN(tokenTimestamp) || Date.now() - tokenTimestamp > TOKEN_EXPIRY_MS) {
+    setResponseStatus(event, 400)
+    return errorResponse('Reset token has expired. Please request a new password reset.', 'TOKEN_EXPIRED', 400)
   }
 
   console.log(`[MOCK] Password reset completed for token: ${token}`)

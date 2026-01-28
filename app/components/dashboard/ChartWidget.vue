@@ -9,6 +9,19 @@ defineProps<{
   height?: string
 }>()
 
+// Helper function for doughnut chart colors - static classes for Tailwind purge
+function getDoughnutColor(index: number): string {
+  const colors = [
+    'bg-primary-500',
+    'bg-emerald-500', 
+    'bg-amber-500',
+    'bg-red-500',
+    'bg-blue-500',
+    'bg-purple-500'
+  ]
+  return colors[index % colors.length] || 'bg-primary-500'
+}
+
 // For MVP, we'll render a simple visual representation
 // In production, integrate Chart.js or similar
 function getBarWidth(value: number, max: number): string {
@@ -102,7 +115,7 @@ function getBarWidth(value: number, max: number): string {
             :key="index"
             class="flex items-center gap-3"
           >
-            <div class="w-3 h-3 rounded-full" :class="`bg-${['primary', 'emerald', 'amber', 'red'][index % 4]}-500`" />
+            <div class="w-3 h-3 rounded-full" :class="getDoughnutColor(index)" />
             <div class="flex-1">
               <div class="flex items-center justify-between text-sm mb-1">
                 <span class="text-gray-300">{{ data.labels[index] }}</span>
@@ -111,7 +124,7 @@ function getBarWidth(value: number, max: number): string {
               <div class="h-2 bg-gray-800 rounded-full overflow-hidden">
                 <div
                   class="h-full rounded-full"
-                  :class="`bg-${['primary', 'emerald', 'amber', 'red'][index % 4]}-500`"
+                  :class="getDoughnutColor(index)"
                   :style="{ width: getBarWidth(value, data.datasets[0]?.data.reduce((a, b) => a + b, 0) || 1) }"
                 />
               </div>

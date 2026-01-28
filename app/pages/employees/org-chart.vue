@@ -20,15 +20,15 @@ interface OrgEmployee {
   department?: string
 }
 
-// Transform employees to org chart format
+// Transform employees to org chart format with proper typing
 const orgEmployees = computed<OrgEmployee[]>(() => {
-  return employeeStore.employees.map(e => ({
+  return employeeStore.employees.map((e) => ({
     id: e.id,
     name: `${e.first_name} ${e.last_name}`,
     jobTitle: e.job_title,
-    avatarUrl: (e as Record<string, unknown>).avatar_url as string | undefined,
-    managerId: ((e as Record<string, unknown>).manager as { id: string } | undefined)?.id,
-    directReportsCount: ((e as Record<string, unknown>).direct_reports_count as number) || 0,
+    avatarUrl: e.avatar_url,
+    managerId: e.manager?.id,
+    directReportsCount: e.direct_reports_count ?? 0,
     department: e.department?.name
   }))
 })

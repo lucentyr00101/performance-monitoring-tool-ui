@@ -51,18 +51,20 @@ const visibilityOptions = [
   { label: 'Private - Only you', value: 'private' },
   { label: 'Team - Your team members', value: 'team' },
   { label: 'Department - Your department', value: 'department' },
-  { label: 'Public - Everyone', value: 'public' }
+  { label: 'Company - Everyone in the company', value: 'company' }
 ]
 
 // Validation
 const errors = reactive({
   title: '',
-  due_date: ''
+  due_date: '',
+  date_range: ''
 })
 
 function validate(): boolean {
   errors.title = ''
   errors.due_date = ''
+  errors.date_range = ''
   
   if (!form.title.trim()) {
     errors.title = 'Title is required'
@@ -76,7 +78,16 @@ function validate(): boolean {
     errors.due_date = 'Due date must be in the future'
   }
   
-  return !errors.title && !errors.due_date
+  // Validate start date is before due date
+  if (form.start_date && form.due_date) {
+    const startDate = new Date(form.start_date)
+    const dueDate = new Date(form.due_date)
+    if (startDate >= dueDate) {
+      errors.date_range = 'Start date must be before due date'
+    }
+  }
+  
+  return !errors.title && !errors.due_date && !errors.date_range
 }
 
 async function handleSubmit() {
@@ -211,7 +222,7 @@ const minDate = computed(() => {
 
     <!-- Dates Row -->
     <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-      <UFormField label="Start Date">
+      <UFormField label="Start Date" :error="errors.date_range">
         <UInput
           v-model="form.start_date"
           type="date"
@@ -226,6 +237,11 @@ const minDate = computed(() => {
         />
       </UFormField>
     </div>
+
+    <!-- Date Range Error -->
+    <p v-if="errors.date_range" class="text-red-400 text-sm -mt-4">
+      {{ errors.date_range }}
+    </p>
 
     <!-- Visibility -->
     <UFormField label="Visibility">

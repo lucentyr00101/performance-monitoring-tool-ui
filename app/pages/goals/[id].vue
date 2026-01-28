@@ -60,8 +60,8 @@ const isDeleting = ref(false)
 
 // Key result modal state
 const isKeyResultModalOpen = ref(false)
-// TODO: Implement key result editing in Phase 5
-const _editingKeyResult = ref<KeyResult | null>(null)
+const editingKeyResult = ref<KeyResult | null>(null)
+const isEditingKeyResult = computed(() => editingKeyResult.value !== null)
 
 // Approval modal state
 const isApprovalModalOpen = ref(false)
@@ -186,11 +186,12 @@ async function handleAddKeyResult(data: KeyResultCreateRequest) {
 }
 
 // Handle update key result
-// TODO: Wire this up when editing modal is implemented
-async function _handleUpdateKeyResult(krId: string, data: KeyResultUpdateRequest) {
+async function handleUpdateKeyResult(data: KeyResultUpdateRequest) {
+  if (!editingKeyResult.value) return
+  
   try {
-    await updateKeyResult(goalId.value, krId, data)
-    _editingKeyResult.value = null
+    await updateKeyResult(goalId.value, editingKeyResult.value.id, data)
+    editingKeyResult.value = null
     toast.add({
       title: 'Key Result Updated',
       color: 'success'
@@ -202,6 +203,11 @@ async function _handleUpdateKeyResult(krId: string, data: KeyResultUpdateRequest
       color: 'error'
     })
   }
+}
+
+// Handle edit key result click
+function handleEditKeyResult(kr: KeyResult) {
+  editingKeyResult.value = kr
 }
 
 // Handle delete key result
@@ -433,7 +439,7 @@ function openApprovalModal(action: 'approve' | 'reject') {
             :key="kr.id"
             :key-result="kr"
             :editable="canProgress"
-            @edit="_editingKeyResult = kr"
+            @edit="handleEditKeyResult(kr)"
             @delete="handleDeleteKeyResult(kr.id)"
           />
         </div>
@@ -507,6 +513,22 @@ function openApprovalModal(action: 'approve' | 'reject') {
           <GoalsKeyResultForm
             @submit="handleAddKeyResult"
             @cancel="isKeyResultModalOpen = false"
+          />
+        </div>
+      </template>
+    </UModal>
+
+    <!-- Edit Key Result Modal -->
+    <UModal v-model:open="isEditingKeyResult">
+      <template #content>
+        <div class="p-6">
+          <h2 class="text-xl font-semibold text-white mb-6">Edit Key Result</h2>
+          <GoalsKeyResultForm
+            v-if="editingKeyResult"
+            :key-result="editingKeyResult"
+            mode="edit"
+            @submit="handleUpdateKeyResult"
+            @cancel="editingKeyResult = null"
           />
         </div>
       </template>

@@ -72,6 +72,7 @@ export interface EmployeeListItem {
   hire_date?: string
   employment_status: EmploymentStatus
   avatar_url?: string
+  direct_reports_count?: number
 }
 
 // Employee filter options

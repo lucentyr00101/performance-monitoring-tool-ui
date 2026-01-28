@@ -10,8 +10,8 @@ const route = useRoute()
 
 const form = reactive({
   email: '',
-  password: '',
-  rememberMe: false
+  password: ''
+  // Note: Remember Me functionality removed - session management handled by httpOnly refresh token
 })
 
 const error = ref<string | null>(null)
@@ -103,9 +103,8 @@ async function handleSubmit() {
       />
     </UFormField>
 
-    <!-- Remember me & Forgot password -->
-    <div class="flex items-center justify-between">
-      <UCheckbox v-model="form.rememberMe" label="Remember me" :disabled="isLoading || isLockedOut" />
+    <!-- Forgot password link -->
+    <div class="flex items-center justify-end">
       <NuxtLink to="/auth/forgot-password" class="text-sm text-primary-500 hover:text-primary-400">
         Forgot password?
       </NuxtLink>

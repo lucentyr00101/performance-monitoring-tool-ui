@@ -21,8 +21,24 @@ const isLoadingTeam = ref(false)
 const isEditModalOpen = ref(false)
 const isSaving = ref(false)
 
-// TODO: Replace with actual access control logic
-const canEdit = computed(() => true)
+// Access control - users can edit their own profile (limited) or HR/Admin can edit any profile
+const { user, hasRole } = useAuth()
+const canEdit = computed(() => {
+  if (!employeeStore.currentEmployee || !user.value) return false
+  
+  // HR and Admin can edit any employee
+  if (hasRole(['admin', 'hr'])) return true
+  
+  // Managers can edit their direct reports
+  if (hasRole('manager')) {
+    const isDirectReport = employeeStore.currentEmployee.manager?.id === user.value.employee?.id
+    if (isDirectReport) return true
+  }
+  
+  // Users can edit their own profile
+  const isOwnProfile = employeeStore.currentEmployee.id === user.value.employee?.id
+  return isOwnProfile
+})
 
 // Fetch employee data
 async function loadEmployee() {

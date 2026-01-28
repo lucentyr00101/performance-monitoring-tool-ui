@@ -11,6 +11,9 @@ const SESSION_WARNING_TIME = 5 * 60 * 1000 // 5 minutes before expiry
 const LOCKOUT_DURATION = 15 * 60 * 1000 // 15 minutes
 const MAX_LOGIN_ATTEMPTS = 5
 
+// Session timer reference for cleanup
+let sessionTimerInterval: ReturnType<typeof setInterval> | null = null
+
 export const useAuthStore = defineStore('auth', {
   state: (): AuthState => ({
     user: null,
@@ -183,6 +186,9 @@ export const useAuthStore = defineStore('auth', {
     },
 
     clearAuth(refreshTokenCookie?: CookieRef): void {
+      // Stop session timer to prevent memory leaks
+      this.stopSessionTimer()
+      
       this.user = null
       this.accessToken = null
       this.isAuthenticated = false
@@ -197,19 +203,38 @@ export const useAuthStore = defineStore('auth', {
     startSessionTimer(): void {
       if (import.meta.server) return
 
+      // Clear existing timer to prevent memory leaks
+      if (sessionTimerInterval) {
+        clearInterval(sessionTimerInterval)
+        sessionTimerInterval = null
+      }
+
       // Check for session expiry every minute
-      const checkInterval = setInterval(() => {
+      sessionTimerInterval = setInterval(() => {
         if (!this.sessionExpiresAt) {
-          clearInterval(checkInterval)
+          if (sessionTimerInterval) {
+            clearInterval(sessionTimerInterval)
+            sessionTimerInterval = null
+          }
           return
         }
 
         if (Date.now() >= this.sessionExpiresAt) {
-          clearInterval(checkInterval)
+          if (sessionTimerInterval) {
+            clearInterval(sessionTimerInterval)
+            sessionTimerInterval = null
+          }
           this.clearAuth()
           navigateTo('/auth/login?reason=session_expired')
         }
       }, 60000)
+    },
+
+    stopSessionTimer(): void {
+      if (sessionTimerInterval) {
+        clearInterval(sessionTimerInterval)
+        sessionTimerInterval = null
+      }
     },
 
     async extendSession(refreshTokenValue: string, refreshTokenCookie?: CookieRef): Promise<void> {
