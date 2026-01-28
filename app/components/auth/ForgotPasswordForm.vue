@@ -76,7 +76,7 @@ async function handleSubmit() {
         />
 
         <!-- Email field -->
-        <UFormField label="Email" name="email" :error="fieldError">
+        <UFormField label="Email" name="email" :error="fieldError || undefined">
           <UInput
             v-model="email"
             type="email"

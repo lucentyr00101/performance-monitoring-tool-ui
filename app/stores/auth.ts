@@ -3,6 +3,9 @@ import { defineStore } from 'pinia'
 import { authService } from '~/services/auth'
 import type { AuthState, User, LoginRequest, ApiError, UserRole } from '~/types/auth'
 
+// Type for cookie ref (compatible with useCookie return type)
+type CookieRef = { value: string | null | undefined }
+
 const _ACCESS_TOKEN_EXPIRY = 60 * 60 * 1000 // 1 hour in ms
 const SESSION_WARNING_TIME = 5 * 60 * 1000 // 5 minutes before expiry
 const LOCKOUT_DURATION = 15 * 60 * 1000 // 15 minutes
@@ -49,7 +52,7 @@ export const useAuthStore = defineStore('auth', {
   },
 
   actions: {
-    async login(credentials: LoginRequest): Promise<void> {
+    async login(credentials: LoginRequest, refreshTokenCookie?: CookieRef): Promise<void> {
       // Check lockout
       if (this.isLockedOut && this.lockoutEndsAt && Date.now() < this.lockoutEndsAt) {
         const minutesLeft = Math.ceil(this.lockoutTimeRemaining / 60000)
@@ -82,13 +85,10 @@ export const useAuthStore = defineStore('auth', {
         this.sessionExpiresAt = Date.now() + (tokens.expiresIn * 1000)
         this.loginAttempts = 0
 
-        // Store refresh token in cookie
-        const refreshCookie = useCookie('refresh_token', {
-          maxAge: 7 * 24 * 60 * 60, // 7 days
-          secure: true,
-          sameSite: 'strict'
-        })
-        refreshCookie.value = tokens.refreshToken
+        // Store refresh token in cookie if provided
+        if (refreshTokenCookie) {
+          refreshTokenCookie.value = tokens.refreshToken
+        }
 
         // Start session timer
         this.startSessionTimer()
@@ -121,10 +121,7 @@ export const useAuthStore = defineStore('auth', {
       }
     },
 
-    async refreshToken(): Promise<void> {
-      const refreshCookie = useCookie('refresh_token')
-      const refreshTokenValue = refreshCookie.value
-
+    async refreshToken(refreshTokenValue: string, refreshTokenCookie?: CookieRef): Promise<void> {
       if (!refreshTokenValue) {
         throw new Error('No refresh token available')
       }
@@ -135,8 +132,10 @@ export const useAuthStore = defineStore('auth', {
       this.accessToken = accessToken
       this.sessionExpiresAt = Date.now() + (expiresIn * 1000)
 
-      // Update refresh token cookie
-      refreshCookie.value = refreshToken
+      // Update refresh token cookie if provided
+      if (refreshTokenCookie) {
+        refreshTokenCookie.value = refreshToken
+      }
 
       // Restart session timer
       this.startSessionTimer()
@@ -159,22 +158,23 @@ export const useAuthStore = defineStore('auth', {
       }
     },
 
-    async checkAuth(): Promise<boolean> {
+    async checkAuth(refreshTokenValue?: string | null, refreshTokenCookie?: CookieRef): Promise<boolean> {
       // If we have a token in memory, we're authenticated
       if (this.accessToken && this.user) {
         return true
       }
 
-      // Try to refresh using cookie
-      const refreshCookie = useCookie('refresh_token')
-      if (refreshCookie.value) {
+      // Try to refresh using provided token
+      if (refreshTokenValue) {
         try {
-          await this.refreshToken()
+          await this.refreshToken(refreshTokenValue, refreshTokenCookie)
           await this.fetchCurrentUser()
           return true
         }
         catch {
-          this.clearAuth()
+          if (refreshTokenCookie) {
+            refreshTokenCookie.value = null
+          }
           return false
         }
       }
@@ -182,15 +182,16 @@ export const useAuthStore = defineStore('auth', {
       return false
     },
 
-    clearAuth(): void {
+    clearAuth(refreshTokenCookie?: CookieRef): void {
       this.user = null
       this.accessToken = null
       this.isAuthenticated = false
       this.sessionExpiresAt = null
 
-      // Clear refresh token cookie
-      const refreshCookie = useCookie('refresh_token')
-      refreshCookie.value = null
+      // Clear refresh token cookie if provided
+      if (refreshTokenCookie) {
+        refreshTokenCookie.value = null
+      }
     },
 
     startSessionTimer(): void {
@@ -211,8 +212,8 @@ export const useAuthStore = defineStore('auth', {
       }, 60000)
     },
 
-    async extendSession(): Promise<void> {
-      await this.refreshToken()
+    async extendSession(refreshTokenValue: string, refreshTokenCookie?: CookieRef): Promise<void> {
+      await this.refreshToken(refreshTokenValue, refreshTokenCookie)
     }
   }
 })

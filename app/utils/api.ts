@@ -95,20 +95,26 @@ class ApiClient {
       // Handle FetchError from $fetch
       const fetchError = error as { response?: { status?: number }; data?: ApiError; message?: string }
 
-      // Handle 401 Unauthorized - try to refresh token
+      // Handle 401 Unauthorized - clear auth and redirect
       if (fetchError?.response?.status === 401 && !skipAuth) {
-        const refreshed = await this.tryRefreshToken()
-        if (refreshed) {
-          // Retry the original request with new token
-          return this.fetch<T>(endpoint, options)
-        }
-        
-        // Refresh failed, redirect to login
+        // Clear auth state and redirect to login
         if (import.meta.client) {
           const authStore = useAuthStore()
           authStore.clearAuth()
-          navigateTo('/auth/login')
+          navigateTo('/auth/login?reason=session_expired')
         }
+        
+        // Throw unauthorized error
+        throw {
+          success: false,
+          error: {
+            code: 'TOKEN_EXPIRED',
+            message: 'Your session has expired. Please log in again.'
+          },
+          meta: {
+            timestamp: new Date().toISOString()
+          }
+        } as ApiError
       }
 
       // Handle other errors
@@ -127,17 +133,6 @@ class ApiClient {
           timestamp: new Date().toISOString()
         }
       } as ApiError
-    }
-  }
-
-  private async tryRefreshToken(): Promise<boolean> {
-    try {
-      const authStore = useAuthStore()
-      await authStore.refreshToken()
-      return true
-    }
-    catch {
-      return false
     }
   }
 

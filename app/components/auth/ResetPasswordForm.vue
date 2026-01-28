@@ -103,7 +103,7 @@ async function handleSubmit() {
   catch (err) {
     const apiError = err as ApiError
     if (apiError?.error?.details) {
-      apiError.error.details.forEach(detail => {
+      (apiError.error.details as Array<{ field: string; message: string }>).forEach(detail => {
         if (detail.field === 'password_confirmation') {
           fieldErrors.value.passwordConfirmation = detail.message
         }

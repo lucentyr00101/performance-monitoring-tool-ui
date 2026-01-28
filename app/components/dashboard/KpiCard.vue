@@ -6,6 +6,7 @@ const props = defineProps<{
   loading?: boolean
 }>()
 
+const defaultColor = { bg: 'bg-primary-500/10', text: 'text-primary-500', icon: 'text-primary-500' }
 const colorClasses = computed(() => {
   const colors: Record<string, { bg: string; text: string; icon: string }> = {
     primary: { bg: 'bg-primary-500/10', text: 'text-primary-500', icon: 'text-primary-500' },
@@ -15,7 +16,7 @@ const colorClasses = computed(() => {
     info: { bg: 'bg-cyan-500/10', text: 'text-cyan-500', icon: 'text-cyan-500' },
     neutral: { bg: 'bg-gray-500/10', text: 'text-gray-400', icon: 'text-gray-400' }
   }
-  return colors[props.kpi.color || 'primary'] || colors.primary
+  return colors[props.kpi.color || 'primary'] ?? defaultColor
 })
 
 const trendClasses = computed(() => {

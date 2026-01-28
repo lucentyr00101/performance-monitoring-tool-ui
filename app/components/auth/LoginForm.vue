@@ -46,7 +46,7 @@ async function handleSubmit() {
   catch (err) {
     const apiError = err as ApiError
     if (apiError?.error?.code === 'VALIDATION_ERROR' && apiError.error.details) {
-      apiError.error.details.forEach(detail => {
+      (apiError.error.details as Array<{ field: string; message: string }>).forEach(detail => {
         fieldErrors.value[detail.field] = detail.message
       })
     }

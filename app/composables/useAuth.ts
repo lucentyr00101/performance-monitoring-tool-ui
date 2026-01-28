@@ -1,7 +1,7 @@
 // useAuth composable - Exposes auth store with role/permission helpers
 import { storeToRefs } from 'pinia'
 import { useAuthStore } from '~/stores/auth'
-import { ROLE_PERMISSIONS, type UserRole } from '~/types/auth'
+import { ROLE_PERMISSIONS, type UserRole, type LoginRequest } from '~/types/auth'
 
 export function useAuth() {
   const store = useAuthStore()
@@ -16,6 +16,44 @@ export function useAuth() {
     isLockedOut,
     lockoutTimeRemaining
   } = storeToRefs(store)
+
+  // Get refresh token cookie
+  const refreshCookie = useCookie('refresh_token', {
+    maxAge: 7 * 24 * 60 * 60, // 7 days
+    secure: true,
+    sameSite: 'strict'
+  })
+
+  /**
+   * Login with credentials
+   */
+  async function login(credentials: LoginRequest) {
+    return store.login(credentials, refreshCookie)
+  }
+
+  /**
+   * Logout current user
+   */
+  async function logout() {
+    await store.logout()
+    refreshCookie.value = null
+  }
+
+  /**
+   * Check authentication status
+   */
+  async function checkAuth() {
+    return store.checkAuth(refreshCookie.value, refreshCookie)
+  }
+
+  /**
+   * Extend current session
+   */
+  async function extendSession() {
+    if (refreshCookie.value) {
+      return store.extendSession(refreshCookie.value, refreshCookie)
+    }
+  }
 
   /**
    * Check if user has a specific role
@@ -87,10 +125,10 @@ export function useAuth() {
     lockoutTimeRemaining,
 
     // Actions
-    login: store.login.bind(store),
-    logout: store.logout.bind(store),
-    checkAuth: store.checkAuth.bind(store),
-    extendSession: store.extendSession.bind(store),
+    login,
+    logout,
+    checkAuth,
+    extendSession,
 
     // Role helpers
     hasRole,
