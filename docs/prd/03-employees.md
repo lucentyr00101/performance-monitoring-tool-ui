@@ -99,11 +99,22 @@ The Employee Management module provides comprehensive employee directory, profil
 | Recent Reviews | Last 3 review summaries |
 | Performance History | Timeline chart |
 
+#### 2.2.4 Profile Actions
+
+| Action | Description | Available To |
+|--------|-------------|--------------|
+| Edit Profile | Modify employee information | HR, Admin |
+| View Goals | Navigate to employee's goals | All |
+| View Reviews | Navigate to employee's review history | Manager+, HR, Admin |
+| **Trigger Review** | Initiate ad-hoc performance review | HR, Manager (for direct reports), C-Suite |
+
+> **Note:** The "Trigger Review" action initiates an on-demand KPI review requiring both self-assessment and manager evaluation. See [PRD: Ad-Hoc Reviews](./08-adhoc-reviews.md) for details.
+
 #### Profile Layout
 
 ```
 ┌────────────────────────────────────────────────────────────┐
-│ ┌──────┐  John Doe                              [Edit]     │
+│ ┌──────┐  John Doe                   [Edit] [Trigger Review▼]│
 │ │ 📷   │  Engineering Manager                              │
 │ │Avatar│  Engineering Department                           │
 │ └──────┘  john.doe@company.com | +1-555-123-4567          │
@@ -413,6 +424,7 @@ Interactive org chart showing reporting relationships.
 - [TSD: Database Schema](/docs/TSD.md#3-database-schema)
 - [PRD: Goals](/docs/prd/04-goals.md)
 - [PRD: Reviews](/docs/prd/05-reviews.md)
+- [PRD: Ad-Hoc Reviews](/docs/prd/08-adhoc-reviews.md)
 
 ---
 
@@ -421,3 +433,4 @@ Interactive org chart showing reporting relationships.
 | Version | Date | Author | Changes |
 |---------|------|--------|---------|
 | 1.0 | January 2026 | System | Initial version |
+| 1.1 | February 2026 | System | Added trigger review profile action |

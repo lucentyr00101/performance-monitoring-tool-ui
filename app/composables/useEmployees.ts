@@ -89,7 +89,7 @@ export function useEmployees() {
   }
 
   // Sort actions
-  function setSort(field: EmployeeListParams['sort_by'], order?: EmployeeListParams['sort_order']) {
+  function setSort(field: EmployeeListParams['sortBy'], order?: EmployeeListParams['sortOrder']) {
     store.setSort(field, order)
   }
 

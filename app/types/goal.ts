@@ -12,12 +12,12 @@ export type ProgressIndicator = 'on_track' | 'at_risk' | 'behind'
 // Basic owner info (embedded in goal)
 export interface GoalOwner {
   id: string
-  first_name: string
-  last_name: string
+  firstName: string
+  lastName: string
   name?: string // Computed full name for convenience
   email?: string
-  job_title?: string
-  avatar_url?: string
+  jobTitle?: string
+  avatarUrl?: string
 }
 
 // Parent goal summary (for alignment)
@@ -40,17 +40,17 @@ export interface ChildGoalSummary {
 // Key Result entity
 export interface KeyResult {
   id: string
-  goal_id: string
+  goalId: string
   title: string
   description?: string
-  target_value: number
-  current_value: number
+  targetValue: number
+  currentValue: number
   unit?: string
   progress: number
   status: KeyResultStatus
-  due_date?: string
-  created_at: string
-  updated_at: string
+  dueDate?: string
+  createdAt: string
+  updatedAt: string
 }
 
 // Key Result for list view (summary)
@@ -70,17 +70,17 @@ export interface Goal {
   priority?: GoalPriority
   visibility?: GoalVisibility
   owner: GoalOwner
-  owner_id: string
-  parent_goal?: ParentGoalSummary
-  parent_goal_id?: string
-  child_goals?: ChildGoalSummary[]
-  key_results: KeyResult[]
+  ownerId: string
+  parentGoal?: ParentGoalSummary
+  parentGoalId?: string
+  childGoals?: ChildGoalSummary[]
+  keyResults: KeyResult[]
   tags?: string[]
-  start_date?: string
-  due_date: string
-  completed_at?: string
-  created_at: string
-  updated_at: string
+  startDate?: string
+  dueDate: string
+  completedAt?: string
+  createdAt: string
+  updatedAt: string
 }
 
 // Goal list item (lighter version for directory)
@@ -93,11 +93,11 @@ export interface GoalListItem {
   progress: number
   priority?: GoalPriority
   owner: GoalOwner
-  parent_goal?: ParentGoalSummary
-  start_date?: string
-  due_date: string
-  key_results: KeyResultSummary
-  created_at: string
+  parentGoal?: ParentGoalSummary
+  startDate?: string
+  dueDate: string
+  keyResults: KeyResultSummary
+  createdAt: string
 }
 
 // Goal filter options
@@ -105,20 +105,20 @@ export interface GoalFilters {
   search?: string
   type?: GoalType
   status?: GoalStatus
-  owner_id?: string
-  department_id?: string
-  parent_goal_id?: string
-  due_before?: string
-  due_after?: string
+  ownerId?: string
+  departmentId?: string
+  parentGoalId?: string
+  dueBefore?: string
+  dueAfter?: string
   priority?: GoalPriority
 }
 
 // Goal list params (for API calls)
 export interface GoalListParams extends GoalFilters {
   page?: number
-  per_page?: number
-  sort_by?: 'title' | 'due_date' | 'progress' | 'created_at' | 'updated_at'
-  sort_order?: 'asc' | 'desc'
+  perPage?: number
+  sortBy?: 'title' | 'due_date' | 'progress' | 'created_at' | 'updated_at'
+  sortOrder?: 'asc' | 'desc'
 }
 
 // Goal create request
@@ -126,14 +126,14 @@ export interface GoalCreateRequest {
   title: string
   description?: string
   type: GoalType
-  owner_id: string
-  parent_goal_id?: string
+  ownerId: string
+  parentGoalId?: string
   priority?: GoalPriority
   visibility?: GoalVisibility
-  start_date?: string
-  due_date: string
+  startDate?: string
+  dueDate: string
   tags?: string[]
-  key_results?: KeyResultCreateRequest[]
+  keyResults?: KeyResultCreateRequest[]
 }
 
 // Goal update request
@@ -144,10 +144,10 @@ export interface GoalUpdateRequest {
   status?: GoalStatus
   priority?: GoalPriority
   visibility?: GoalVisibility
-  owner_id?: string
-  parent_goal_id?: string | null
-  start_date?: string
-  due_date?: string
+  ownerId?: string
+  parentGoalId?: string | null
+  startDate?: string
+  dueDate?: string
   tags?: string[]
 }
 
@@ -161,33 +161,33 @@ export interface GoalProgressRequest {
 export interface KeyResultCreateRequest {
   title: string
   description?: string
-  target_value: number
-  current_value?: number
+  targetValue: number
+  currentValue?: number
   unit?: string
-  due_date?: string
+  dueDate?: string
 }
 
 // Key result update request
 export interface KeyResultUpdateRequest {
   title?: string
   description?: string
-  target_value?: number
-  current_value?: number
+  targetValue?: number
+  currentValue?: number
   unit?: string
-  due_date?: string
+  dueDate?: string
   status?: KeyResultStatus
 }
 
 // Progress history entry
 export interface ProgressHistory {
   id: string
-  goal_id: string
-  key_result_id?: string
-  old_value: number
-  new_value: number
+  goalId: string
+  keyResultId?: string
+  oldValue: number
+  newValue: number
   comment?: string
-  updated_by: GoalOwner
-  created_at: string
+  updatedBy: GoalOwner
+  createdAt: string
 }
 
 // Goal template entity
@@ -197,12 +197,12 @@ export interface GoalTemplate {
   description?: string
   type: GoalType
   category: string
-  default_priority?: GoalPriority
-  suggested_key_results: KeyResultCreateRequest[]
-  created_by?: GoalOwner
-  is_active: boolean
-  created_at: string
-  updated_at: string
+  defaultPriority?: GoalPriority
+  suggestedKeyResults: KeyResultCreateRequest[]
+  createdBy?: GoalOwner
+  isActive: boolean
+  createdAt: string
+  updatedAt: string
 }
 
 // Goal approval request (for managers)
@@ -236,12 +236,12 @@ export interface GoalState {
   filters: GoalFilters
   pagination: {
     page: number
-    per_page: number
-    total_items: number
-    total_pages: number
+    perPage: number
+    totalItems: number
+    totalPages: number
   }
-  sortBy: GoalListParams['sort_by']
-  sortOrder: GoalListParams['sort_order']
+  sortBy: GoalListParams['sortBy']
+  sortOrder: GoalListParams['sortOrder']
   viewMode: 'grid' | 'list' | 'kanban'
   isLoading: boolean
   error: string | null
@@ -254,9 +254,9 @@ export interface GoalListResponse {
   meta: {
     pagination: {
       page: number
-      per_page: number
-      total_items: number
-      total_pages: number
+      perPage: number
+      totalItems: number
+      totalPages: number
     }
     timestamp: string
   }
@@ -300,9 +300,9 @@ export interface ProgressHistoryResponse {
   meta: {
     pagination: {
       page: number
-      per_page: number
-      total_items: number
-      total_pages: number
+      perPage: number
+      totalItems: number
+      totalPages: number
     }
     timestamp: string
   }
@@ -317,8 +317,8 @@ export interface GoalProgressInfo {
 
 // Helper type for alignment scoring
 export interface AlignmentScore {
-  total_goals: number
-  aligned_goals: number
-  unaligned_goals: number
-  score_percentage: number
+  totalGoals: number
+  alignedGoals: number
+  unalignedGoals: number
+  scorePercentage: number
 }

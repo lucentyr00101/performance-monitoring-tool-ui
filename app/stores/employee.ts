@@ -23,9 +23,9 @@ export const useEmployeeStore = defineStore('employee', {
     filters: {},
     pagination: {
       page: 1,
-      per_page: DEFAULT_PER_PAGE,
-      total_items: 0,
-      total_pages: 0
+      perPage: DEFAULT_PER_PAGE,
+      totalItems: 0,
+      totalPages: 0
     },
     sortBy: 'last_name',
     sortOrder: 'asc',
@@ -35,9 +35,9 @@ export const useEmployeeStore = defineStore('employee', {
   }),
 
   getters: {
-    totalEmployees: (state) => state.pagination.total_items,
+    totalEmployees: (state) => state.pagination.totalItems,
     
-    hasNextPage: (state) => state.pagination.page < state.pagination.total_pages,
+    hasNextPage: (state) => state.pagination.page < state.pagination.totalPages,
     
     hasPreviousPage: (state) => state.pagination.page > 1,
     
@@ -47,21 +47,22 @@ export const useEmployeeStore = defineStore('employee', {
 
     currentEmployeeFullName: (state): string => {
       if (!state.currentEmployee) return ''
-      return `${state.currentEmployee.first_name} ${state.currentEmployee.last_name}`
+      return `${state.currentEmployee.firstName} ${state.currentEmployee.lastName}`
     }
   },
 
   actions: {
     async fetchEmployees(params?: Partial<EmployeeListParams>): Promise<void> {
+      const { failed } = useNotification()
       this.isLoading = true
       this.error = null
 
       try {
         const listParams: EmployeeListParams = {
           page: params?.page ?? this.pagination.page,
-          per_page: params?.per_page ?? this.pagination.per_page,
-          sort_by: params?.sort_by ?? this.sortBy,
-          sort_order: params?.sort_order ?? this.sortOrder,
+          perPage: params?.perPage ?? this.pagination.perPage,
+          sortBy: params?.sortBy ?? this.sortBy,
+          sortOrder: params?.sortOrder ?? this.sortOrder,
           ...this.filters,
           ...params
         }
@@ -74,6 +75,7 @@ export const useEmployeeStore = defineStore('employee', {
       catch (error) {
         const err = error as { error?: { message?: string } }
         this.error = err?.error?.message || 'Failed to fetch employees'
+        failed('fetch', 'employees', 'network')
         throw error
       }
       finally {
@@ -101,11 +103,13 @@ export const useEmployeeStore = defineStore('employee', {
     },
 
     async createEmployee(data: EmployeeCreateRequest): Promise<Employee> {
+      const { created, failed } = useNotification()
       this.isLoading = true
       this.error = null
 
       try {
         const response = await employeeService.create(data)
+        created('Employee')
         // Refresh list after creation
         await this.fetchEmployees()
         return response.data
@@ -113,6 +117,7 @@ export const useEmployeeStore = defineStore('employee', {
       catch (error) {
         const err = error as { error?: { message?: string } }
         this.error = err?.error?.message || 'Failed to create employee'
+        failed('create', 'employee', 'server')
         throw error
       }
       finally {
@@ -121,11 +126,13 @@ export const useEmployeeStore = defineStore('employee', {
     },
 
     async updateEmployee(id: string, data: EmployeeUpdateRequest): Promise<Employee> {
+      const { updated, failed } = useNotification()
       this.isLoading = true
       this.error = null
 
       try {
         const response = await employeeService.update(id, data)
+        updated('Employee')
         
         // Update current employee if it's the one being updated
         if (this.currentEmployee?.id === id) {
@@ -135,10 +142,28 @@ export const useEmployeeStore = defineStore('employee', {
         // Update in list if present
         const index = this.employees.findIndex(e => e.id === id)
         if (index !== -1) {
-          this.employees[index] = {
-            ...this.employees[index],
-            ...response.data
+          // Convert Employee to EmployeeListItem format
+          const listItem: _EmployeeListItem = {
+            id: response.data.id,
+            employeeCode: response.data.employeeCode,
+            firstName: response.data.firstName,
+            lastName: response.data.lastName,
+            fullName: response.data.fullName,
+            email: response.data.email,
+            jobTitle: response.data.jobTitle,
+            departmentId: typeof response.data.departmentId === 'object' 
+              ? response.data.departmentId 
+              : undefined,
+            department: response.data.department,
+            manager: response.data.manager,
+            managerId: response.data.managerId,
+            hireDate: response.data.hireDate,
+            status: response.data.status,
+            employmentStatus: response.data.employmentStatus,
+            avatarUrl: response.data.avatarUrl,
+            directReportsCount: response.data.directReportsCount
           }
+          this.employees[index] = listItem
         }
         
         return response.data
@@ -146,6 +171,7 @@ export const useEmployeeStore = defineStore('employee', {
       catch (error) {
         const err = error as { error?: { message?: string } }
         this.error = err?.error?.message || 'Failed to update employee'
+        failed('update', 'employee', 'server')
         throw error
       }
       finally {
@@ -154,11 +180,13 @@ export const useEmployeeStore = defineStore('employee', {
     },
 
     async deleteEmployee(id: string): Promise<void> {
+      const { deleted, failed } = useNotification()
       this.isLoading = true
       this.error = null
 
       try {
         await employeeService.delete(id)
+        deleted('Employee')
         
         // Remove from list
         this.employees = this.employees.filter(e => e.id !== id)
@@ -169,11 +197,12 @@ export const useEmployeeStore = defineStore('employee', {
         }
         
         // Update total count
-        this.pagination.total_items--
+        this.pagination.totalItems--
       }
       catch (error) {
         const err = error as { error?: { message?: string } }
         this.error = err?.error?.message || 'Failed to delete employee'
+        failed('delete', 'employee', 'server')
         throw error
       }
       finally {
@@ -183,7 +212,7 @@ export const useEmployeeStore = defineStore('employee', {
 
     async fetchEmployeeGoals(
       id: string, 
-      params?: { status?: string; type?: string; page?: number; per_page?: number }
+      params?: { status?: string; type?: string; page?: number; perPage?: number }
     ): Promise<EmployeeGoalSummary[]> {
       try {
         const response = await employeeService.getGoals(id, params)
@@ -240,7 +269,7 @@ export const useEmployeeStore = defineStore('employee', {
     },
 
     // Sorting actions
-    setSort(sortBy: EmployeeListParams['sort_by'], sortOrder?: EmployeeListParams['sort_order']): void {
+    setSort(sortBy: EmployeeListParams['sortBy'], sortOrder?: EmployeeListParams['sortOrder']): void {
       if (this.sortBy === sortBy && !sortOrder) {
         // Toggle order if same field
         this.sortOrder = this.sortOrder === 'asc' ? 'desc' : 'asc'

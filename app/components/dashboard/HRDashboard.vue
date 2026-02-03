@@ -10,6 +10,9 @@ defineEmits<{
   refresh: []
 }>()
 
+// Trigger review modal state
+const showTriggerModal = ref(false)
+
 function getCycleStatusColor(status: ReviewCycle['status']): 'primary' | 'warning' | 'success' {
   const colors: Record<ReviewCycle['status'], 'primary' | 'warning' | 'success'> = {
     active: 'primary',
@@ -270,5 +273,20 @@ function getCycleStatusLabel(status: ReviewCycle['status']): string {
         </div>
       </template>
     </UCard>
+
+    <!-- Ad-Hoc Reviews Widget -->
+    <DashboardAdhocReviewsWidget
+      title="Ad-Hoc Reviews"
+      variant="triggered"
+      :max-items="5"
+      show-trigger-button
+      @trigger-review="showTriggerModal = true"
+    />
+
+    <!-- Trigger Review Modal -->
+    <ReviewsTriggerReviewModal
+      :is-open="showTriggerModal"
+      @close="showTriggerModal = false"
+    />
   </div>
 </template>

@@ -4,6 +4,8 @@
 
 Employee management endpoints for CRUD operations and employee-related queries.
 
+> **Naming Convention:** JSON request/response bodies use camelCase. URL query parameters use snake_case.
+
 **Base Path:** `/employees`
 
 ---
@@ -44,7 +46,7 @@ Authorization: Bearer <token>
 | `department_id` | uuid | No | Filter by department |
 | `manager_id` | uuid | No | Filter by manager |
 | `search` | string | No | Search by name or email |
-| `sort_by` | string | No | Sort field (default: `last_name`) |
+| `sort_by` | string | No | Sort field (default: `lastName`) |
 | `sort_order` | string | No | `asc` or `desc` (default: `asc`) |
 
 ### Response
@@ -57,51 +59,51 @@ Authorization: Bearer <token>
   "data": [
     {
       "id": "550e8400-e29b-41d4-a716-446655440001",
-      "employee_code": "EMP-001",
-      "first_name": "John",
-      "last_name": "Doe",
+      "employeeCode": "EMP-001",
+      "firstName": "John",
+      "lastName": "Doe",
       "email": "john.doe@company.com",
-      "job_title": "Engineering Manager",
+      "jobTitle": "Engineering Manager",
       "department": {
         "id": "550e8400-e29b-41d4-a716-446655440010",
         "name": "Engineering"
       },
       "manager": {
         "id": "550e8400-e29b-41d4-a716-446655440002",
-        "first_name": "Jane",
-        "last_name": "Smith"
+        "firstName": "Jane",
+        "lastName": "Smith"
       },
-      "hire_date": "2022-03-15",
+      "hireDate": "2022-03-15",
       "status": "active",
-      "avatar_url": "https://cdn.example.com/avatars/john-doe.jpg"
+      "avatarUrl": "https://cdn.example.com/avatars/john-doe.jpg"
     },
     {
       "id": "550e8400-e29b-41d4-a716-446655440003",
-      "employee_code": "EMP-002",
-      "first_name": "Alice",
-      "last_name": "Johnson",
+      "employeeCode": "EMP-002",
+      "firstName": "Alice",
+      "lastName": "Johnson",
       "email": "alice.johnson@company.com",
-      "job_title": "Senior Developer",
+      "jobTitle": "Senior Developer",
       "department": {
         "id": "550e8400-e29b-41d4-a716-446655440010",
         "name": "Engineering"
       },
       "manager": {
         "id": "550e8400-e29b-41d4-a716-446655440001",
-        "first_name": "John",
-        "last_name": "Doe"
+        "firstName": "John",
+        "lastName": "Doe"
       },
-      "hire_date": "2023-01-10",
+      "hireDate": "2023-01-10",
       "status": "active",
-      "avatar_url": null
+      "avatarUrl": null
     }
   ],
   "meta": {
     "pagination": {
       "page": 1,
-      "per_page": 20,
-      "total_items": 156,
-      "total_pages": 8
+      "perPage": 20,
+      "totalItems": 156,
+      "totalPages": 8
     },
     "timestamp": "2026-01-28T10:30:00Z"
   }
@@ -130,13 +132,13 @@ Authorization: Bearer <token>
   "success": true,
   "data": {
     "id": "550e8400-e29b-41d4-a716-446655440001",
-    "user_id": "550e8400-e29b-41d4-a716-446655440000",
-    "employee_code": "EMP-001",
-    "first_name": "John",
-    "last_name": "Doe",
+    "userId": "550e8400-e29b-41d4-a716-446655440000",
+    "employeeCode": "EMP-001",
+    "firstName": "John",
+    "lastName": "Doe",
     "email": "john.doe@company.com",
     "phone": "+1-555-123-4567",
-    "job_title": "Engineering Manager",
+    "jobTitle": "Engineering Manager",
     "department": {
       "id": "550e8400-e29b-41d4-a716-446655440010",
       "name": "Engineering",
@@ -147,18 +149,18 @@ Authorization: Bearer <token>
     },
     "manager": {
       "id": "550e8400-e29b-41d4-a716-446655440002",
-      "first_name": "Jane",
-      "last_name": "Smith",
-      "job_title": "VP of Engineering",
+      "firstName": "Jane",
+      "lastName": "Smith",
+      "jobTitle": "VP of Engineering",
       "email": "jane.smith@company.com"
     },
-    "hire_date": "2022-03-15",
-    "employment_type": "full-time",
+    "hireDate": "2022-03-15",
+    "employmentType": "full-time",
     "status": "active",
-    "avatar_url": "https://cdn.example.com/avatars/john-doe.jpg",
-    "direct_reports_count": 5,
-    "created_at": "2022-03-15T09:00:00Z",
-    "updated_at": "2026-01-15T14:30:00Z"
+    "avatarUrl": "https://cdn.example.com/avatars/john-doe.jpg",
+    "directReportsCount": 5,
+    "createdAt": "2022-03-15T09:00:00Z",
+    "updatedAt": "2026-01-15T14:30:00Z"
   },
   "meta": {
     "timestamp": "2026-01-28T10:30:00Z"
@@ -197,17 +199,17 @@ Content-Type: application/json
 
 ```json
 {
-  "first_name": "Bob",
-  "last_name": "Williams",
+  "firstName": "Bob",
+  "lastName": "Williams",
   "email": "bob.williams@company.com",
   "phone": "+1-555-987-6543",
-  "job_title": "Software Engineer",
-  "department_id": "550e8400-e29b-41d4-a716-446655440010",
-  "manager_id": "550e8400-e29b-41d4-a716-446655440001",
-  "hire_date": "2026-02-01",
-  "employment_type": "full-time",
-  "create_user_account": true,
-  "user_role": "employee"
+  "jobTitle": "Software Engineer",
+  "departmentId": "550e8400-e29b-41d4-a716-446655440010",
+  "managerId": "550e8400-e29b-41d4-a716-446655440001",
+  "hireDate": "2026-02-01",
+  "employmentType": "full-time",
+  "createUserAccount": true,
+  "userRole": "employee"
 }
 ```
 
@@ -215,18 +217,18 @@ Content-Type: application/json
 
 | Field | Type | Required | Description |
 |-------|------|----------|-------------|
-| `first_name` | string | Yes | First name (max 100 chars) |
-| `last_name` | string | Yes | Last name (max 100 chars) |
+| `firstName` | string | Yes | First name (max 100 chars) |
+| `lastName` | string | Yes | Last name (max 100 chars) |
 | `email` | string | Yes | Unique email address |
 | `phone` | string | No | Phone number |
-| `job_title` | string | No | Job title (max 100 chars) |
-| `department_id` | uuid | No | Department ID |
-| `manager_id` | uuid | No | Manager's employee ID |
-| `hire_date` | date | No | Hire date (YYYY-MM-DD) |
-| `employment_type` | string | No | `full-time`, `part-time`, `contract` |
-| `avatar_url` | string | No | Avatar image URL |
-| `create_user_account` | boolean | No | Create login account (default: true) |
-| `user_role` | string | No | User role if creating account |
+| `jobTitle` | string | No | Job title (max 100 chars) |
+| `departmentId` | uuid | No | Department ID |
+| `managerId` | uuid | No | Manager's employee ID |
+| `hireDate` | date | No | Hire date (YYYY-MM-DD) |
+| `employmentType` | string | No | `full-time`, `part-time`, `contract` |
+| `avatarUrl` | string | No | Avatar image URL |
+| `createUserAccount` | boolean | No | Create login account (default: true) |
+| `userRole` | string | No | User role if creating account |
 
 ### Response
 
@@ -237,28 +239,28 @@ Content-Type: application/json
   "success": true,
   "data": {
     "id": "550e8400-e29b-41d4-a716-446655440050",
-    "user_id": "550e8400-e29b-41d4-a716-446655440051",
-    "employee_code": "EMP-157",
-    "first_name": "Bob",
-    "last_name": "Williams",
+    "userId": "550e8400-e29b-41d4-a716-446655440051",
+    "employeeCode": "EMP-157",
+    "firstName": "Bob",
+    "lastName": "Williams",
     "email": "bob.williams@company.com",
     "phone": "+1-555-987-6543",
-    "job_title": "Software Engineer",
+    "jobTitle": "Software Engineer",
     "department": {
       "id": "550e8400-e29b-41d4-a716-446655440010",
       "name": "Engineering"
     },
     "manager": {
       "id": "550e8400-e29b-41d4-a716-446655440001",
-      "first_name": "John",
-      "last_name": "Doe"
+      "firstName": "John",
+      "lastName": "Doe"
     },
-    "hire_date": "2026-02-01",
-    "employment_type": "full-time",
+    "hireDate": "2026-02-01",
+    "employmentType": "full-time",
     "status": "active",
-    "avatar_url": null,
-    "created_at": "2026-01-28T10:30:00Z",
-    "updated_at": "2026-01-28T10:30:00Z"
+    "avatarUrl": null,
+    "createdAt": "2026-01-28T10:30:00Z",
+    "updatedAt": "2026-01-28T10:30:00Z"
   },
   "meta": {
     "timestamp": "2026-01-28T10:30:00Z"
@@ -318,9 +320,9 @@ Content-Type: application/json
 
 ```json
 {
-  "job_title": "Senior Engineering Manager",
+  "jobTitle": "Senior Engineering Manager",
   "phone": "+1-555-111-2222",
-  "department_id": "550e8400-e29b-41d4-a716-446655440011"
+  "departmentId": "550e8400-e29b-41d4-a716-446655440011"
 }
 ```
 
@@ -330,16 +332,16 @@ All fields are optional. Only provided fields will be updated.
 
 | Field | Type | Description |
 |-------|------|-------------|
-| `first_name` | string | First name |
-| `last_name` | string | Last name |
+| `firstName` | string | First name |
+| `lastName` | string | Last name |
 | `email` | string | Email address |
 | `phone` | string | Phone number |
-| `job_title` | string | Job title |
-| `department_id` | uuid | Department ID |
-| `manager_id` | uuid | Manager's employee ID |
-| `employment_type` | string | Employment type |
+| `jobTitle` | string | Job title |
+| `departmentId` | uuid | Department ID |
+| `managerId` | uuid | Manager's employee ID |
+| `employmentType` | string | Employment type |
 | `status` | string | `active` or `inactive` |
-| `avatar_url` | string | Avatar URL |
+| `avatarUrl` | string | Avatar URL |
 
 ### Response
 
@@ -350,18 +352,18 @@ All fields are optional. Only provided fields will be updated.
   "success": true,
   "data": {
     "id": "550e8400-e29b-41d4-a716-446655440001",
-    "employee_code": "EMP-001",
-    "first_name": "John",
-    "last_name": "Doe",
+    "employeeCode": "EMP-001",
+    "firstName": "John",
+    "lastName": "Doe",
     "email": "john.doe@company.com",
     "phone": "+1-555-111-2222",
-    "job_title": "Senior Engineering Manager",
+    "jobTitle": "Senior Engineering Manager",
     "department": {
       "id": "550e8400-e29b-41d4-a716-446655440011",
       "name": "Platform Engineering"
     },
     "status": "active",
-    "updated_at": "2026-01-28T10:35:00Z"
+    "updatedAt": "2026-01-28T10:35:00Z"
   },
   "meta": {
     "timestamp": "2026-01-28T10:35:00Z"
@@ -439,9 +441,9 @@ Authorization: Bearer <token>
       "type": "team",
       "status": "active",
       "progress": 65,
-      "due_date": "2026-03-31",
-      "key_results_count": 3,
-      "key_results_completed": 1
+      "dueDate": "2026-03-31",
+      "keyResultsCount": 3,
+      "keyResultsCompleted": 1
     },
     {
       "id": "550e8400-e29b-41d4-a716-446655440101",
@@ -449,17 +451,17 @@ Authorization: Bearer <token>
       "type": "individual",
       "status": "active",
       "progress": 80,
-      "due_date": "2026-02-28",
-      "key_results_count": 2,
-      "key_results_completed": 1
+      "dueDate": "2026-02-28",
+      "keyResultsCount": 2,
+      "keyResultsCompleted": 1
     }
   ],
   "meta": {
     "pagination": {
       "page": 1,
-      "per_page": 20,
-      "total_items": 5,
-      "total_pages": 1
+      "perPage": 20,
+      "totalItems": 5,
+      "totalPages": 1
     },
     "timestamp": "2026-01-28T10:30:00Z"
   }
@@ -504,12 +506,12 @@ Authorization: Bearer <token>
       "type": "manager",
       "reviewer": {
         "id": "550e8400-e29b-41d4-a716-446655440002",
-        "first_name": "Jane",
-        "last_name": "Smith"
+        "firstName": "Jane",
+        "lastName": "Smith"
       },
       "status": "submitted",
       "rating": 4.5,
-      "submitted_at": "2025-12-20T15:00:00Z"
+      "submittedAt": "2025-12-20T15:00:00Z"
     }
   ],
   "meta": {
@@ -541,29 +543,29 @@ Authorization: Bearer <token>
   "data": [
     {
       "id": "550e8400-e29b-41d4-a716-446655440003",
-      "first_name": "Alice",
-      "last_name": "Johnson",
+      "firstName": "Alice",
+      "lastName": "Johnson",
       "email": "alice.johnson@company.com",
-      "job_title": "Senior Developer",
+      "jobTitle": "Senior Developer",
       "status": "active",
-      "avatar_url": null,
-      "active_goals_count": 3,
-      "pending_reviews_count": 1
+      "avatarUrl": null,
+      "activeGoalsCount": 3,
+      "pendingReviewsCount": 1
     },
     {
       "id": "550e8400-e29b-41d4-a716-446655440004",
-      "first_name": "Bob",
-      "last_name": "Williams",
+      "firstName": "Bob",
+      "lastName": "Williams",
       "email": "bob.williams@company.com",
-      "job_title": "Software Engineer",
+      "jobTitle": "Software Engineer",
       "status": "active",
-      "avatar_url": "https://cdn.example.com/avatars/bob.jpg",
-      "active_goals_count": 2,
-      "pending_reviews_count": 1
+      "avatarUrl": "https://cdn.example.com/avatars/bob.jpg",
+      "activeGoalsCount": 2,
+      "pendingReviewsCount": 1
     }
   ],
   "meta": {
-    "total_direct_reports": 5,
+    "totalDirectReports": 5,
     "timestamp": "2026-01-28T10:30:00Z"
   }
 }
@@ -593,18 +595,18 @@ Authorization: Bearer <token>
 | Field | Type | Description |
 |-------|------|-------------|
 | `id` | uuid | Unique identifier |
-| `user_id` | uuid | Associated user account ID |
-| `employee_code` | string | Auto-generated employee code |
-| `first_name` | string | First name |
-| `last_name` | string | Last name |
+| `userId` | uuid | Associated user account ID |
+| `employeeCode` | string | Auto-generated employee code |
+| `firstName` | string | First name |
+| `lastName` | string | Last name |
 | `email` | string | Email address |
 | `phone` | string | Phone number |
-| `job_title` | string | Job title |
+| `jobTitle` | string | Job title |
 | `department` | object | Department info |
 | `manager` | object | Manager info |
-| `hire_date` | date | Date of hire |
-| `employment_type` | string | full-time, part-time, contract |
+| `hireDate` | date | Date of hire |
+| `employmentType` | string | full-time, part-time, contract |
 | `status` | string | active, inactive |
-| `avatar_url` | string | Profile image URL |
-| `created_at` | datetime | Creation timestamp |
-| `updated_at` | datetime | Last update timestamp |
+| `avatarUrl` | string | Profile image URL |
+| `createdAt` | datetime | Creation timestamp |
+| `updatedAt` | datetime | Last update timestamp |

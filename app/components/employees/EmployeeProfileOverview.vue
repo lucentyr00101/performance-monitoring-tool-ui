@@ -7,6 +7,14 @@ interface Props {
 
 defineProps<Props>()
 
+// Get department name from either 'departmentId.name' or 'department.name'
+function getDepartmentName(employee: Employee) {
+  if (employee.departmentId && typeof employee.departmentId === 'object') {
+    return employee.departmentId.name
+  }
+  return employee.department?.name || 'Unassigned'
+}
+
 function formatDate(dateStr?: string): string {
   if (!dateStr) return 'Not set'
   return new Date(dateStr).toLocaleDateString('en-US', {
@@ -43,11 +51,11 @@ function calculateTenure(hireDate?: string): string {
         <div class="grid grid-cols-2 gap-4">
           <div>
             <label class="block text-xs font-medium text-gray-500 uppercase tracking-wider">First Name</label>
-            <p class="mt-1 text-white">{{ employee.first_name }}</p>
+            <p class="mt-1 text-white">{{ employee.firstName }}</p>
           </div>
           <div>
             <label class="block text-xs font-medium text-gray-500 uppercase tracking-wider">Last Name</label>
-            <p class="mt-1 text-white">{{ employee.last_name }}</p>
+            <p class="mt-1 text-white">{{ employee.lastName }}</p>
           </div>
         </div>
         
@@ -63,7 +71,7 @@ function calculateTenure(hireDate?: string): string {
         
         <div>
           <label class="block text-xs font-medium text-gray-500 uppercase tracking-wider">Employee ID</label>
-          <p class="mt-1 text-white font-mono">{{ employee.employee_code }}</p>
+          <p class="mt-1 text-white font-mono">{{ employee.employeeCode }}</p>
         </div>
       </div>
     </div>
@@ -78,26 +86,26 @@ function calculateTenure(hireDate?: string): string {
       <div class="space-y-4">
         <div>
           <label class="block text-xs font-medium text-gray-500 uppercase tracking-wider">Job Title</label>
-          <p class="mt-1 text-white">{{ employee.job_title || 'Not set' }}</p>
+          <p class="mt-1 text-white">{{ employee.jobTitle || 'Not set' }}</p>
         </div>
         
         <div>
           <label class="block text-xs font-medium text-gray-500 uppercase tracking-wider">Department</label>
-          <p class="mt-1 text-white">{{ employee.department?.name || 'Unassigned' }}</p>
+          <p class="mt-1 text-white">{{ getDepartmentName(employee) }}</p>
         </div>
         
         <div>
           <label class="block text-xs font-medium text-gray-500 uppercase tracking-wider">Manager</label>
           <div v-if="employee.manager" class="mt-1 flex items-center gap-2">
             <UAvatar
-              :alt="`${employee.manager.first_name} ${employee.manager.last_name}`"
+              :alt="`${employee.manager.firstName} ${employee.manager.lastName}`"
               size="xs"
             />
             <NuxtLink
               :to="`/employees/${employee.manager.id}`"
               class="text-primary-400 hover:text-primary-300 transition-colors"
             >
-              {{ employee.manager.first_name }} {{ employee.manager.last_name }}
+              {{ employee.manager.firstName }} {{ employee.manager.lastName }}
             </NuxtLink>
           </div>
           <p v-else class="mt-1 text-gray-400">No manager assigned</p>
@@ -106,28 +114,28 @@ function calculateTenure(hireDate?: string): string {
         <div class="grid grid-cols-2 gap-4">
           <div>
             <label class="block text-xs font-medium text-gray-500 uppercase tracking-wider">Join Date</label>
-            <p class="mt-1 text-white">{{ formatDate(employee.hire_date) }}</p>
+            <p class="mt-1 text-white">{{ formatDate(employee.hireDate) }}</p>
           </div>
           <div>
             <label class="block text-xs font-medium text-gray-500 uppercase tracking-wider">Tenure</label>
-            <p class="mt-1 text-white">{{ calculateTenure(employee.hire_date) }}</p>
+            <p class="mt-1 text-white">{{ calculateTenure(employee.hireDate) }}</p>
           </div>
         </div>
         
         <div class="grid grid-cols-2 gap-4">
           <div>
             <label class="block text-xs font-medium text-gray-500 uppercase tracking-wider">Employment Type</label>
-            <p class="mt-1 text-white capitalize">{{ employee.employment_type?.replace('-', ' ') || 'Not set' }}</p>
+            <p class="mt-1 text-white capitalize">{{ employee.employmentType?.replace('-', ' ') || 'Not set' }}</p>
           </div>
           <div>
             <label class="block text-xs font-medium text-gray-500 uppercase tracking-wider">Work Location</label>
-            <p class="mt-1 text-white capitalize">{{ employee.work_location || 'Not set' }}</p>
+            <p class="mt-1 text-white capitalize">{{ employee.workLocation || 'Not set' }}</p>
           </div>
         </div>
         
-        <div v-if="employee.career_level">
+        <div v-if="employee.careerLevel">
           <label class="block text-xs font-medium text-gray-500 uppercase tracking-wider">Career Level</label>
-          <p class="mt-1 text-white">{{ employee.career_level }}</p>
+          <p class="mt-1 text-white">{{ employee.careerLevel }}</p>
         </div>
       </div>
     </div>

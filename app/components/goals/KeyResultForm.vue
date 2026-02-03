@@ -22,10 +22,10 @@ const isLoading = ref(false)
 const form = reactive({
   title: props.keyResult?.title || '',
   description: props.keyResult?.description || '',
-  target_value: props.keyResult?.target_value || 100,
-  current_value: props.keyResult?.current_value || 0,
+  targetValue: props.keyResult?.targetValue || 100,
+  currentValue: props.keyResult?.currentValue || 0,
   unit: props.keyResult?.unit || 'percent',
-  due_date: props.keyResult?.due_date || ''
+  dueDate: props.keyResult?.dueDate || ''
 })
 
 const unitOptions = [
@@ -42,12 +42,12 @@ const unitOptions = [
 // Validation
 const errors = reactive({
   title: '',
-  target_value: ''
+  targetValue: ''
 })
 
 function validate(): boolean {
   errors.title = ''
-  errors.target_value = ''
+  errors.targetValue = ''
   
   if (!form.title.trim()) {
     errors.title = 'Title is required'
@@ -55,11 +55,11 @@ function validate(): boolean {
     errors.title = 'Title must be at least 3 characters'
   }
   
-  if (form.target_value <= 0) {
-    errors.target_value = 'Target value must be greater than 0'
+  if (form.targetValue <= 0) {
+    errors.targetValue = 'Target value must be greater than 0'
   }
   
-  return !errors.title && !errors.target_value
+  return !errors.title && !errors.targetValue
 }
 
 async function handleSubmit() {
@@ -70,10 +70,10 @@ async function handleSubmit() {
     const data: KeyResultCreateRequest = {
       title: form.title.trim(),
       description: form.description.trim() || undefined,
-      target_value: Number(form.target_value),
-      current_value: Number(form.current_value),
+      targetValue: Number(form.targetValue),
+      currentValue: Number(form.currentValue),
       unit: form.unit,
-      due_date: form.due_date || undefined
+      dueDate: form.dueDate || undefined
     }
     emit('submit', data)
   } finally {
@@ -83,8 +83,8 @@ async function handleSubmit() {
 
 // Calculate progress preview
 const progressPreview = computed(() => {
-  if (form.target_value <= 0) return 0
-  return Math.min(Math.round((form.current_value / form.target_value) * 100), 100)
+  if (form.targetValue <= 0) return 0
+  return Math.min(Math.round((form.currentValue / form.targetValue) * 100), 100)
 })
 </script>
 
@@ -118,9 +118,9 @@ const progressPreview = computed(() => {
 
     <!-- Target & Current Values -->
     <div class="grid grid-cols-2 gap-4">
-      <UFormField label="Target Value" :error="errors.target_value" required>
+      <UFormField label="Target Value" :error="errors.targetValue" required>
         <UInput
-          v-model.number="form.target_value"
+          v-model.number="form.targetValue"
           type="number"
           :min="1"
           placeholder="100"
@@ -129,10 +129,10 @@ const progressPreview = computed(() => {
 
       <UFormField label="Current Value">
         <UInput
-          v-model.number="form.current_value"
+          v-model.number="form.currentValue"
           type="number"
           :min="0"
-          :max="form.target_value"
+          :max="form.targetValue"
           placeholder="0"
         />
       </UFormField>
@@ -155,7 +155,7 @@ const progressPreview = computed(() => {
     <!-- Due Date -->
     <UFormField label="Due Date">
       <UInput
-        v-model="form.due_date"
+        v-model="form.dueDate"
         type="date"
       />
     </UFormField>

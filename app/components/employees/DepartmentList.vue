@@ -109,7 +109,7 @@ const filteredDepartments = computed(() => {
       </div>
       <div class="flex items-center gap-2">
         <UIcon name="i-heroicons-users" class="w-4 h-4" />
-        <span>{{ departments.reduce((sum, d) => sum + (d.employee_count || 0), 0) }} total employees</span>
+        <span>{{ departments.reduce((sum, d) => sum + (d.employeeCount || 0), 0) }} total employees</span>
       </div>
     </div>
   </div>

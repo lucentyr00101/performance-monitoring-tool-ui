@@ -21,19 +21,16 @@ interface PaginatedResponse<T> {
   meta: {
     pagination: {
       page: number
-      per_page: number
-      total_items: number
-      total_pages: number
+      perPage: number
+      totalItems: number
+      totalPages: number
     }
     timestamp: string
   }
 }
 
 /**
- * Reviews Service
- * 
- * Communicates with the Reviews Microservice
- * In mock mode, routes to server/api/review-cycles/* and server/api/reviews/*
+ * Reviews Service - Communicates with the API Gateway
  */
 export const reviewsService = {
   // ============================================
@@ -42,13 +39,14 @@ export const reviewsService = {
 
   /**
    * List review cycles with filtering and pagination
-   * GET /api/review-cycles
+   * GET /api/v1/review-cycles
    */
   async listCycles(params: ReviewCycleListParams = {}) {
     const queryParams = new URLSearchParams()
     
+    // Query params stay snake_case per API convention
     if (params.page) queryParams.set('page', String(params.page))
-    if (params.per_page) queryParams.set('per_page', String(params.per_page))
+    if (params.perPage) queryParams.set('per_page', String(params.perPage))
     if (params.search) queryParams.set('search', params.search)
     if (params.status) queryParams.set('status', params.status)
     if (params.type) queryParams.set('type', params.type)
@@ -57,59 +55,47 @@ export const reviewsService = {
     const query = queryParams.toString()
     const endpoint = `/review-cycles${query ? `?${query}` : ''}`
     
-    return api.get<PaginatedResponse<ReviewCycleListItem>['data']>(endpoint, {
-      service: 'reviews'
-    }) as Promise<PaginatedResponse<ReviewCycleListItem>>
+    return api.get<PaginatedResponse<ReviewCycleListItem>['data']>(endpoint) as Promise<PaginatedResponse<ReviewCycleListItem>>
   },
 
   /**
    * Get review cycle by ID
-   * GET /api/review-cycles/:id
+   * GET /api/v1/review-cycles/:id
    */
   async getCycle(id: string) {
-    return api.get<ReviewCycle>(`/review-cycles/${id}`, {
-      service: 'reviews'
-    })
+    return api.get<ReviewCycle>(`/review-cycles/${id}`)
   },
 
   /**
    * Create a new review cycle
-   * POST /api/review-cycles
+   * POST /api/v1/review-cycles
    */
   async createCycle(data: ReviewCycleCreateRequest) {
-    return api.post<ReviewCycle>('/review-cycles', data, {
-      service: 'reviews'
-    })
+    return api.post<ReviewCycle>('/review-cycles', data)
   },
 
   /**
    * Update a review cycle
-   * PUT /api/review-cycles/:id
+   * PUT /api/v1/review-cycles/:id
    */
   async updateCycle(id: string, data: ReviewCycleUpdateRequest) {
-    return api.put<ReviewCycle>(`/review-cycles/${id}`, data, {
-      service: 'reviews'
-    })
+    return api.put<ReviewCycle>(`/review-cycles/${id}`, data)
   },
 
   /**
    * Delete a review cycle
-   * DELETE /api/review-cycles/:id
+   * DELETE /api/v1/review-cycles/:id
    */
   async deleteCycle(id: string) {
-    return api.delete<undefined>(`/review-cycles/${id}`, {
-      service: 'reviews'
-    })
+    return api.delete<undefined>(`/review-cycles/${id}`)
   },
 
   /**
    * Launch a review cycle
-   * POST /api/review-cycles/:id/launch
+   * POST /api/v1/review-cycles/:id/launch
    */
   async launchCycle(id: string) {
-    return api.post<LaunchCycleResponse>(`/review-cycles/${id}/launch`, {}, {
-      service: 'reviews'
-    }) as Promise<ApiResponse<LaunchCycleResponse>>
+    return api.post<LaunchCycleResponse>(`/review-cycles/${id}/launch`, {}) as Promise<ApiResponse<LaunchCycleResponse>>
   },
 
   // ============================================
@@ -118,58 +104,51 @@ export const reviewsService = {
 
   /**
    * List reviews with filtering and pagination
-   * GET /api/reviews
+   * GET /api/v1/reviews
    */
   async listReviews(params: ReviewListParams = {}) {
     const queryParams = new URLSearchParams()
     
+    // Query params stay snake_case per API convention
     if (params.page) queryParams.set('page', String(params.page))
-    if (params.per_page) queryParams.set('per_page', String(params.per_page))
+    if (params.perPage) queryParams.set('per_page', String(params.perPage))
     if (params.search) queryParams.set('search', params.search)
-    if (params.cycle_id) queryParams.set('cycle_id', params.cycle_id)
-    if (params.employee_id) queryParams.set('employee_id', params.employee_id)
-    if (params.reviewer_id) queryParams.set('reviewer_id', params.reviewer_id)
+    if (params.cycleId) queryParams.set('cycle_id', params.cycleId)
+    if (params.employeeId) queryParams.set('employee_id', params.employeeId)
+    if (params.reviewerId) queryParams.set('reviewer_id', params.reviewerId)
     if (params.type) queryParams.set('type', params.type)
     if (params.status) queryParams.set('status', params.status)
-    if (params.sort_by) queryParams.set('sort_by', params.sort_by)
-    if (params.sort_order) queryParams.set('sort_order', params.sort_order)
+    if (params.sortBy) queryParams.set('sort_by', params.sortBy)
+    if (params.sortOrder) queryParams.set('sort_order', params.sortOrder)
 
     const query = queryParams.toString()
     const endpoint = `/reviews${query ? `?${query}` : ''}`
     
-    return api.get<PaginatedResponse<ReviewListItem>['data']>(endpoint, {
-      service: 'reviews'
-    }) as Promise<PaginatedResponse<ReviewListItem>>
+    return api.get<PaginatedResponse<ReviewListItem>['data']>(endpoint) as Promise<PaginatedResponse<ReviewListItem>>
   },
 
   /**
    * Get review by ID
-   * GET /api/reviews/:id
+   * GET /api/v1/reviews/:id
    */
   async getReview(id: string) {
-    return api.get<Review>(`/reviews/${id}`, {
-      service: 'reviews'
-    })
+    return api.get<Review>(`/reviews/${id}`)
   },
 
   /**
    * Update/submit a review
-   * PUT /api/reviews/:id
+   * PUT /api/v1/reviews/:id
    */
   async updateReview(id: string, data: ReviewUpdateRequest) {
-    return api.put<Review>(`/reviews/${id}`, data, {
-      service: 'reviews'
-    })
+    return api.put<Review>(`/reviews/${id}`, data)
   },
 
   /**
    * Acknowledge a review
-   * POST /api/reviews/:id/acknowledge
+   * POST /api/v1/reviews/:id/acknowledge
    */
   async acknowledgeReview(id: string, data: ReviewAcknowledgeRequest = {}) {
-    return api.post<Review>(`/reviews/${id}/acknowledge`, data, {
-      service: 'reviews'
-    })
+    return api.post<Review>(`/reviews/${id}/acknowledge`, data)
   },
 
   // ============================================
@@ -199,7 +178,7 @@ export const reviewsService = {
   /**
    * Get my review history (as employee)
    */
-  async getMyReviewHistory(params: { page?: number; per_page?: number } = {}) {
+  async getMyReviewHistory(params: { page?: number; perPage?: number } = {}) {
     return this.listReviews({
       ...params,
       status: 'acknowledged'

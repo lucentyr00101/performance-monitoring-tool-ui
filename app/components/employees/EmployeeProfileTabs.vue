@@ -150,7 +150,7 @@ function formatDate(dateStr?: string): string {
               <div>
                 <h4 class="font-medium text-white">{{ goal.title }}</h4>
                 <p class="text-sm text-gray-400 mt-0.5">
-                  Due: {{ formatDate(goal.due_date) }}
+                  Due: {{ formatDate(goal.dueDate) }}
                 </p>
               </div>
               <span
@@ -176,7 +176,7 @@ function formatDate(dateStr?: string): string {
                 </div>
               </div>
               <span class="text-sm text-gray-500">
-                {{ goal.key_results_completed }}/{{ goal.key_results_count }} KRs
+                {{ goal.keyResultsCompleted }}/{{ goal.keyResultsCount }} KRs
               </span>
             </div>
           </div>
@@ -213,7 +213,7 @@ function formatDate(dateStr?: string): string {
                 <p class="text-sm text-gray-400 mt-0.5 capitalize">
                   {{ review.type }} review
                   <span v-if="review.reviewer">
-                    by {{ review.reviewer.first_name }} {{ review.reviewer.last_name }}
+                    by {{ review.reviewer.firstName }} {{ review.reviewer.lastName }}
                   </span>
                 </p>
               </div>
@@ -232,8 +232,8 @@ function formatDate(dateStr?: string): string {
                 </p>
               </div>
             </div>
-            <p v-if="review.submitted_at" class="text-xs text-gray-500 mt-2">
-              Submitted {{ formatDate(review.submitted_at) }}
+            <p v-if="review.submittedAt" class="text-xs text-gray-500 mt-2">
+              Submitted {{ formatDate(review.submittedAt) }}
             </p>
           </div>
         </div>

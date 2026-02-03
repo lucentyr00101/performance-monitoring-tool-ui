@@ -39,7 +39,7 @@ const dueDateDisplay = computed(() => {
   if (daysLeft.value === 1) return 'Due tomorrow'
   if (daysLeft.value <= 7) return `${daysLeft.value} days left`
   
-  return formatDueDate(props.goal.due_date)
+  return formatDueDate(props.goal.dueDate)
 })
 
 const dueDateColor = computed(() => {
@@ -86,7 +86,7 @@ const dueDateColor = computed(() => {
     <!-- Key Results Summary -->
     <div class="flex items-center gap-2 text-xs text-gray-400 mb-3">
       <UIcon name="i-heroicons-flag" class="w-3.5 h-3.5" />
-      <span>{{ goal.key_results.completed }}/{{ goal.key_results.total }} Key Results</span>
+      <span>{{ goal.keyResults.completed }}/{{ goal.keyResults.total }} Key Results</span>
     </div>
 
     <!-- Divider -->
@@ -97,12 +97,12 @@ const dueDateColor = computed(() => {
       <!-- Owner -->
       <div class="flex items-center gap-2">
         <UAvatar
-          :src="goal.owner.avatar_url"
-          :alt="goal.owner.name || `${goal.owner.first_name} ${goal.owner.last_name}`"
+          :src="goal.owner.avatarUrl"
+          :alt="goal.owner.name || `${goal.owner.firstName} ${goal.owner.lastName}`"
           size="xs"
         />
         <span class="text-xs text-gray-400 truncate max-w-[100px]">
-          {{ goal.owner.name || `${goal.owner.first_name} ${goal.owner.last_name}` }}
+          {{ goal.owner.name || `${goal.owner.firstName} ${goal.owner.lastName}` }}
         </span>
       </div>
 

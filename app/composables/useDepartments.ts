@@ -63,7 +63,7 @@ export function useDepartments() {
 
   async function fetchDepartmentEmployees(
     id: string,
-    params?: { include_sub?: boolean; status?: string; page?: number; per_page?: number }
+    params?: { includeSub?: boolean; status?: string; page?: number; perPage?: number }
   ) {
     return store.fetchDepartmentEmployees(id, params)
   }

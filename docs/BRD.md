@@ -338,6 +338,30 @@ The Employee Performance Monitoring Tool (MVP) is a unified digital platform tha
 - **REQ-CAL-004**: System shall track calibration history and reasons for changes
 - **REQ-CAL-005**: System shall require final HR approval before review sharing
 
+#### 4.3.5 Ad-Hoc Reviews (On-Demand KPI Reviews)
+- **REQ-ADHOC-001**: HR managers, managers, and C-Suite shall be able to trigger ad-hoc reviews for employees
+- **REQ-ADHOC-002**: System Admin role shall NOT have ad-hoc review trigger permissions (technical role, not HR role)
+- **REQ-ADHOC-003**: Managers shall only trigger reviews for employees in their reporting hierarchy
+- **REQ-ADHOC-004**: Ad-hoc reviews shall require both self-assessment and manager evaluation
+- **REQ-ADHOC-005**: System shall notify employee when ad-hoc review is triggered
+- **REQ-ADHOC-006**: System shall notify employee's manager when ad-hoc review is triggered
+- **REQ-ADHOC-007**: Ad-hoc reviews shall use department-specific review forms when available
+- **REQ-ADHOC-008**: Ad-hoc reviews shall be trackable separately from scheduled review cycles
+- **REQ-ADHOC-009**: System shall allow configurable due dates for ad-hoc reviews (default: 14 days)
+- **REQ-ADHOC-010**: System shall prevent triggering ad-hoc review for employee with active ad-hoc review
+
+#### 4.3.6 Department Review Forms
+- **REQ-FORM-001**: HR managers shall be able to create custom review forms
+- **REQ-FORM-002**: Review forms shall support multiple section types (Rating, Text, Goal Review, Competency Matrix)
+- **REQ-FORM-003**: Review forms shall support multiple question types (Rating Scale, Text, Multiple Choice, Checkbox, Yes/No)
+- **REQ-FORM-004**: HR managers shall be able to assign review forms to specific departments
+- **REQ-FORM-005**: System shall automatically select department-specific form when creating reviews
+- **REQ-FORM-006**: System shall fall back to company default form if no department form exists
+- **REQ-FORM-007**: System shall support form versioning with history tracking
+- **REQ-FORM-008**: Active reviews shall be locked to form version at creation time
+- **REQ-FORM-009**: System shall allow form cloning for creating variations
+- **REQ-FORM-010**: Admin shall be able to set one form as company-wide default
+
 ### 4.4 Feedback & 1:1 Management
 
 #### 4.4.1 Continuous Feedback

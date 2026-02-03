@@ -25,7 +25,7 @@ const { formatDate, formatEmployeeName } = useReviews()
     <div class="flex items-start gap-4">
       <!-- Employee Avatar -->
       <UAvatar
-        :src="review.employee.avatar_url"
+        :src="review.employee.avatarUrl"
         :alt="formatEmployeeName(review.employee)"
         size="md"
       />
@@ -41,14 +41,14 @@ const { formatDate, formatEmployeeName } = useReviews()
         </div>
 
         <!-- Job Title -->
-        <p v-if="review.employee.job_title" class="text-sm text-gray-400 truncate mb-2">
-          {{ review.employee.job_title }}
+        <p v-if="review.employee.jobTitle" class="text-sm text-gray-400 truncate mb-2">
+          {{ review.employee.jobTitle }}
         </p>
 
         <!-- Tags -->
         <div class="flex items-center gap-2 flex-wrap">
           <ReviewsReviewTypeBadge :type="review.type" size="xs" />
-          <span v-if="showCycle" class="text-xs text-gray-500">
+          <span v-if="showCycle && review.cycle" class="text-xs text-gray-500">
             {{ review.cycle.name }}
           </span>
         </div>
@@ -62,8 +62,8 @@ const { formatDate, formatEmployeeName } = useReviews()
     </div>
 
     <!-- Footer -->
-    <div v-if="review.submitted_at" class="mt-3 pt-3 border-t border-gray-800 text-xs text-gray-500">
-      Submitted {{ formatDate(review.submitted_at) }}
+    <div v-if="review.submittedAt" class="mt-3 pt-3 border-t border-gray-800 text-xs text-gray-500">
+      Submitted {{ formatDate(review.submittedAt) }}
     </div>
   </div>
 </template>

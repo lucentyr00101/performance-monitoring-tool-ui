@@ -26,7 +26,7 @@ const { user } = useAuthStore()
 // Filter to only show acknowledged/completed reviews for current user
 onMounted(async () => {
   if (user?.id) {
-    updateReviewFilter('employee_id', user.id)
+    updateReviewFilter('employeeId', user.id)
     updateReviewFilter('status', 'acknowledged')
   }
   await fetchReviews()
@@ -114,7 +114,7 @@ function handlePageChange(page: number) {
           <!-- Content -->
           <div class="flex-1">
             <div class="flex items-center justify-between mb-2">
-              <h3 class="font-medium text-white">{{ review.cycle.name }}</h3>
+              <h3 class="font-medium text-white">{{ review.cycle?.name ?? 'Ad-Hoc Review' }}</h3>
               <div class="flex items-center gap-2">
                 <ReviewsReviewTypeBadge :type="review.type" size="xs" />
                 <span v-if="review.rating" class="flex items-center gap-1 text-sm">
@@ -129,7 +129,7 @@ function handlePageChange(page: number) {
             </p>
 
             <p class="text-xs text-gray-500">
-              {{ review.submitted_at ? formatDate(review.submitted_at) : 'N/A' }}
+              {{ review.submittedAt ? formatDate(review.submittedAt) : 'N/A' }}
             </p>
           </div>
 
@@ -139,11 +139,11 @@ function handlePageChange(page: number) {
       </div>
 
       <!-- Pagination -->
-      <div v-if="reviewPagination.total_pages > 1" class="mt-6 flex justify-center">
+      <div v-if="reviewPagination.totalPages > 1" class="mt-6 flex justify-center">
         <UPagination
           :model-value="reviewPagination.page"
-          :page-count="reviewPagination.per_page"
-          :total="reviewPagination.total_items"
+          :page-count="reviewPagination.perPage"
+          :total="reviewPagination.totalItems"
           @update:model-value="handlePageChange"
         />
       </div>

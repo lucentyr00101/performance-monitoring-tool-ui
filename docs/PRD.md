@@ -25,6 +25,8 @@ This is the master PRD index for the Employee Performance Monitoring Tool MVP. T
 | [05 - Performance Reviews](./prd/05-reviews.md) | Review cycles, evaluations, feedback |
 | [06 - Analytics & Reports](./prd/06-analytics.md) | Metrics, visualizations, exports |
 | [07 - UI/UX Requirements](./prd/07-ui-ux.md) | Design system, dark mode, animations |
+| [08 - Ad-Hoc Reviews](./prd/08-adhoc-reviews.md) | On-demand review triggers, KPI reviews |
+| [09 - Department Review Forms](./prd/09-review-forms.md) | Department-specific review templates |
 
 ---
 
@@ -85,6 +87,8 @@ To empower organizations with a modern, intuitive performance monitoring tool th
 - Self-assessment and manager evaluations
 - Customizable templates
 - Review history and trends
+- **Ad-hoc review triggers** (on-demand KPI reviews)
+- **Department-specific review forms**
 - [Full Details →](./prd/05-reviews.md)
 
 ### 6. Analytics & Reports
@@ -170,6 +174,7 @@ docs/
 │   ├── departments.md
 │   ├── goals.md
 │   ├── reviews.md
+│   ├── review-forms.md
 │   └── analytics.md
 └── prd/                # Feature-specific PRDs
     ├── 01-authentication.md
@@ -178,7 +183,9 @@ docs/
     ├── 04-goals.md
     ├── 05-reviews.md
     ├── 06-analytics.md
-    └── 07-ui-ux.md
+    ├── 07-ui-ux.md
+    ├── 08-adhoc-reviews.md
+    └── 09-review-forms.md
 ```
 
 ---

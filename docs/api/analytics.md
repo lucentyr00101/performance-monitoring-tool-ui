@@ -38,50 +38,50 @@ Authorization: Bearer <token>
 {
   "success": true,
   "data": {
-    "user_role": "employee",
+    "userRole": "employee",
     "overview": {
-      "active_goals": 3,
-      "completed_goals": 5,
-      "pending_reviews": 1,
-      "average_goal_progress": 65
+      "activeGoals": 3,
+      "completedGoals": 5,
+      "pendingReviews": 1,
+      "averageGoalProgress": 65
     },
-    "goals_summary": {
+    "goalsSummary": {
       "total": 8,
-      "by_status": {
+      "byStatus": {
         "active": 3,
         "completed": 5,
         "draft": 0
       },
-      "upcoming_deadlines": [
+      "upcomingDeadlines": [
         {
           "id": "550e8400-e29b-41d4-a716-446655440101",
           "title": "Complete AWS certification",
-          "due_date": "2026-02-28",
+          "dueDate": "2026-02-28",
           "progress": 80,
-          "days_remaining": 31
+          "daysRemaining": 31
         }
       ]
     },
-    "reviews_summary": {
-      "pending_self_assessments": 1,
-      "recent_reviews": [
+    "reviewsSummary": {
+      "pendingSelfAssessments": 1,
+      "recentReviews": [
         {
           "id": "550e8400-e29b-41d4-a716-446655440200",
-          "cycle_name": "Q4 2025 Performance Review",
+          "cycleName": "Q4 2025 Performance Review",
           "rating": 4.5,
           "status": "acknowledged"
         }
       ]
     },
     "notifications": {
-      "unread_count": 3,
+      "unreadCount": 3,
       "recent": [
         {
           "id": "550e8400-e29b-41d4-a716-446655440400",
           "type": "review_reminder",
           "title": "Self-assessment due soon",
           "message": "Your Q1 2026 self-assessment is due in 3 days",
-          "created_at": "2026-01-28T08:00:00Z"
+          "createdAt": "2026-01-28T08:00:00Z"
         }
       ]
     }
@@ -98,39 +98,39 @@ Authorization: Bearer <token>
 {
   "success": true,
   "data": {
-    "user_role": "manager",
+    "userRole": "manager",
     "overview": {
-      "direct_reports": 5,
-      "team_active_goals": 12,
-      "pending_reviews_to_complete": 3,
-      "team_avg_goal_progress": 58
+      "directReports": 5,
+      "teamActiveGoals": 12,
+      "pendingReviewsToComplete": 3,
+      "teamAvgGoalProgress": 58
     },
-    "team_summary": {
+    "teamSummary": {
       "members": 5,
-      "by_status": {
-        "on_track": 4,
-        "at_risk": 1,
-        "needs_attention": 0
+      "byStatus": {
+        "onTrack": 4,
+        "atRisk": 1,
+        "needsAttention": 0
       }
     },
-    "goals_summary": {
-      "team_goals": {
+    "goalsSummary": {
+      "teamGoals": {
         "total": 12,
         "active": 8,
-        "completed_this_quarter": 4,
-        "average_progress": 58
+        "completedThisQuarter": 4,
+        "averageProgress": 58
       },
-      "personal_goals": {
+      "personalGoals": {
         "active": 2,
-        "average_progress": 70
+        "averageProgress": 70
       }
     },
-    "reviews_summary": {
-      "pending_to_complete": 3,
-      "completed_this_cycle": 2,
-      "team_average_rating": 4.2
+    "reviewsSummary": {
+      "pendingToComplete": 3,
+      "completedThisCycle": 2,
+      "teamAverageRating": 4.2
     },
-    "quick_actions": [
+    "quickActions": [
       {
         "type": "review_pending",
         "title": "Complete review for Alice Johnson",
@@ -155,27 +155,27 @@ Authorization: Bearer <token>
 {
   "success": true,
   "data": {
-    "user_role": "hr",
+    "userRole": "hr",
     "overview": {
-      "total_employees": 156,
-      "active_review_cycles": 1,
-      "organization_goal_completion": 72,
-      "review_completion_rate": 94.5
+      "totalEmployees": 156,
+      "activeReviewCycles": 1,
+      "organizationGoalCompletion": 72,
+      "reviewCompletionRate": 94.5
     },
-    "employees_summary": {
+    "employeesSummary": {
       "total": 156,
-      "by_status": {
+      "byStatus": {
         "active": 150,
         "inactive": 6
       },
-      "new_this_month": 3,
-      "departures_this_month": 1
+      "newThisMonth": 3,
+      "departuresThisMonth": 1
     },
-    "goals_summary": {
-      "organization_wide": {
-        "total_active": 245,
-        "average_progress": 62,
-        "by_type": {
+    "goalsSummary": {
+      "organizationWide": {
+        "totalActive": 245,
+        "averageProgress": 62,
+        "byType": {
           "individual": 180,
           "team": 45,
           "department": 15,
@@ -183,29 +183,29 @@ Authorization: Bearer <token>
         }
       }
     },
-    "reviews_summary": {
-      "active_cycle": {
+    "reviewsSummary": {
+      "activeCycle": {
         "id": "550e8400-e29b-41d4-a716-446655440301",
         "name": "Q1 2026 Performance Review",
-        "completion_rate": 45,
-        "days_remaining": 62
+        "completionRate": 45,
+        "daysRemaining": 62
       },
-      "organization_average_rating": 3.9
+      "organizationAverageRating": 3.9
     },
-    "departments_overview": [
+    "departmentsOverview": [
       {
         "id": "550e8400-e29b-41d4-a716-446655440010",
         "name": "Engineering",
-        "employee_count": 25,
-        "goal_completion": 68,
-        "avg_review_rating": 4.1
+        "employeeCount": 25,
+        "goalCompletion": 68,
+        "avgReviewRating": 4.1
       },
       {
         "id": "550e8400-e29b-41d4-a716-446655440011",
         "name": "Product",
-        "employee_count": 12,
-        "goal_completion": 75,
-        "avg_review_rating": 4.0
+        "employeeCount": 12,
+        "goalCompletion": 75,
+        "avgReviewRating": 4.0
       }
     ]
   },
@@ -250,46 +250,46 @@ Authorization: Bearer <token>
       "type": "quarter",
       "year": 2026,
       "quarter": 1,
-      "start_date": "2026-01-01",
-      "end_date": "2026-03-31"
+      "startDate": "2026-01-01",
+      "endDate": "2026-03-31"
     },
     "summary": {
-      "total_goals": 245,
+      "totalGoals": 245,
       "completed": 45,
       "active": 180,
       "cancelled": 20,
-      "completion_rate": 18.4,
-      "average_progress": 42
+      "completionRate": 18.4,
+      "averageProgress": 42
     },
-    "by_type": [
-      { "type": "individual", "count": 180, "completion_rate": 22, "avg_progress": 45 },
-      { "type": "team", "count": 45, "completion_rate": 15, "avg_progress": 38 },
-      { "type": "department", "count": 15, "completion_rate": 10, "avg_progress": 35 },
-      { "type": "company", "count": 5, "completion_rate": 0, "avg_progress": 30 }
+    "byType": [
+      { "type": "individual", "count": 180, "completionRate": 22, "avgProgress": 45 },
+      { "type": "team", "count": 45, "completionRate": 15, "avgProgress": 38 },
+      { "type": "department", "count": 15, "completionRate": 10, "avgProgress": 35 },
+      { "type": "company", "count": 5, "completionRate": 0, "avgProgress": 30 }
     ],
-    "by_department": [
-      { "department": "Engineering", "total": 65, "completion_rate": 25, "avg_progress": 48 },
-      { "department": "Product", "total": 35, "completion_rate": 20, "avg_progress": 42 },
-      { "department": "Sales", "total": 50, "completion_rate": 18, "avg_progress": 40 },
-      { "department": "Marketing", "total": 30, "completion_rate": 15, "avg_progress": 38 }
+    "byDepartment": [
+      { "department": "Engineering", "total": 65, "completionRate": 25, "avgProgress": 48 },
+      { "department": "Product", "total": 35, "completionRate": 20, "avgProgress": 42 },
+      { "department": "Sales", "total": 50, "completionRate": 18, "avgProgress": 40 },
+      { "department": "Marketing", "total": 30, "completionRate": 15, "avgProgress": 38 }
     ],
     "trends": {
       "monthly": [
-        { "month": "2026-01", "created": 80, "completed": 15, "avg_progress": 25 },
-        { "month": "2026-02", "created": 45, "completed": 20, "avg_progress": 38 },
-        { "month": "2026-03", "created": 30, "completed": 10, "avg_progress": 42 }
+        { "month": "2026-01", "created": 80, "completed": 15, "avgProgress": 25 },
+        { "month": "2026-02", "created": 45, "completed": 20, "avgProgress": 38 },
+        { "month": "2026-03", "created": 30, "completed": 10, "avgProgress": 42 }
       ]
     },
-    "top_performers": [
+    "topPerformers": [
       {
         "employee": { "id": "uuid", "name": "Alice Johnson", "department": "Engineering" },
-        "goals_completed": 4,
-        "avg_completion_time_days": 25
+        "goalsCompleted": 4,
+        "avgCompletionTimeDays": 25
       },
       {
         "employee": { "id": "uuid", "name": "Bob Williams", "department": "Product" },
-        "goals_completed": 3,
-        "avg_completion_time_days": 30
+        "goalsCompleted": 3,
+        "avgCompletionTimeDays": 30
       }
     ]
   },
@@ -333,12 +333,12 @@ Authorization: Bearer <token>
       "status": "completed"
     },
     "summary": {
-      "total_reviews": 150,
+      "totalReviews": 150,
       "completed": 142,
       "pending": 8,
-      "completion_rate": 94.67,
-      "average_rating": 3.85,
-      "rating_distribution": {
+      "completionRate": 94.67,
+      "averageRating": 3.85,
+      "ratingDistribution": {
         "1": 2,
         "2": 8,
         "3": 45,
@@ -346,42 +346,42 @@ Authorization: Bearer <token>
         "5": 30
       }
     },
-    "by_type": [
-      { "type": "self", "total": 75, "completed": 72, "avg_rating": 3.9 },
-      { "type": "manager", "total": 75, "completed": 70, "avg_rating": 3.8 }
+    "byType": [
+      { "type": "self", "total": 75, "completed": 72, "avgRating": 3.9 },
+      { "type": "manager", "total": 75, "completed": 70, "avgRating": 3.8 }
     ],
-    "by_department": [
+    "byDepartment": [
       {
         "department": "Engineering",
         "total": 50,
         "completed": 48,
-        "completion_rate": 96,
-        "avg_rating": 4.1
+        "completionRate": 96,
+        "avgRating": 4.1
       },
       {
         "department": "Product",
         "total": 24,
         "completed": 24,
-        "completion_rate": 100,
-        "avg_rating": 3.9
+        "completionRate": 100,
+        "avgRating": 3.9
       },
       {
         "department": "Sales",
         "total": 40,
         "completed": 36,
-        "completion_rate": 90,
-        "avg_rating": 3.7
+        "completionRate": 90,
+        "avgRating": 3.7
       }
     ],
     "timeline": {
-      "daily_completions": [
+      "dailyCompletions": [
         { "date": "2025-12-01", "completed": 5 },
         { "date": "2025-12-02", "completed": 12 },
         { "date": "2025-12-03", "completed": 18 }
       ]
     },
-    "categories_breakdown": {
-      "technical_skills": { "avg": 4.0, "distribution": { "1": 1, "2": 5, "3": 20, "4": 50, "5": 66 } },
+    "categoriesBreakdown": {
+      "technicalSkills": { "avg": 4.0, "distribution": { "1": 1, "2": 5, "3": 20, "4": 50, "5": 66 } },
       "communication": { "avg": 3.8, "distribution": { "1": 2, "2": 8, "3": 30, "4": 55, "5": 47 } },
       "teamwork": { "avg": 3.9, "distribution": { "1": 1, "2": 6, "3": 25, "4": 58, "5": 52 } }
     }
@@ -416,63 +416,63 @@ Authorization: Bearer <token>
     "manager": {
       "id": "550e8400-e29b-41d4-a716-446655440001",
       "name": "John Doe",
-      "job_title": "Engineering Manager"
+      "jobTitle": "Engineering Manager"
     },
-    "team_size": 5,
+    "teamSize": 5,
     "summary": {
-      "total_active_goals": 12,
-      "avg_goal_progress": 58,
-      "goals_completed_this_quarter": 4,
-      "pending_reviews": 2,
-      "team_avg_rating": 4.2
+      "totalActiveGoals": 12,
+      "avgGoalProgress": 58,
+      "goalsCompletedThisQuarter": 4,
+      "pendingReviews": 2,
+      "teamAvgRating": 4.2
     },
     "members": [
       {
         "employee": {
           "id": "550e8400-e29b-41d4-a716-446655440003",
           "name": "Alice Johnson",
-          "job_title": "Senior Developer",
-          "avatar_url": null
+          "jobTitle": "Senior Developer",
+          "avatarUrl": null
         },
         "goals": {
           "active": 3,
           "completed": 2,
-          "avg_progress": 75
+          "avgProgress": 75
         },
-        "latest_review": {
+        "latestReview": {
           "rating": 4.5,
           "cycle": "Q4 2025"
         },
-        "status": "on_track"
+        "status": "onTrack"
       },
       {
         "employee": {
           "id": "550e8400-e29b-41d4-a716-446655440004",
           "name": "Bob Williams",
-          "job_title": "Software Engineer",
-          "avatar_url": "https://cdn.example.com/bob.jpg"
+          "jobTitle": "Software Engineer",
+          "avatarUrl": "https://cdn.example.com/bob.jpg"
         },
         "goals": {
           "active": 2,
           "completed": 1,
-          "avg_progress": 45
+          "avgProgress": 45
         },
-        "latest_review": {
+        "latestReview": {
           "rating": 3.8,
           "cycle": "Q4 2025"
         },
-        "status": "at_risk"
+        "status": "atRisk"
       }
     ],
-    "goals_by_status": {
+    "goalsByStatus": {
       "active": 8,
       "completed": 4,
       "overdue": 1
     },
-    "performance_trend": [
-      { "period": "Q2 2025", "avg_rating": 3.9, "goal_completion": 70 },
-      { "period": "Q3 2025", "avg_rating": 4.0, "goal_completion": 75 },
-      { "period": "Q4 2025", "avg_rating": 4.2, "goal_completion": 80 }
+    "performanceTrend": [
+      { "period": "Q2 2025", "avgRating": 3.9, "goalCompletion": 70 },
+      { "period": "Q3 2025", "avgRating": 4.0, "goalCompletion": 75 },
+      { "period": "Q4 2025", "avgRating": 4.2, "goalCompletion": 80 }
     ]
   },
   "meta": {
@@ -510,63 +510,63 @@ Authorization: Bearer <token>
         "name": "John Doe"
       }
     },
-    "employee_count": 25,
+    "employeeCount": 25,
     "summary": {
-      "total_goals": 65,
-      "goal_completion_rate": 68,
-      "avg_goal_progress": 58,
-      "review_completion_rate": 96,
-      "avg_review_rating": 4.1
+      "totalGoals": 65,
+      "goalCompletionRate": 68,
+      "avgGoalProgress": 58,
+      "reviewCompletionRate": 96,
+      "avgReviewRating": 4.1
     },
-    "sub_departments": [
+    "subDepartments": [
       {
         "id": "550e8400-e29b-41d4-a716-446655440012",
         "name": "Frontend Engineering",
-        "employee_count": 8,
-        "goal_completion": 72,
-        "avg_rating": 4.2
+        "employeeCount": 8,
+        "goalCompletion": 72,
+        "avgRating": 4.2
       },
       {
         "id": "550e8400-e29b-41d4-a716-446655440013",
         "name": "Backend Engineering",
-        "employee_count": 10,
-        "goal_completion": 65,
-        "avg_rating": 4.0
+        "employeeCount": 10,
+        "goalCompletion": 65,
+        "avgRating": 4.0
       },
       {
         "id": "550e8400-e29b-41d4-a716-446655440014",
         "name": "DevOps",
-        "employee_count": 5,
-        "goal_completion": 70,
-        "avg_rating": 4.1
+        "employeeCount": 5,
+        "goalCompletion": 70,
+        "avgRating": 4.1
       }
     ],
-    "goals_breakdown": {
-      "by_type": [
-        { "type": "individual", "count": 45, "avg_progress": 60 },
-        { "type": "team", "count": 15, "avg_progress": 55 },
-        { "type": "department", "count": 5, "avg_progress": 50 }
+    "goalsBreakdown": {
+      "byType": [
+        { "type": "individual", "count": 45, "avgProgress": 60 },
+        { "type": "team", "count": 15, "avgProgress": 55 },
+        { "type": "department", "count": 5, "avgProgress": 50 }
       ],
-      "by_status": {
+      "byStatus": {
         "active": 40,
         "completed": 20,
         "cancelled": 5
       }
     },
-    "reviews_breakdown": {
-      "avg_rating": 4.1,
-      "by_category": {
-        "technical_skills": 4.3,
+    "reviewsBreakdown": {
+      "avgRating": 4.1,
+      "byCategory": {
+        "technicalSkills": 4.3,
         "communication": 3.9,
         "teamwork": 4.0,
-        "problem_solving": 4.2
+        "problemSolving": 4.2
       }
     },
     "trend": [
-      { "quarter": "Q1 2025", "goal_completion": 60, "avg_rating": 3.8 },
-      { "quarter": "Q2 2025", "goal_completion": 65, "avg_rating": 3.9 },
-      { "quarter": "Q3 2025", "goal_completion": 68, "avg_rating": 4.0 },
-      { "quarter": "Q4 2025", "goal_completion": 72, "avg_rating": 4.1 }
+      { "quarter": "Q1 2025", "goalCompletion": 60, "avgRating": 3.8 },
+      { "quarter": "Q2 2025", "goalCompletion": 65, "avgRating": 3.9 },
+      { "quarter": "Q3 2025", "goalCompletion": 68, "avgRating": 4.0 },
+      { "quarter": "Q4 2025", "goalCompletion": 72, "avgRating": 4.1 }
     ]
   },
   "meta": {
@@ -607,11 +607,11 @@ Authorization: Bearer <token>
 {
   "success": true,
   "data": {
-    "download_url": "https://api.example.com/downloads/report-abc123.csv",
-    "expires_at": "2026-01-28T11:30:00Z",
-    "file_name": "goals-report-q1-2026.csv",
-    "file_size": "125KB",
-    "record_count": 245
+    "downloadUrl": "https://api.example.com/downloads/report-abc123.csv",
+    "expiresAt": "2026-01-28T11:30:00Z",
+    "fileName": "goals-report-q1-2026.csv",
+    "fileSize": "125KB",
+    "recordCount": 245
   },
   "meta": {
     "timestamp": "2026-01-28T10:30:00Z"
@@ -627,9 +627,9 @@ Authorization: Bearer <token>
 
 | Status | Description | Criteria |
 |--------|-------------|----------|
-| `on_track` | Employee performing well | Goals > 50% progress, positive reviews |
-| `at_risk` | May need attention | Goals < 30% progress or overdue |
-| `needs_attention` | Requires immediate intervention | Multiple overdue goals, low ratings |
+| `onTrack` | Employee performing well | Goals > 50% progress, positive reviews |
+| `atRisk` | May need attention | Goals < 30% progress or overdue |
+| `needsAttention` | Requires immediate intervention | Multiple overdue goals, low ratings |
 
 ### Time Periods
 

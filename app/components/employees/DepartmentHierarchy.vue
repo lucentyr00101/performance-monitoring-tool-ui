@@ -85,14 +85,14 @@ function isExpanded(id: string): boolean {
             <div class="flex-1 min-w-0">
               <p class="font-medium text-white truncate">{{ dept.name }}</p>
               <p v-if="dept.manager" class="text-xs text-gray-500">
-                {{ dept.manager.first_name }} {{ dept.manager.last_name }}
+                {{ dept.manager.firstName }} {{ dept.manager.lastName }}
               </p>
             </div>
 
             <!-- Employee Count -->
             <div class="flex items-center gap-1 text-sm text-gray-400">
               <UIcon name="i-heroicons-users" class="w-4 h-4" />
-              <span>{{ dept.employee_count || 0 }}</span>
+              <span>{{ dept.employeeCount || 0 }}</span>
             </div>
           </div>
 
@@ -126,13 +126,13 @@ function isExpanded(id: string): boolean {
                   <div class="flex-1 min-w-0">
                     <p class="font-medium text-white truncate">{{ child.name }}</p>
                     <p v-if="child.manager" class="text-xs text-gray-500">
-                      {{ child.manager.first_name }} {{ child.manager.last_name }}
+                      {{ child.manager.firstName }} {{ child.manager.lastName }}
                     </p>
                   </div>
 
                   <div class="flex items-center gap-1 text-sm text-gray-400">
                     <UIcon name="i-heroicons-users" class="w-4 h-4" />
-                    <span>{{ child.employee_count || 0 }}</span>
+                    <span>{{ child.employeeCount || 0 }}</span>
                   </div>
                 </div>
 
@@ -156,7 +156,7 @@ function isExpanded(id: string): boolean {
                     </div>
                     <div class="flex items-center gap-1 text-sm text-gray-500">
                       <UIcon name="i-heroicons-users" class="w-4 h-4" />
-                      <span>{{ grandchild.employee_count || 0 }}</span>
+                      <span>{{ grandchild.employeeCount || 0 }}</span>
                     </div>
                   </div>
                 </div>

@@ -1,4 +1,4 @@
-// Auth Service - API calls for authentication (external microservice)
+// Auth Service - API calls for authentication
 import { api } from '~/utils/api'
 import type {
   LoginRequest,
@@ -12,11 +12,7 @@ import type {
 } from '~/types/auth'
 
 /**
- * Auth Service
- * 
- * Communicates with the external Auth Microservice
- * Backend: Node.js/Express + MongoDB
- * Repository: performance-monitoring-tool-api
+ * Auth Service - API calls for authentication
  */
 export const authService = {
   /**
@@ -24,10 +20,7 @@ export const authService = {
    * POST /api/v1/auth/login
    */
   async login(credentials: LoginRequest) {
-    return api.post<LoginResponse>('/auth/login', credentials, {
-      skipAuth: true,
-      service: 'auth'
-    })
+    return api.post<LoginResponse>('/auth/login', credentials, { skipAuth: true })
   },
 
   /**
@@ -35,9 +28,7 @@ export const authService = {
    * POST /api/v1/auth/logout
    */
   async logout() {
-    return api.post<MessageResponse>('/auth/logout', undefined, {
-      service: 'auth'
-    })
+    return api.post<MessageResponse>('/auth/logout')
   },
 
   /**
@@ -45,11 +36,8 @@ export const authService = {
    * POST /api/v1/auth/refresh
    */
   async refresh(refreshToken: string) {
-    const body: RefreshRequest = { refreshToken }
-    return api.post<RefreshResponse>('/auth/refresh', body, {
-      skipAuth: true,
-      service: 'auth'
-    })
+    const body = { refresh_token: refreshToken }
+    return api.post<RefreshResponse>('/auth/refresh', body, { skipAuth: true })
   },
 
   /**
@@ -58,10 +46,7 @@ export const authService = {
    */
   async forgotPassword(email: string) {
     const body: ForgotPasswordRequest = { email }
-    return api.post<MessageResponse>('/auth/forgot-password', body, {
-      skipAuth: true,
-      service: 'auth'
-    })
+    return api.post<MessageResponse>('/auth/forgot-password', body, { skipAuth: true })
   },
 
   /**
@@ -69,10 +54,7 @@ export const authService = {
    * POST /api/v1/auth/reset-password
    */
   async resetPassword(data: ResetPasswordRequest) {
-    return api.post<MessageResponse>('/auth/reset-password', data, {
-      skipAuth: true,
-      service: 'auth'
-    })
+    return api.post<MessageResponse>('/auth/reset-password', data, { skipAuth: true })
   },
 
   /**
@@ -80,8 +62,6 @@ export const authService = {
    * GET /api/v1/auth/me
    */
   async getCurrentUser() {
-    return api.get<User>('/auth/me', {
-      service: 'auth'
-    })
+    return api.get<User>('/auth/me')
   }
 }

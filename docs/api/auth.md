@@ -4,7 +4,9 @@
 
 Authentication endpoints for user login, logout, and token management.
 
-> **Architecture Note:** This API is implemented as an external microservice.  
+> **Naming Convention Exception:** The Auth Service uses **snake_case** for all JSON request/response bodies (e.g., `access_token`, `refresh_token`, `expires_in`) because it's an external microservice with its own naming conventions. All other services use camelCase.
+
+> **Architecture Note:** This API is implemented as an external microservice.
 > **Repository:** `performance-monitoring-tool-api`  
 > **Technology:** Node.js + Express + MongoDB  
 > **Service Name:** Auth Service
@@ -39,17 +41,17 @@ Authentication endpoints for user login, logout, and token management.
 {
   _id: ObjectId,
   email: String,           // unique, indexed
-  password_hash: String,   // bcrypt hashed
+  passwordHash: String,    // bcrypt hashed
   role: String,            // enum: admin, hr, manager, employee, csuite
   status: String,          // enum: active, inactive, suspended
-  employee_id: ObjectId,   // ref: employees collection
-  last_login_at: Date,
-  failed_login_attempts: Number,
-  locked_until: Date,
-  password_reset_token: String,
-  password_reset_expires: Date,
-  created_at: Date,
-  updated_at: Date
+  employeeId: ObjectId,    // ref: employees collection
+  lastLoginAt: Date,
+  failedLoginAttempts: Number,
+  lockedUntil: Date,
+  passwordResetToken: String,
+  passwordResetExpires: Date,
+  createdAt: Date,
+  updatedAt: Date
 }
 ```
 
@@ -57,11 +59,11 @@ Authentication endpoints for user login, logout, and token management.
 ```javascript
 {
   _id: ObjectId,
-  user_id: ObjectId,       // ref: users collection
-  token_hash: String,      // hashed refresh token
-  expires_at: Date,
-  created_at: Date,
-  revoked_at: Date         // null if active
+  userId: ObjectId,        // ref: users collection
+  tokenHash: String,       // hashed refresh token
+  expiresAt: Date,
+  createdAt: Date,
+  revokedAt: Date          // null if active
 }
 ```
 
@@ -110,10 +112,10 @@ Content-Type: application/json
       "role": "manager",
       "employee": {
         "id": "550e8400-e29b-41d4-a716-446655440001",
-        "first_name": "John",
-        "last_name": "Doe",
-        "job_title": "Engineering Manager",
-        "avatar_url": "https://cdn.example.com/avatars/john-doe.jpg"
+        "firstName": "John",
+        "lastName": "Doe",
+        "jobTitle": "Engineering Manager",
+        "avatarUrl": "https://cdn.example.com/avatars/john-doe.jpg"
       }
     }
   },
@@ -394,27 +396,27 @@ Authorization: Bearer <access_token>
     "email": "john.doe@company.com",
     "role": "manager",
     "status": "active",
-    "last_login_at": "2026-01-28T10:30:00Z",
+    "lastLoginAt": "2026-01-28T10:30:00Z",
     "employee": {
       "id": "550e8400-e29b-41d4-a716-446655440001",
-      "employee_code": "EMP-001",
-      "first_name": "John",
-      "last_name": "Doe",
+      "employeeCode": "EMP-001",
+      "firstName": "John",
+      "lastName": "Doe",
       "email": "john.doe@company.com",
       "phone": "+1-555-123-4567",
-      "job_title": "Engineering Manager",
+      "jobTitle": "Engineering Manager",
       "department": {
         "id": "550e8400-e29b-41d4-a716-446655440010",
         "name": "Engineering"
       },
       "manager": {
         "id": "550e8400-e29b-41d4-a716-446655440002",
-        "first_name": "Jane",
-        "last_name": "Smith"
+        "firstName": "Jane",
+        "lastName": "Smith"
       },
-      "hire_date": "2022-03-15",
-      "employment_type": "full-time",
-      "avatar_url": "https://cdn.example.com/avatars/john-doe.jpg"
+      "hireDate": "2022-03-15",
+      "employmentType": "full-time",
+      "avatarUrl": "https://cdn.example.com/avatars/john-doe.jpg"
     }
   },
   "meta": {

@@ -402,15 +402,22 @@ db.review_cycles.createIndex({ start_date: 1, end_date: 1 })
 ```javascript
 {
   _id: ObjectId,
-  cycle_id: ObjectId,         // ref: review_cycles collection
+  cycle_id: ObjectId,         // ref: review_cycles collection (null for ad-hoc reviews)
+  adhoc_review_id: ObjectId,  // ref: adhoc_reviews collection (null for cycle reviews)
   employee_id: ObjectId,      // ref: employees collection (cross-service reference)
   reviewer_id: ObjectId,      // ref: employees collection (cross-service reference)
   type: String,               // enum: 'self', 'manager', 'peer', '360'
   status: String,             // enum: 'pending', 'in_progress', 'submitted', 'acknowledged'
+  is_adhoc: Boolean,          // true for ad-hoc reviews
+  form_id: ObjectId,          // ref: review_forms collection
+  form_version: String,       // version of form used
+  form_snapshot: Object,      // snapshot of form at creation time
   rating: Number,             // 1.0 - 5.0
+  ratings_breakdown: Object,  // individual question/section ratings
   strengths: String,
   improvements: String,
   comments: String,
+  employee_comments: String,  // employee response to review
   submitted_at: Date,
   acknowledged_at: Date,
   created_at: Date,
@@ -419,9 +426,127 @@ db.review_cycles.createIndex({ start_date: 1, end_date: 1 })
 
 // Indexes
 db.reviews.createIndex({ cycle_id: 1 })
+db.reviews.createIndex({ adhoc_review_id: 1 })
 db.reviews.createIndex({ employee_id: 1 })
 db.reviews.createIndex({ reviewer_id: 1 })
 db.reviews.createIndex({ status: 1 })
+db.reviews.createIndex({ is_adhoc: 1 })
+```
+
+#### adhoc_reviews (Reviews Service Database)
+```javascript
+{
+  _id: ObjectId,
+  employee_id: ObjectId,      // ref: employees collection (cross-service reference)
+  manager_id: ObjectId,       // ref: employees collection (employee's direct manager)
+  triggered_by: ObjectId,     // ref: users collection (who initiated the review)
+  reason: String,             // context/reason for the ad-hoc review
+  due_date: Date,             // deadline for completion
+  review_form_id: ObjectId,   // ref: review_forms collection
+  self_review_id: ObjectId,   // ref: reviews collection
+  manager_review_id: ObjectId, // ref: reviews collection
+  status: String,             // enum: 'initiated', 'pending_acknowledgment', 'completed', 'cancelled'
+  settings: {
+    self_review_required: Boolean,  // default: true
+    manager_review_required: Boolean, // default: true
+    include_goals: Boolean    // default: true
+  },
+  triggered_at: Date,
+  completed_at: Date,
+  created_at: Date,
+  updated_at: Date
+}
+
+// Indexes
+db.adhoc_reviews.createIndex({ employee_id: 1 })
+db.adhoc_reviews.createIndex({ manager_id: 1 })
+db.adhoc_reviews.createIndex({ triggered_by: 1 })
+db.adhoc_reviews.createIndex({ status: 1 })
+db.adhoc_reviews.createIndex({ due_date: 1 })
+```
+
+#### review_forms (Reviews Service Database)
+```javascript
+{
+  _id: ObjectId,
+  name: String,               // form name
+  description: String,        // form description
+  instructions: String,       // completion instructions
+  version: String,            // version number (e.g., "1.0", "1.1")
+  status: String,             // enum: 'draft', 'published', 'archived'
+  is_default: Boolean,        // company default form
+  sections: [{                // form structure
+    _id: ObjectId,
+    title: String,
+    description: String,
+    order: Number,
+    collapsible: Boolean,
+    for_reviewer: String,     // enum: 'self', 'manager', 'both'
+    questions: [{
+      _id: ObjectId,
+      text: String,
+      help_text: String,
+      type: String,           // enum: 'rating_scale', 'text_short', 'text_long', 'multiple_choice', 'checkbox', 'yes_no', 'goal_rating', 'number'
+      required: Boolean,
+      for_reviewer: String,   // enum: 'self', 'manager', 'both'
+      weight: Number,         // for score calculation
+      config: Object          // type-specific configuration
+    }]
+  }],
+  settings: {
+    rating_scale: {
+      min: Number,
+      max: Number,
+      labels: Object
+    }
+  },
+  created_by: ObjectId,
+  published_at: Date,
+  created_at: Date,
+  updated_at: Date
+}
+
+// Indexes
+db.review_forms.createIndex({ status: 1 })
+db.review_forms.createIndex({ is_default: 1 })
+db.review_forms.createIndex({ name: 1 })
+```
+
+#### department_form_assignments (Reviews Service Database)
+```javascript
+{
+  _id: ObjectId,
+  department_id: ObjectId,    // ref: departments collection (cross-service reference)
+  review_form_id: ObjectId,   // ref: review_forms collection
+  form_type: String,          // enum: 'self', 'manager', 'both'
+  effective_date: Date,       // when assignment becomes active
+  assigned_by: ObjectId,      // ref: users collection
+  status: String,             // enum: 'active', 'inactive'
+  created_at: Date,
+  updated_at: Date
+}
+
+// Indexes
+db.department_form_assignments.createIndex({ department_id: 1, status: 1 })
+db.department_form_assignments.createIndex({ review_form_id: 1 })
+db.department_form_assignments.createIndex({ effective_date: 1 })
+```
+
+#### form_version_history (Reviews Service Database)
+```javascript
+{
+  _id: ObjectId,
+  review_form_id: ObjectId,   // ref: review_forms collection
+  version: String,            // version number
+  sections: Object,           // snapshot of form content
+  changed_by: ObjectId,       // ref: users collection
+  change_summary: String,     // description of changes
+  created_at: Date
+}
+
+// Indexes
+db.form_version_history.createIndex({ review_form_id: 1 })
+db.form_version_history.createIndex({ version: 1 })
 ```
 
 #### notifications (Across Services - typically in a shared DB or per service)
@@ -618,6 +743,45 @@ Authorization: Bearer <access_token>
 | GET | `/reviews/:id` | Get review by ID | Yes | Participant |
 | PUT | `/reviews/:id` | Submit/update review | Yes | Reviewer |
 | POST | `/reviews/:id/acknowledge` | Acknowledge review | Yes | Employee |
+
+### Ad-Hoc Reviews (`/adhoc-reviews`)
+
+| Method | Endpoint | Description | Auth | Roles |
+|--------|----------|-------------|------|-------|
+| GET | `/adhoc-reviews` | List ad-hoc reviews | Yes | HR, Manager (own team), C-Suite |
+| GET | `/adhoc-reviews/:id` | Get ad-hoc review by ID | Yes | Participant, HR |
+| POST | `/adhoc-reviews` | Trigger ad-hoc review | Yes | HR, Manager, C-Suite |
+| PUT | `/adhoc-reviews/:id` | Update ad-hoc review settings | Yes | HR, Triggered By |
+| DELETE | `/adhoc-reviews/:id` | Cancel ad-hoc review | Yes | HR, Triggered By |
+| POST | `/adhoc-reviews/:id/remind` | Send reminder notification | Yes | HR, Manager, Triggered By |
+
+### Review Forms (`/review-forms`)
+
+| Method | Endpoint | Description | Auth | Roles |
+|--------|----------|-------------|------|-------|
+| GET | `/review-forms` | List review forms | Yes | HR, Admin |
+| GET | `/review-forms/:id` | Get form by ID | Yes | HR, Admin, Dept Manager |
+| POST | `/review-forms` | Create review form | Yes | HR, Admin |
+| PUT | `/review-forms/:id` | Update review form | Yes | HR, Admin |
+| DELETE | `/review-forms/:id` | Delete form (draft only) | Yes | Admin |
+| POST | `/review-forms/:id/publish` | Publish form | Yes | HR, Admin |
+| POST | `/review-forms/:id/archive` | Archive form | Yes | HR, Admin |
+| POST | `/review-forms/:id/clone` | Clone form | Yes | HR, Admin |
+| GET | `/review-forms/:id/preview` | Preview form | Yes | HR, Admin, Dept Manager |
+| GET | `/review-forms/:id/versions` | Get form version history | Yes | HR, Admin |
+| GET | `/review-forms/:id/versions/:version` | Get specific version | Yes | HR, Admin |
+| POST | `/review-forms/:id/assign` | Assign to departments | Yes | HR, Admin |
+| DELETE | `/review-forms/:id/assign/:deptId` | Remove department assignment | Yes | HR, Admin |
+| GET | `/review-forms/default` | Get company default form | Yes | All |
+| PUT | `/review-forms/:id/set-default` | Set as company default | Yes | Admin |
+
+### Department Form Assignments (`/departments/:id/review-form`)
+
+| Method | Endpoint | Description | Auth | Roles |
+|--------|----------|-------------|------|-------|
+| GET | `/departments/:id/review-form` | Get department's assigned form | Yes | All |
+| PUT | `/departments/:id/review-form` | Assign form to department | Yes | HR, Admin |
+| DELETE | `/departments/:id/review-form` | Remove form assignment | Yes | HR, Admin |
 
 ### Analytics (`/analytics`)
 

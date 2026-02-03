@@ -19,7 +19,18 @@ function highlightMatch(text: string): string {
   return text.replace(regex, '<mark class="bg-primary-500/30 text-primary-300 rounded px-0.5">$1</mark>')
 }
 
-const fullName = computed(() => `${props.employee.first_name} ${props.employee.last_name}`)
+const fullName = computed(() => props.employee.fullName || `${props.employee.firstName} ${props.employee.lastName}`)
+
+// Get status from either 'status' or 'employmentStatus' field (API returns 'status')
+const employeeStatus = computed(() => props.employee.status || props.employee.employmentStatus || 'active')
+
+// Get department name from either 'departmentId.name' or 'department.name'
+const departmentName = computed(() => {
+  if (props.employee.departmentId && typeof props.employee.departmentId === 'object') {
+    return props.employee.departmentId.name
+  }
+  return props.employee.department?.name || 'Unassigned'
+})
 
 const statusColors: Record<string, string> = {
   active: 'text-emerald-400',
@@ -34,6 +45,13 @@ const statusIcons: Record<string, string> = {
   on_leave: 'i-heroicons-clock',
   terminated: 'i-heroicons-x-circle'
 }
+
+const statusLabels: Record<string, string> = {
+  active: 'Active',
+  inactive: 'Inactive',
+  on_leave: 'On Leave',
+  terminated: 'Terminated'
+}
 </script>
 
 <template>
@@ -43,7 +61,7 @@ const statusIcons: Record<string, string> = {
   >
     <!-- Avatar -->
     <UAvatar
-      :src="employee.avatar_url"
+      :src="employee.avatarUrl"
       :alt="fullName"
       size="md"
     />
@@ -56,14 +74,14 @@ const statusIcons: Record<string, string> = {
       />
       <p
         class="text-sm text-gray-400 truncate"
-        v-html="highlightMatch(employee.job_title || 'No title')"
+        v-html="highlightMatch(employee.jobTitle || 'No title')"
       />
     </div>
 
     <!-- Department -->
     <div class="hidden md:block w-40">
       <span class="text-sm text-gray-400 truncate block">
-        {{ employee.department?.name || 'Unassigned' }}
+        {{ departmentName }}
       </span>
     </div>
 
@@ -78,12 +96,12 @@ const statusIcons: Record<string, string> = {
     <!-- Status -->
     <div class="flex items-center gap-1.5">
       <UIcon
-        :name="statusIcons[employee.employment_status] || statusIcons.active"
+        :name="statusIcons[employeeStatus] || statusIcons.active"
         class="w-4 h-4"
-        :class="statusColors[employee.employment_status] || statusColors.active"
+        :class="statusColors[employeeStatus] || statusColors.active"
       />
-      <span class="text-sm hidden sm:inline" :class="statusColors[employee.employment_status]">
-        {{ employee.employment_status === 'on_leave' ? 'Leave' : employee.employment_status }}
+      <span class="text-sm hidden sm:inline" :class="statusColors[employeeStatus] || statusColors.active">
+        {{ statusLabels[employeeStatus] || employeeStatus }}
       </span>
     </div>
 

@@ -53,7 +53,9 @@ The Performance Reviews module enables organizations to conduct structured perfo
 | Semi-Annual | Twice per year | 2-4 weeks |
 | Quarterly | Four times per year | 2-3 weeks |
 | Monthly | Every month | 1 week |
-| Ad-hoc | As needed | Variable |
+| Ad-hoc | As needed (triggered on-demand) | Variable |
+
+> **Note:** Ad-hoc reviews can be triggered outside of scheduled cycles by HR, managers, or executives. See [PRD: Ad-Hoc Reviews](./08-adhoc-reviews.md) for details.
 
 #### Cycle Phases
 
@@ -76,6 +78,9 @@ The Performance Reviews module enables organizations to conduct structured perfo
 | Sections | Group questions by category |
 | Versioning | Track template changes |
 | Clone | Copy and modify existing templates |
+| Department Assignment | Assign forms to specific departments |
+
+> **Note:** Review forms can be customized per department. When a review is triggered, the system automatically selects the appropriate form based on the employee's department. See [PRD: Department Review Forms](./09-review-forms.md) for details.
 
 #### Question Types
 
@@ -552,9 +557,12 @@ HR Creates Cycle
 ## Related Documents
 
 - [API Reference: Reviews](/docs/api/reviews.md)
+- [API Reference: Review Forms](/docs/api/review-forms.md)
 - [TSD: Database Schema](/docs/TSD.md#3-database-schema)
 - [PRD: Goals](/docs/prd/04-goals.md)
 - [PRD: Analytics](/docs/prd/06-analytics.md)
+- [PRD: Ad-Hoc Reviews](/docs/prd/08-adhoc-reviews.md)
+- [PRD: Department Review Forms](/docs/prd/09-review-forms.md)
 
 ---
 
@@ -563,3 +571,4 @@ HR Creates Cycle
 | Version | Date | Author | Changes |
 |---------|------|--------|---------|
 | 1.0 | January 2026 | System | Initial version |
+| 1.1 | February 2026 | System | Added references to ad-hoc reviews and department forms |

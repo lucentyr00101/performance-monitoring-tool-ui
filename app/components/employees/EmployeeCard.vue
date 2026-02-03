@@ -19,7 +19,18 @@ function highlightMatch(text: string): string {
   return text.replace(regex, '<mark class="bg-primary-500/30 text-primary-300 rounded px-0.5">$1</mark>')
 }
 
-const fullName = computed(() => `${props.employee.first_name} ${props.employee.last_name}`)
+const fullName = computed(() => props.employee.fullName || `${props.employee.firstName} ${props.employee.lastName}`)
+
+// Get status from either 'status' or 'employmentStatus' field (API returns 'status')
+const employeeStatus = computed(() => props.employee.status || props.employee.employmentStatus || 'active')
+
+// Get department name from either 'departmentId.name' or 'department.name'
+const departmentName = computed(() => {
+  if (props.employee.departmentId && typeof props.employee.departmentId === 'object') {
+    return props.employee.departmentId.name
+  }
+  return props.employee.department?.name || 'Unassigned'
+})
 
 const statusColors: Record<string, string> = {
   active: 'bg-emerald-500/10 text-emerald-400 border-emerald-500/20',
@@ -44,7 +55,7 @@ const statusLabels: Record<string, string> = {
     <!-- Avatar & Name -->
     <div class="flex flex-col items-center text-center mb-4">
       <UAvatar
-        :src="employee.avatar_url"
+        :src="employee.avatarUrl"
         :alt="fullName"
         size="xl"
         class="mb-3"
@@ -55,7 +66,7 @@ const statusLabels: Record<string, string> = {
       />
       <p
         class="text-sm text-gray-400 mt-0.5"
-        v-html="highlightMatch(employee.job_title || 'No title')"
+        v-html="highlightMatch(employee.jobTitle || 'No title')"
       />
     </div>
 
@@ -73,7 +84,7 @@ const statusLabels: Record<string, string> = {
       </div>
       <div class="flex items-center gap-2 text-gray-400">
         <UIcon name="i-heroicons-building-office-2" class="w-4 h-4 flex-shrink-0" />
-        <span class="truncate">{{ employee.department?.name || 'Unassigned' }}</span>
+        <span class="truncate">{{ departmentName }}</span>
       </div>
     </div>
 
@@ -81,9 +92,9 @@ const statusLabels: Record<string, string> = {
     <div class="mt-4 flex justify-center">
       <span
         class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium border"
-        :class="statusColors[employee.employment_status] || statusColors.active"
+        :class="statusColors[employeeStatus] || statusColors.active"
       >
-        {{ statusLabels[employee.employment_status] || employee.employment_status }}
+        {{ statusLabels[employeeStatus] || employeeStatus }}
       </span>
     </div>
   </div>

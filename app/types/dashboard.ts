@@ -30,10 +30,22 @@ export interface GoalProgressItem {
 export interface DeadlineItem {
   id: string
   title: string
-  type: 'goal' | 'review' | 'self_assessment'
+  type: 'goal' | 'review' | 'self_assessment' | 'adhoc_review'
   dueDate: string
   daysRemaining: number
   link?: string
+}
+
+// Ad-Hoc Review Summary (for dashboard widgets)
+export interface AdhocReviewSummary {
+  id: string
+  employeeName: string
+  employeeAvatar?: string
+  dueDate: string
+  daysRemaining: number
+  selfReviewStatus: 'pending' | 'submitted'
+  managerReviewStatus: 'pending' | 'submitted'
+  isOverdue: boolean
 }
 
 // Notification Item

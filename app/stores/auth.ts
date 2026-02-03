@@ -56,6 +56,7 @@ export const useAuthStore = defineStore('auth', {
 
   actions: {
     async login(credentials: LoginRequest, refreshTokenCookie?: CookieRef): Promise<void> {
+      const { success, error: notifyError } = useNotification()
       // Check lockout
       if (this.isLockedOut && this.lockoutEndsAt && Date.now() < this.lockoutEndsAt) {
         const minutesLeft = Math.ceil(this.lockoutTimeRemaining / 60000)
@@ -79,22 +80,23 @@ export const useAuthStore = defineStore('auth', {
 
       try {
         const response = await authService.login(credentials)
-        const { user, tokens } = response.data
+        const data = response.data
 
-        // Store tokens
-        this.accessToken = tokens.accessToken
-        this.user = user
+        // Store tokens (API returns snake_case)
+        this.accessToken = data.access_token
+        this.user = data.user
         this.isAuthenticated = true
-        this.sessionExpiresAt = Date.now() + (tokens.expiresIn * 1000)
+        this.sessionExpiresAt = Date.now() + (data.expires_in * 1000)
         this.loginAttempts = 0
 
         // Store refresh token in cookie if provided
         if (refreshTokenCookie) {
-          refreshTokenCookie.value = tokens.refreshToken
+          refreshTokenCookie.value = data.refresh_token
         }
 
         // Start session timer
         this.startSessionTimer()
+        success('Logged in successfully')
       }
       catch (error) {
         this.loginAttempts++
@@ -103,6 +105,9 @@ export const useAuthStore = defineStore('auth', {
         if (this.loginAttempts >= MAX_LOGIN_ATTEMPTS) {
           this.isLockedOut = true
           this.lockoutEndsAt = Date.now() + LOCKOUT_DURATION
+          notifyError('Account locked due to multiple failed attempts', 'validation')
+        } else {
+          notifyError('Login failed. Please check your credentials.', 'validation')
         }
 
         throw error
@@ -113,8 +118,10 @@ export const useAuthStore = defineStore('auth', {
     },
 
     async logout(): Promise<void> {
+      const { success } = useNotification()
       try {
         await authService.logout()
+        success('Logged out successfully')
       }
       catch {
         // Ignore logout errors, clear state anyway
@@ -130,14 +137,15 @@ export const useAuthStore = defineStore('auth', {
       }
 
       const response = await authService.refresh(refreshTokenValue)
-      const { accessToken, refreshToken, expiresIn } = response.data
+      const data = response.data
 
-      this.accessToken = accessToken
-      this.sessionExpiresAt = Date.now() + (expiresIn * 1000)
+      // Store tokens (API returns snake_case)
+      this.accessToken = data.access_token
+      this.sessionExpiresAt = Date.now() + (data.expires_in * 1000)
 
       // Update refresh token cookie if provided
       if (refreshTokenCookie) {
-        refreshTokenCookie.value = refreshToken
+        refreshTokenCookie.value = data.refresh_token
       }
 
       // Restart session timer

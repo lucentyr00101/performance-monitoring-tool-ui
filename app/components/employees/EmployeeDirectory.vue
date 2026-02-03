@@ -8,12 +8,12 @@ interface Props {
   filters: EmployeeFilters
   pagination: {
     page: number
-    per_page: number
-    total_items: number
-    total_pages: number
+    perPage: number
+    totalItems: number
+    totalPages: number
   }
-  sortBy: EmployeeListParams['sort_by']
-  sortOrder: EmployeeListParams['sort_order']
+  sortBy: EmployeeListParams['sortBy']
+  sortOrder: EmployeeListParams['sortOrder']
   viewMode: 'grid' | 'list'
   searchQuery: string
   isLoading: boolean
@@ -26,7 +26,7 @@ const emit = defineEmits<{
   'update:searchQuery': [value: string]
   'update:viewMode': [mode: 'grid' | 'list']
   'update:filters': [filters: EmployeeFilters]
-  'update:sortBy': [field: EmployeeListParams['sort_by']]
+  'update:sortBy': [field: EmployeeListParams['sortBy']]
   employeeClick: [employee: EmployeeListItem]
   pageChange: [page: number]
   applyFilters: []
@@ -39,10 +39,10 @@ const showFilters = ref(false)
 
 // Sort options
 const sortOptions = [
-  { label: 'Last Name', value: 'last_name' },
-  { label: 'First Name', value: 'first_name' },
+  { label: 'Last Name', value: 'lastName' },
+  { label: 'First Name', value: 'firstName' },
   { label: 'Department', value: 'department' },
-  { label: 'Hire Date', value: 'hire_date' }
+  { label: 'Hire Date', value: 'hireDate' }
 ]
 
 // Get managers list from employees
@@ -55,7 +55,7 @@ const managers = computed(() => {
       managerSet.add(emp.manager.id)
       managerList.push({
         id: emp.manager.id,
-        name: `${emp.manager.first_name} ${emp.manager.last_name}`
+        name: `${emp.manager.firstName} ${emp.manager.lastName}`
       })
     }
   })
@@ -70,7 +70,7 @@ const activeFilterCount = computed(() => {
 
 // Handle sort change
 function handleSortChange(value: string) {
-  emit('update:sortBy', value as EmployeeListParams['sort_by'])
+  emit('update:sortBy', value as EmployeeListParams['sortBy'])
 }
 
 // Handle employee click
@@ -80,9 +80,9 @@ function handleEmployeeClick(employee: EmployeeListItem) {
 
 // Pagination display
 const paginationDisplay = computed(() => {
-  const start = (props.pagination.page - 1) * props.pagination.per_page + 1
-  const end = Math.min(props.pagination.page * props.pagination.per_page, props.pagination.total_items)
-  return `${start}-${end} of ${props.pagination.total_items}`
+  const start = (props.pagination.page - 1) * props.pagination.perPage + 1
+  const end = Math.min(props.pagination.page * props.pagination.perPage, props.pagination.totalItems)
+  return `${start}-${end} of ${props.pagination.totalItems}`
 })
 </script>
 
@@ -203,7 +203,7 @@ const paginationDisplay = computed(() => {
         <!-- Results count -->
         <div class="flex items-center justify-between mb-4">
           <p class="text-sm text-gray-400">
-            <span class="text-white font-medium">{{ pagination.total_items }}</span> employees found
+            <span class="text-white font-medium">{{ pagination.totalItems }}</span> employees found
           </p>
           <p class="text-sm text-gray-400">
             Showing {{ paginationDisplay }}
@@ -278,7 +278,7 @@ const paginationDisplay = computed(() => {
         <!-- Pagination -->
         <div v-if="employees.length > 0" class="mt-6 flex items-center justify-between">
           <p class="text-sm text-gray-400">
-            Page {{ pagination.page }} of {{ pagination.total_pages }}
+            Page {{ pagination.page }} of {{ pagination.totalPages }}
           </p>
           <div class="flex items-center gap-2">
             <UButton
@@ -295,7 +295,7 @@ const paginationDisplay = computed(() => {
               variant="outline"
               color="neutral"
               size="sm"
-              :disabled="pagination.page >= pagination.total_pages"
+              :disabled="pagination.page >= pagination.totalPages"
               @click="emit('pageChange', pagination.page + 1)"
             >
               Next

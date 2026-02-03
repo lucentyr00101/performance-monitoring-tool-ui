@@ -15,7 +15,7 @@ const navItems: NavItem[] = [
   { label: 'Employees', icon: 'i-heroicons-users', to: '/employees', roles: ['admin', 'hr', 'manager', 'csuite'] },
   { label: 'Goals', icon: 'i-heroicons-flag', to: '/goals' },
   { label: 'Reviews', icon: 'i-heroicons-document-text', to: '/reviews' },
-  { label: 'Analytics', icon: 'i-heroicons-chart-pie', to: '/analytics', roles: ['admin', 'hr', 'manager', 'csuite'] },
+  { label: 'Analytics', icon: 'i-heroicons-chart-pie', to: '/analytics' },
   { label: 'Settings', icon: 'i-heroicons-cog-6-tooth', to: '/settings', roles: ['admin'] }
 ]
 
@@ -122,7 +122,7 @@ async function handleLogout() {
             <button class="flex items-center gap-3 hover:bg-gray-800 rounded-lg px-3 py-2 transition-colors">
               <UAvatar
                 :alt="userFullName"
-                :src="user?.employee?.avatar_url"
+                :src="user?.employee?.avatarUrl"
                 size="sm"
               />
               <div class="text-left hidden sm:block">

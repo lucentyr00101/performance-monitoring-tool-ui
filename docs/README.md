@@ -27,6 +27,8 @@ Detailed product requirements split by feature:
 | [prd/05-reviews.md](./prd/05-reviews.md) | Performance Reviews |
 | [prd/06-analytics.md](./prd/06-analytics.md) | Analytics & Reports |
 | [prd/07-ui-ux.md](./prd/07-ui-ux.md) | UI/UX Design System |
+| [prd/08-adhoc-reviews.md](./prd/08-adhoc-reviews.md) | Ad-Hoc Review Trigger (On-Demand KPI Reviews) |
+| [prd/09-review-forms.md](./prd/09-review-forms.md) | Department-Specific Review Forms |
 
 ---
 
@@ -41,7 +43,8 @@ Complete API specifications for backend development:
 | [api/employees.md](./api/employees.md) | Employee CRUD, profiles |
 | [api/departments.md](./api/departments.md) | Organization structure |
 | [api/goals.md](./api/goals.md) | OKRs, key results, progress |
-| [api/reviews.md](./api/reviews.md) | Review cycles, evaluations |
+| [api/reviews.md](./api/reviews.md) | Review cycles, evaluations, ad-hoc reviews |
+| [api/review-forms.md](./api/review-forms.md) | Department review forms management |
 | [api/analytics.md](./api/analytics.md) | Metrics, reports, exports |
 
 ---

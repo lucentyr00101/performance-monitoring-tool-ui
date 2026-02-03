@@ -21,109 +21,125 @@ export interface EmployeeDepartment {
 // Basic manager info (embedded in employee)
 export interface EmployeeManager {
   id: string
-  first_name: string
-  last_name: string
-  job_title?: string
+  firstName: string
+  lastName: string
+  jobTitle?: string
   email?: string
 }
 
 // Employee entity
 export interface Employee {
   id: string
-  user_id?: string
-  employee_code: string
-  first_name: string
-  last_name: string
+  userId?: string
+  employeeCode: string
+  firstName: string
+  lastName: string
+  fullName?: string
   email: string
   phone?: string
-  avatar_url?: string
-  job_title?: string
-  department_id?: string
+  avatarUrl?: string
+  jobTitle?: string
+  // API returns departmentId as object with id and name
+  departmentId?: string | {
+    id: string
+    name: string
+  }
   department?: EmployeeDepartment
-  manager_id?: string
+  managerId?: string | null
   manager?: EmployeeManager
-  hire_date?: string
-  employment_type: EmploymentType
-  employment_status: EmploymentStatus
-  work_location?: WorkLocation
-  career_level?: string
-  direct_reports_count?: number
-  created_at: string
-  updated_at: string
+  hireDate?: string
+  employmentType: EmploymentType
+  // API returns 'status' field (not employmentStatus)
+  status?: EmploymentStatus
+  employmentStatus?: EmploymentStatus
+  workLocation?: WorkLocation
+  careerLevel?: string
+  directReportsCount?: number
+  createdAt: string
+  updatedAt: string
 }
 
 // Employee list item (lighter version for directory)
 export interface EmployeeListItem {
   id: string
-  employee_code: string
-  first_name: string
-  last_name: string
+  employeeCode: string
+  firstName: string
+  lastName: string
+  fullName?: string
   email: string
-  job_title?: string
+  jobTitle?: string
+  // API returns departmentId as object with id and name
+  departmentId?: {
+    id: string
+    name: string
+  }
   department?: {
     id: string
     name: string
   }
   manager?: {
     id: string
-    first_name: string
-    last_name: string
+    firstName: string
+    lastName: string
   }
-  hire_date?: string
-  employment_status: EmploymentStatus
-  avatar_url?: string
-  direct_reports_count?: number
+  managerId?: string | null
+  hireDate?: string
+  // API returns 'status' field (not employmentStatus)
+  status?: EmploymentStatus
+  employmentStatus?: EmploymentStatus
+  avatarUrl?: string
+  directReportsCount?: number
 }
 
 // Employee filter options
 export interface EmployeeFilters {
   search?: string
-  department_id?: string
-  manager_id?: string
-  employment_status?: EmploymentStatus
-  employment_type?: EmploymentType
-  work_location?: WorkLocation
+  departmentId?: string
+  managerId?: string
+  employmentStatus?: EmploymentStatus
+  employmentType?: EmploymentType
+  workLocation?: WorkLocation
   role?: UserRole
 }
 
 // Employee list params (for API calls)
 export interface EmployeeListParams extends EmployeeFilters {
   page?: number
-  per_page?: number
-  sort_by?: 'first_name' | 'last_name' | 'department' | 'hire_date' | 'email'
-  sort_order?: 'asc' | 'desc'
+  perPage?: number
+  sortBy?: 'first_name' | 'last_name' | 'department' | 'hire_date' | 'email'
+  sortOrder?: 'asc' | 'desc'
 }
 
 // Employee create/update request
 export interface EmployeeCreateRequest {
-  first_name: string
-  last_name: string
+  firstName: string
+  lastName: string
   email: string
   phone?: string
-  job_title?: string
-  department_id?: string
-  manager_id?: string
-  hire_date?: string
-  employment_type?: EmploymentType
-  avatar_url?: string
-  create_user_account?: boolean
-  user_role?: UserRole
+  jobTitle?: string
+  departmentId?: string
+  managerId?: string
+  hireDate?: string
+  employmentType?: EmploymentType
+  avatarUrl?: string
+  createUserAccount?: boolean
+  userRole?: UserRole
 }
 
 export interface EmployeeUpdateRequest {
-  first_name?: string
-  last_name?: string
+  firstName?: string
+  lastName?: string
   email?: string
   phone?: string
-  job_title?: string
-  department_id?: string
-  manager_id?: string
-  hire_date?: string
-  employment_type?: EmploymentType
-  employment_status?: EmploymentStatus
-  work_location?: WorkLocation
-  career_level?: string
-  avatar_url?: string
+  jobTitle?: string
+  departmentId?: string
+  managerId?: string
+  hireDate?: string
+  employmentType?: EmploymentType
+  employmentStatus?: EmploymentStatus
+  workLocation?: WorkLocation
+  careerLevel?: string
+  avatarUrl?: string
 }
 
 // Employee goals summary
@@ -133,9 +149,9 @@ export interface EmployeeGoalSummary {
   type: 'individual' | 'team' | 'department'
   status: 'draft' | 'active' | 'completed' | 'cancelled'
   progress: number
-  due_date?: string
-  key_results_count: number
-  key_results_completed: number
+  dueDate?: string
+  keyResultsCount: number
+  keyResultsCompleted: number
 }
 
 // Employee review summary
@@ -148,33 +164,36 @@ export interface EmployeeReviewSummary {
   type: 'self' | 'manager' | 'peer'
   reviewer?: {
     id: string
-    first_name: string
-    last_name: string
+    firstName: string
+    lastName: string
   }
   status: 'pending' | 'submitted' | 'acknowledged'
   rating?: number
-  submitted_at?: string
+  submittedAt?: string
 }
 
 // Employee team member (direct report)
 export interface EmployeeTeamMember {
   id: string
-  first_name: string
-  last_name: string
+  firstName: string
+  lastName: string
+  fullName?: string
   email: string
-  job_title?: string
-  employment_status: EmploymentStatus
-  avatar_url?: string
-  active_goals_count: number
-  pending_reviews_count: number
+  jobTitle?: string
+  // API returns 'status' field (not employmentStatus)
+  status?: EmploymentStatus
+  employmentStatus?: EmploymentStatus
+  avatarUrl?: string
+  activeGoalsCount: number
+  pendingReviewsCount: number
 }
 
 // Performance summary for profile
 export interface EmployeePerformanceSummary {
-  current_rating?: number
-  active_goals_count: number
-  average_goal_progress: number
-  recent_reviews: EmployeeReviewSummary[]
+  currentRating?: number
+  activeGoalsCount: number
+  averageGoalProgress: number
+  recentReviews: EmployeeReviewSummary[]
 }
 
 // Employee store state
@@ -184,12 +203,12 @@ export interface EmployeeState {
   filters: EmployeeFilters
   pagination: {
     page: number
-    per_page: number
-    total_items: number
-    total_pages: number
+    perPage: number
+    totalItems: number
+    totalPages: number
   }
-  sortBy: EmployeeListParams['sort_by']
-  sortOrder: EmployeeListParams['sort_order']
+  sortBy: EmployeeListParams['sortBy']
+  sortOrder: EmployeeListParams['sortOrder']
   viewMode: 'grid' | 'list'
   isLoading: boolean
   error: string | null
@@ -202,9 +221,9 @@ export interface EmployeeListResponse {
   meta: {
     pagination: {
       page: number
-      per_page: number
-      total_items: number
-      total_pages: number
+      perPage: number
+      totalItems: number
+      totalPages: number
     }
     timestamp: string
   }
@@ -224,9 +243,9 @@ export interface EmployeeGoalsResponse {
   meta: {
     pagination: {
       page: number
-      per_page: number
-      total_items: number
-      total_pages: number
+      perPage: number
+      totalItems: number
+      totalPages: number
     }
     timestamp: string
   }
@@ -244,7 +263,7 @@ export interface EmployeeTeamResponse {
   success: boolean
   data: EmployeeTeamMember[]
   meta: {
-    total_direct_reports: number
+    totalDirectReports: number
     timestamp: string
   }
 }

@@ -8,7 +8,6 @@ definePageMeta({
 
 const departmentStore = useDepartmentStore()
 const employeeStore = useEmployeeStore()
-const toast = useToast()
 const { user } = useAuth()
 
 // Check if user can manage departments
@@ -37,17 +36,17 @@ onMounted(async () => {
   ])
   
   // Load managers for the dropdown
-  await employeeStore.fetchEmployees({ per_page: 100 })
+  await employeeStore.fetchEmployees({ perPage: 100 })
 })
 
 // Get managers from employees
 const managers = computed(() => {
   return employeeStore.employees
-    .filter(e => e.employment_status === 'active')
+    .filter(e => e.employmentStatus === 'active')
     .map(e => ({
       id: e.id,
-      first_name: e.first_name,
-      last_name: e.last_name
+      firstName: e.firstName,
+      lastName: e.lastName
     }))
 })
 
@@ -82,21 +81,11 @@ async function handleDelete() {
   
   try {
     await departmentStore.deleteDepartment(departmentToDelete.value.id)
-    toast.add({
-      title: 'Department Deleted',
-      description: `${departmentToDelete.value.name} has been deleted.`,
-      color: 'success'
-    })
     isDeleteDialogOpen.value = false
     departmentToDelete.value = null
   }
-  catch (error: unknown) {
-    const err = error as { error?: { message?: string } }
-    toast.add({
-      title: 'Delete Failed',
-      description: err?.error?.message || 'Failed to delete department. Please try again.',
-      color: 'error'
-    })
+  catch {
+    // Error notification handled by store
   }
 }
 
@@ -107,18 +96,8 @@ async function handleSave(data: DepartmentCreateRequest | DepartmentUpdateReques
   try {
     if (selectedDepartment.value) {
       await departmentStore.updateDepartment(selectedDepartment.value.id, data as DepartmentUpdateRequest)
-      toast.add({
-        title: 'Department Updated',
-        description: `${data.name} has been updated.`,
-        color: 'success'
-      })
     } else {
       await departmentStore.createDepartment(data as DepartmentCreateRequest)
-      toast.add({
-        title: 'Department Created',
-        description: `${data.name} has been created.`,
-        color: 'success'
-      })
     }
     
     isModalOpen.value = false
@@ -127,13 +106,8 @@ async function handleSave(data: DepartmentCreateRequest | DepartmentUpdateReques
     // Refresh hierarchy
     await departmentStore.fetchHierarchy()
   }
-  catch (error: unknown) {
-    const err = error as { error?: { message?: string } }
-    toast.add({
-      title: selectedDepartment.value ? 'Update Failed' : 'Creation Failed',
-      description: err?.error?.message || 'Please try again.',
-      color: 'error'
-    })
+  catch {
+    // Error notification handled by store
   }
   finally {
     isSaving.value = false
@@ -244,8 +218,8 @@ async function handleSave(data: DepartmentCreateRequest | DepartmentUpdateReques
                 Are you sure you want to delete <strong>{{ departmentToDelete?.name }}</strong>?
                 This action cannot be undone.
               </p>
-              <p v-if="departmentToDelete?.employee_count" class="text-amber-400 text-sm mt-2">
-                ⚠️ This department has {{ departmentToDelete.employee_count }} employees.
+              <p v-if="departmentToDelete?.employeeCount" class="text-amber-400 text-sm mt-2">
+                ⚠️ This department has {{ departmentToDelete.employeeCount }} employees.
                 You must reassign them first.
               </p>
             </div>
@@ -262,7 +236,7 @@ async function handleSave(data: DepartmentCreateRequest | DepartmentUpdateReques
             <UButton
               variant="solid"
               color="error"
-              :disabled="(departmentToDelete?.employee_count || 0) > 0"
+              :disabled="(departmentToDelete?.employeeCount || 0) > 0"
               @click="handleDelete"
             >
               Delete

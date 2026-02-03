@@ -22,17 +22,22 @@ watch(
   () => props.employee,
   (employee) => {
     if (employee) {
+      // Extract departmentId string from object if needed
+      const departmentId = typeof employee.departmentId === 'object' 
+        ? employee.departmentId?.id 
+        : employee.departmentId
+      
       formData.value = {
-        first_name: employee.first_name,
-        last_name: employee.last_name,
+        firstName: employee.firstName,
+        lastName: employee.lastName,
         email: employee.email,
         phone: employee.phone || '',
-        job_title: employee.job_title || '',
-        department_id: employee.department_id,
-        work_location: employee.work_location,
-        employment_type: employee.employment_type,
-        employment_status: employee.employment_status,
-        career_level: employee.career_level || ''
+        jobTitle: employee.jobTitle || '',
+        departmentId,
+        workLocation: employee.workLocation,
+        employmentType: employee.employmentType,
+        employmentStatus: employee.status || employee.employmentStatus,
+        careerLevel: employee.careerLevel || ''
       }
     }
   },
@@ -44,17 +49,22 @@ watch(
   () => props.isOpen,
   (open) => {
     if (open && props.employee) {
+      // Extract departmentId string from object if needed
+      const departmentId = typeof props.employee.departmentId === 'object' 
+        ? props.employee.departmentId?.id 
+        : props.employee.departmentId
+      
       formData.value = {
-        first_name: props.employee.first_name,
-        last_name: props.employee.last_name,
+        firstName: props.employee.firstName,
+        lastName: props.employee.lastName,
         email: props.employee.email,
         phone: props.employee.phone || '',
-        job_title: props.employee.job_title || '',
-        department_id: props.employee.department_id,
-        work_location: props.employee.work_location,
-        employment_type: props.employee.employment_type,
-        employment_status: props.employee.employment_status,
-        career_level: props.employee.career_level || ''
+        jobTitle: props.employee.jobTitle || '',
+        departmentId,
+        workLocation: props.employee.workLocation,
+        employmentType: props.employee.employmentType,
+        employmentStatus: props.employee.status || props.employee.employmentStatus,
+        careerLevel: props.employee.careerLevel || ''
       }
     }
   }
@@ -76,12 +86,12 @@ const errors = ref<Record<string, string>>({})
 function validateForm(): boolean {
   errors.value = {}
   
-  if (!formData.value.first_name?.trim()) {
-    errors.value.first_name = 'First name is required'
+  if (!formData.value.firstName?.trim()) {
+    errors.value.firstName = 'First name is required'
   }
   
-  if (!formData.value.last_name?.trim()) {
-    errors.value.last_name = 'Last name is required'
+  if (!formData.value.lastName?.trim()) {
+    errors.value.lastName = 'Last name is required'
   }
   
   if (!formData.value.email?.trim()) {
@@ -137,13 +147,13 @@ const workLocationOptions = [
     <template #header>
       <div class="flex items-center gap-3">
         <UAvatar
-          :src="employee.avatar_url"
-          :alt="`${employee.first_name} ${employee.last_name}`"
+          :src="employee.avatarUrl"
+          :alt="`${employee.firstName} ${employee.lastName}`"
           size="sm"
         />
         <div>
           <h2 class="text-lg font-semibold text-white">Edit Employee</h2>
-          <p class="text-sm text-gray-400">{{ employee.first_name }} {{ employee.last_name }}</p>
+          <p class="text-sm text-gray-400">{{ employee.firstName }} {{ employee.lastName }}</p>
         </div>
       </div>
     </template>
@@ -162,12 +172,12 @@ const workLocationOptions = [
                   First Name <span class="text-red-400">*</span>
                 </label>
                 <UInput
-                  v-model="formData.first_name"
+                  v-model="formData.firstName"
                   placeholder="First name"
-                  :color="errors.first_name ? 'error' : 'neutral'"
+                  :color="errors.firstName ? 'error' : 'neutral'"
                 />
-                <p v-if="errors.first_name" class="text-xs text-red-400 mt-1">
-                  {{ errors.first_name }}
+                <p v-if="errors.firstName" class="text-xs text-red-400 mt-1">
+                  {{ errors.firstName }}
                 </p>
               </div>
               <div>
@@ -175,12 +185,12 @@ const workLocationOptions = [
                   Last Name <span class="text-red-400">*</span>
                 </label>
                 <UInput
-                  v-model="formData.last_name"
+                  v-model="formData.lastName"
                   placeholder="Last name"
-                  :color="errors.last_name ? 'error' : 'neutral'"
+                  :color="errors.lastName ? 'error' : 'neutral'"
                 />
-                <p v-if="errors.last_name" class="text-xs text-red-400 mt-1">
-                  {{ errors.last_name }}
+                <p v-if="errors.lastName" class="text-xs text-red-400 mt-1">
+                  {{ errors.lastName }}
                 </p>
               </div>
             </div>
@@ -224,7 +234,7 @@ const workLocationOptions = [
             <div>
               <label class="block text-sm font-medium text-gray-300 mb-1">Job Title</label>
               <UInput
-                v-model="formData.job_title"
+                v-model="formData.jobTitle"
                 placeholder="e.g., Senior Developer"
               />
             </div>
@@ -232,7 +242,7 @@ const workLocationOptions = [
             <div>
               <label class="block text-sm font-medium text-gray-300 mb-1">Department</label>
               <USelectMenu
-                v-model="formData.department_id"
+                v-model="formData.departmentId"
                 :items="departmentStore.departments.map(d => ({ value: d.id, label: d.name }))"
                 placeholder="Select department"
                 value-key="value"
@@ -242,7 +252,7 @@ const workLocationOptions = [
             <div>
               <label class="block text-sm font-medium text-gray-300 mb-1">Career Level</label>
               <UInput
-                v-model="formData.career_level"
+                v-model="formData.careerLevel"
                 placeholder="e.g., Senior, Lead, Director"
               />
             </div>
@@ -259,7 +269,7 @@ const workLocationOptions = [
               <div>
                 <label class="block text-sm font-medium text-gray-300 mb-1">Employment Type</label>
                 <USelectMenu
-                  v-model="formData.employment_type"
+                  v-model="formData.employmentType"
                   :items="employmentTypeOptions"
                   value-key="value"
                 />
@@ -267,7 +277,7 @@ const workLocationOptions = [
               <div>
                 <label class="block text-sm font-medium text-gray-300 mb-1">Status</label>
                 <USelectMenu
-                  v-model="formData.employment_status"
+                  v-model="formData.employmentStatus"
                   :items="employmentStatusOptions"
                   value-key="value"
                 />
@@ -277,7 +287,7 @@ const workLocationOptions = [
             <div>
               <label class="block text-sm font-medium text-gray-300 mb-1">Work Location</label>
               <USelectMenu
-                v-model="formData.work_location"
+                v-model="formData.workLocation"
                 :items="workLocationOptions"
                 value-key="value"
               />

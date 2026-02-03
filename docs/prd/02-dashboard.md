@@ -98,7 +98,8 @@ Dashboard for team leads focusing on team performance and pending actions.
 | Team Goals Alignment | Visual alignment chart | P1 |
 | Team Members | Individual performance cards | P0 |
 | Review Deadlines | Team review schedule | P1 |
-| Quick Actions | Review pending, add team goal, analytics | P0 |
+| Pending Ad-Hoc Reviews | Ad-hoc reviews awaiting completion | P0 |
+| Quick Actions | Review pending, add team goal, **trigger review**, analytics | P0 |
 
 #### KPIs Displayed
 
@@ -148,10 +149,11 @@ Dashboard for HR professionals with organization-wide metrics and cycle manageme
 |--------|-------------|----------|
 | Org Performance | Organization-wide metrics | P0 |
 | Active Review Cycles | Current cycle status | P0 |
+| Ad-Hoc Reviews | Pending ad-hoc reviews across organization | P0 |
 | Department Comparison | Performance by department | P1 |
 | Recent Activity | System activity feed | P2 |
 | User Engagement | Login/usage metrics | P2 |
-| Quick Actions | Create cycle, generate report, manage users | P0 |
+| Quick Actions | Create cycle, **trigger review**, generate report, manage users, **manage forms** | P0 |
 
 #### KPIs Displayed
 
@@ -481,6 +483,8 @@ System administration dashboard focusing on system health and user management.
 - [PRD: UI/UX Requirements](/docs/prd/07-ui-ux.md)
 - [PRD: Goals](/docs/prd/04-goals.md)
 - [PRD: Reviews](/docs/prd/05-reviews.md)
+- [PRD: Ad-Hoc Reviews](/docs/prd/08-adhoc-reviews.md)
+- [PRD: Department Review Forms](/docs/prd/09-review-forms.md)
 
 ---
 
@@ -488,4 +492,6 @@ System administration dashboard focusing on system health and user management.
 
 | Version | Date | Author | Changes |
 |---------|------|--------|---------|
+| 1.0 | January 2026 | System | Initial version |
+| 1.1 | February 2026 | System | Added ad-hoc review widgets and quick actions |
 | 1.0 | January 2026 | System | Initial version |

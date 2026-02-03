@@ -20,11 +20,19 @@ Development: http://localhost:3001/api/v1
 | Departments | 6 | [departments.md](./departments.md) |
 | Goals & OKRs | 10 | [goals.md](./goals.md) |
 | Reviews | 10 | [reviews.md](./reviews.md) |
+| Ad-Hoc Reviews | 6 | [reviews.md](./reviews.md#ad-hoc-reviews-endpoints) |
+| Review Forms | 13 | [review-forms.md](./review-forms.md) |
 | Analytics | 6 | [analytics.md](./analytics.md) |
 
 ---
 
 ## API Conventions
+
+### Naming Conventions
+
+> **Important:** This API uses different naming conventions for different contexts:
+> - **JSON request/response bodies:** camelCase (e.g., `firstName`, `lastName`, `createdAt`)
+> - **URL query parameters:** snake_case (e.g., `per_page`, `sort_by`, `department_id`)
 
 ### Authentication
 
@@ -66,9 +74,9 @@ Authorization: Bearer <token>
   "meta": {
     "pagination": {
       "page": 1,
-      "per_page": 20,
-      "total_items": 150,
-      "total_pages": 8
+      "perPage": 20,
+      "totalItems": 150,
+      "totalPages": 8
     },
     "timestamp": "2026-01-28T10:30:00Z"
   }
@@ -96,7 +104,7 @@ Authorization: Bearer <token>
 |-----------|------|---------|-----|-------------|
 | `page` | integer | 1 | - | Page number |
 | `per_page` | integer | 20 | 100 | Items per page |
-| `sort_by` | string | created_at | - | Sort field |
+| `sort_by` | string | createdAt | - | Sort field |
 | `sort_order` | string | desc | - | asc or desc |
 
 ### Filtering
@@ -107,6 +115,8 @@ Use query parameters for filtering:
 GET /employees?status=active&department_id=uuid
 GET /goals?type=individual&status=active&owner_id=uuid
 ```
+
+> **Note:** Query parameters use snake_case while response body fields use camelCase.
 
 ### HTTP Status Codes
 

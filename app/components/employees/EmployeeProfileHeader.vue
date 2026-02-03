@@ -13,6 +13,19 @@ const emit = defineEmits<{
   back: []
 }>()
 
+// Get status from either 'status' or 'employmentStatus' field (API returns 'status')
+function getEmployeeStatus(employee: Employee) {
+  return employee.status || employee.employmentStatus || 'active'
+}
+
+// Get department name from either 'departmentId.name' or 'department.name'
+function getDepartmentName(employee: Employee) {
+  if (employee.departmentId && typeof employee.departmentId === 'object') {
+    return employee.departmentId.name
+  }
+  return employee.department?.name || 'Unassigned'
+}
+
 const statusColors: Record<string, string> = {
   active: 'bg-emerald-500/10 text-emerald-400 border-emerald-500/20',
   inactive: 'bg-gray-500/10 text-gray-400 border-gray-500/20',
@@ -60,8 +73,8 @@ const locationIcons: Record<string, string> = {
       <!-- Avatar -->
       <div class="flex-shrink-0 mx-auto md:mx-0">
         <UAvatar
-          :src="employee.avatar_url"
-          :alt="`${employee.first_name} ${employee.last_name}`"
+          :src="employee.avatarUrl"
+          :alt="`${employee.firstName} ${employee.lastName}`"
           size="3xl"
           class="ring-4 ring-gray-800"
         />
@@ -72,13 +85,13 @@ const locationIcons: Record<string, string> = {
         <div class="flex flex-col md:flex-row md:items-start md:justify-between gap-4">
           <div>
             <h1 class="text-2xl font-bold text-white">
-              {{ employee.first_name }} {{ employee.last_name }}
+              {{ employee.firstName }} {{ employee.lastName }}
             </h1>
             <p class="text-lg text-gray-400 mt-1">
-              {{ employee.job_title || 'No title' }}
+              {{ employee.jobTitle || 'No title' }}
             </p>
             <p class="text-gray-500 mt-0.5">
-              {{ employee.department?.name || 'Unassigned' }}
+              {{ getDepartmentName(employee) }}
             </p>
           </div>
 
@@ -108,9 +121,9 @@ const locationIcons: Record<string, string> = {
               {{ employee.phone }}
             </a>
           </div>
-          <div v-if="employee.work_location" class="flex items-center gap-2 text-gray-400">
-            <UIcon :name="locationIcons[employee.work_location] || 'i-heroicons-map-pin'" class="w-4 h-4" />
-            <span>{{ locationLabels[employee.work_location] || employee.work_location }}</span>
+          <div v-if="employee.workLocation" class="flex items-center gap-2 text-gray-400">
+            <UIcon :name="locationIcons[employee.workLocation] || 'i-heroicons-map-pin'" class="w-4 h-4" />
+            <span>{{ locationLabels[employee.workLocation] || employee.workLocation }}</span>
           </div>
         </div>
 
@@ -119,19 +132,19 @@ const locationIcons: Record<string, string> = {
           <!-- Status -->
           <span
             class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium border"
-            :class="statusColors[employee.employment_status] || statusColors.active"
+            :class="statusColors[getEmployeeStatus(employee)] || statusColors.active"
           >
-            {{ statusLabels[employee.employment_status] || employee.employment_status }}
+            {{ statusLabels[getEmployeeStatus(employee)] || getEmployeeStatus(employee) }}
           </span>
           
           <!-- Employment Type -->
           <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-gray-800 text-gray-300 border border-gray-700">
-            {{ employmentTypeLabels[employee.employment_type] || employee.employment_type }}
+            {{ employmentTypeLabels[employee.employmentType] || employee.employmentType }}
           </span>
           
           <!-- Employee Code -->
           <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-gray-800 text-gray-400 border border-gray-700">
-            {{ employee.employee_code }}
+            {{ employee.employeeCode }}
           </span>
         </div>
       </div>

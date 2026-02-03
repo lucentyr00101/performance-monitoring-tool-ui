@@ -4,6 +4,8 @@
 
 Goals and Objectives & Key Results (OKRs) management endpoints.
 
+> **Naming Convention:** JSON request/response bodies use camelCase. URL query parameters use snake_case.
+
 **Base Path:** `/goals`
 
 ---
@@ -70,21 +72,21 @@ Authorization: Bearer <token>
       "progress": 65,
       "owner": {
         "id": "550e8400-e29b-41d4-a716-446655440001",
-        "first_name": "John",
-        "last_name": "Doe",
-        "avatar_url": "https://cdn.example.com/avatars/john.jpg"
+        "firstName": "John",
+        "lastName": "Doe",
+        "avatarUrl": "https://cdn.example.com/avatars/john.jpg"
       },
-      "parent_goal": {
+      "parentGoal": {
         "id": "550e8400-e29b-41d4-a716-446655440090",
         "title": "Improve Engineering Efficiency"
       },
-      "start_date": "2026-01-01",
-      "due_date": "2026-03-31",
-      "key_results": {
+      "startDate": "2026-01-01",
+      "dueDate": "2026-03-31",
+      "keyResults": {
         "total": 3,
         "completed": 1
       },
-      "created_at": "2026-01-02T09:00:00Z"
+      "createdAt": "2026-01-02T09:00:00Z"
     },
     {
       "id": "550e8400-e29b-41d4-a716-446655440101",
@@ -95,26 +97,26 @@ Authorization: Bearer <token>
       "progress": 80,
       "owner": {
         "id": "550e8400-e29b-41d4-a716-446655440003",
-        "first_name": "Alice",
-        "last_name": "Johnson",
-        "avatar_url": null
+        "firstName": "Alice",
+        "lastName": "Johnson",
+        "avatarUrl": null
       },
-      "parent_goal": null,
-      "start_date": "2026-01-15",
-      "due_date": "2026-02-28",
-      "key_results": {
+      "parentGoal": null,
+      "startDate": "2026-01-15",
+      "dueDate": "2026-02-28",
+      "keyResults": {
         "total": 2,
         "completed": 1
       },
-      "created_at": "2026-01-15T10:00:00Z"
+      "createdAt": "2026-01-15T10:00:00Z"
     }
   ],
   "meta": {
     "pagination": {
       "page": 1,
-      "per_page": 20,
-      "total_items": 45,
-      "total_pages": 3
+      "perPage": 20,
+      "totalItems": 45,
+      "totalPages": 3
     },
     "timestamp": "2026-01-28T10:30:00Z"
   }
@@ -150,19 +152,19 @@ Authorization: Bearer <token>
     "progress": 65,
     "owner": {
       "id": "550e8400-e29b-41d4-a716-446655440001",
-      "first_name": "John",
-      "last_name": "Doe",
+      "firstName": "John",
+      "lastName": "Doe",
       "email": "john.doe@company.com",
-      "job_title": "Engineering Manager",
-      "avatar_url": "https://cdn.example.com/avatars/john.jpg"
+      "jobTitle": "Engineering Manager",
+      "avatarUrl": "https://cdn.example.com/avatars/john.jpg"
     },
-    "parent_goal": {
+    "parentGoal": {
       "id": "550e8400-e29b-41d4-a716-446655440090",
       "title": "Improve Engineering Efficiency",
       "type": "department",
       "status": "active"
     },
-    "child_goals": [
+    "childGoals": [
       {
         "id": "550e8400-e29b-41d4-a716-446655440102",
         "title": "Reduce code review turnaround time",
@@ -171,13 +173,13 @@ Authorization: Bearer <token>
         "progress": 70
       }
     ],
-    "key_results": [
+    "keyResults": [
       {
         "id": "550e8400-e29b-41d4-a716-446655440150",
         "title": "Average story points per sprint",
         "description": "Increase from 40 to 48 points per sprint",
-        "target_value": 48,
-        "current_value": 44,
+        "targetValue": 48,
+        "currentValue": 44,
         "unit": "points",
         "progress": 50,
         "status": "in_progress"
@@ -186,8 +188,8 @@ Authorization: Bearer <token>
         "id": "550e8400-e29b-41d4-a716-446655440151",
         "title": "Sprint completion rate",
         "description": "Achieve 95% sprint completion rate",
-        "target_value": 95,
-        "current_value": 92,
+        "targetValue": 95,
+        "currentValue": 92,
         "unit": "%",
         "progress": 80,
         "status": "in_progress"
@@ -196,18 +198,18 @@ Authorization: Bearer <token>
         "id": "550e8400-e29b-41d4-a716-446655440152",
         "title": "Reduce blocked tickets",
         "description": "Reduce average blocked tickets to under 2 per sprint",
-        "target_value": 2,
-        "current_value": 2,
+        "targetValue": 2,
+        "currentValue": 2,
         "unit": "tickets",
         "progress": 100,
         "status": "completed"
       }
     ],
-    "start_date": "2026-01-01",
-    "due_date": "2026-03-31",
-    "completed_at": null,
-    "created_at": "2026-01-02T09:00:00Z",
-    "updated_at": "2026-01-25T14:30:00Z"
+    "startDate": "2026-01-01",
+    "dueDate": "2026-03-31",
+    "completedAt": null,
+    "createdAt": "2026-01-02T09:00:00Z",
+    "updatedAt": "2026-01-25T14:30:00Z"
   },
   "meta": {
     "timestamp": "2026-01-28T10:30:00Z"
@@ -234,21 +236,21 @@ Content-Type: application/json
   "title": "Launch new product feature",
   "description": "Successfully launch the analytics dashboard feature by end of Q1",
   "type": "team",
-  "owner_id": "550e8400-e29b-41d4-a716-446655440001",
-  "parent_goal_id": "550e8400-e29b-41d4-a716-446655440090",
-  "start_date": "2026-02-01",
-  "due_date": "2026-03-31",
-  "key_results": [
+  "ownerId": "550e8400-e29b-41d4-a716-446655440001",
+  "parentGoalId": "550e8400-e29b-41d4-a716-446655440090",
+  "startDate": "2026-02-01",
+  "dueDate": "2026-03-31",
+  "keyResults": [
     {
       "title": "Feature development complete",
       "description": "All planned features developed and tested",
-      "target_value": 100,
+      "targetValue": 100,
       "unit": "%"
     },
     {
       "title": "User adoption rate",
       "description": "Achieve 50% adoption within first week",
-      "target_value": 50,
+      "targetValue": 50,
       "unit": "%"
     }
   ]
@@ -262,11 +264,11 @@ Content-Type: application/json
 | `title` | string | Yes | Goal title (max 255 chars) |
 | `description` | string | No | Detailed description |
 | `type` | string | Yes | `individual`, `team`, `department`, `company` |
-| `owner_id` | uuid | Yes | Goal owner's employee ID |
-| `parent_goal_id` | uuid | No | Parent goal for alignment |
-| `start_date` | date | No | Goal start date |
-| `due_date` | date | No | Goal due date |
-| `key_results` | array | No | Initial key results |
+| `ownerId` | uuid | Yes | Goal owner's employee ID |
+| `parentGoalId` | uuid | No | Parent goal for alignment |
+| `startDate` | date | No | Goal start date |
+| `dueDate` | date | No | Goal due date |
+| `keyResults` | array | No | Initial key results |
 
 ### Key Result Object
 
@@ -274,7 +276,7 @@ Content-Type: application/json
 |-------|------|----------|-------------|
 | `title` | string | Yes | Key result title |
 | `description` | string | No | Description |
-| `target_value` | number | Yes | Target value to achieve |
+| `targetValue` | number | Yes | Target value to achieve |
 | `unit` | string | No | Unit of measurement |
 
 ### Response
@@ -293,35 +295,35 @@ Content-Type: application/json
     "progress": 0,
     "owner": {
       "id": "550e8400-e29b-41d4-a716-446655440001",
-      "first_name": "John",
-      "last_name": "Doe"
+      "firstName": "John",
+      "lastName": "Doe"
     },
-    "parent_goal": {
+    "parentGoal": {
       "id": "550e8400-e29b-41d4-a716-446655440090",
       "title": "Improve Engineering Efficiency"
     },
-    "key_results": [
+    "keyResults": [
       {
         "id": "550e8400-e29b-41d4-a716-446655440160",
         "title": "Feature development complete",
-        "target_value": 100,
-        "current_value": 0,
+        "targetValue": 100,
+        "currentValue": 0,
         "unit": "%",
         "status": "in_progress"
       },
       {
         "id": "550e8400-e29b-41d4-a716-446655440161",
         "title": "User adoption rate",
-        "target_value": 50,
-        "current_value": 0,
+        "targetValue": 50,
+        "currentValue": 0,
         "unit": "%",
         "status": "in_progress"
       }
     ],
-    "start_date": "2026-02-01",
-    "due_date": "2026-03-31",
-    "created_at": "2026-01-28T10:30:00Z",
-    "updated_at": "2026-01-28T10:30:00Z"
+    "startDate": "2026-02-01",
+    "dueDate": "2026-03-31",
+    "createdAt": "2026-01-28T10:30:00Z",
+    "updatedAt": "2026-01-28T10:30:00Z"
   },
   "meta": {
     "timestamp": "2026-01-28T10:30:00Z"
@@ -347,7 +349,7 @@ Content-Type: application/json
 {
   "title": "Increase team velocity by 25%",
   "status": "active",
-  "due_date": "2026-04-15"
+  "dueDate": "2026-04-15"
 }
 ```
 
@@ -359,10 +361,10 @@ Content-Type: application/json
 | `description` | string | Description |
 | `type` | string | Goal type |
 | `status` | string | `draft`, `active`, `completed`, `cancelled` |
-| `owner_id` | uuid | Owner's employee ID |
-| `parent_goal_id` | uuid | Parent goal ID (null to remove) |
-| `start_date` | date | Start date |
-| `due_date` | date | Due date |
+| `ownerId` | uuid | Owner's employee ID |
+| `parentGoalId` | uuid | Parent goal ID (null to remove) |
+| `startDate` | date | Start date |
+| `dueDate` | date | Due date |
 
 ### Response
 
@@ -375,8 +377,8 @@ Content-Type: application/json
     "id": "550e8400-e29b-41d4-a716-446655440100",
     "title": "Increase team velocity by 25%",
     "status": "active",
-    "due_date": "2026-04-15",
-    "updated_at": "2026-01-28T10:35:00Z"
+    "dueDate": "2026-04-15",
+    "updatedAt": "2026-01-28T10:35:00Z"
   },
   "meta": {
     "timestamp": "2026-01-28T10:35:00Z"
@@ -457,7 +459,7 @@ Content-Type: application/json
     "id": "550e8400-e29b-41d4-a716-446655440100",
     "progress": 75,
     "status": "active",
-    "updated_at": "2026-01-28T10:35:00Z"
+    "updatedAt": "2026-01-28T10:35:00Z"
   },
   "meta": {
     "timestamp": "2026-01-28T10:35:00Z"
@@ -490,37 +492,37 @@ Authorization: Bearer <token>
       "id": "550e8400-e29b-41d4-a716-446655440150",
       "title": "Average story points per sprint",
       "description": "Increase from 40 to 48 points per sprint",
-      "target_value": 48,
-      "current_value": 44,
+      "targetValue": 48,
+      "currentValue": 44,
       "unit": "points",
       "progress": 50,
       "status": "in_progress",
-      "created_at": "2026-01-02T09:00:00Z",
-      "updated_at": "2026-01-25T14:30:00Z"
+      "createdAt": "2026-01-02T09:00:00Z",
+      "updatedAt": "2026-01-25T14:30:00Z"
     },
     {
       "id": "550e8400-e29b-41d4-a716-446655440151",
       "title": "Sprint completion rate",
       "description": "Achieve 95% sprint completion rate",
-      "target_value": 95,
-      "current_value": 92,
+      "targetValue": 95,
+      "currentValue": 92,
       "unit": "%",
       "progress": 80,
       "status": "in_progress",
-      "created_at": "2026-01-02T09:00:00Z",
-      "updated_at": "2026-01-25T14:30:00Z"
+      "createdAt": "2026-01-02T09:00:00Z",
+      "updatedAt": "2026-01-25T14:30:00Z"
     },
     {
       "id": "550e8400-e29b-41d4-a716-446655440152",
       "title": "Reduce blocked tickets",
       "description": "Reduce average blocked tickets to under 2 per sprint",
-      "target_value": 2,
-      "current_value": 2,
+      "targetValue": 2,
+      "currentValue": 2,
       "unit": "tickets",
       "progress": 100,
       "status": "completed",
-      "created_at": "2026-01-02T09:00:00Z",
-      "updated_at": "2026-01-20T11:00:00Z"
+      "createdAt": "2026-01-02T09:00:00Z",
+      "updatedAt": "2026-01-20T11:00:00Z"
     }
   ],
   "meta": {
@@ -547,7 +549,7 @@ Content-Type: application/json
 {
   "title": "Reduce bug escape rate",
   "description": "Reduce bugs found in production to under 5%",
-  "target_value": 5,
+  "targetValue": 5,
   "unit": "%"
 }
 ```
@@ -558,7 +560,7 @@ Content-Type: application/json
 |-------|------|----------|-------------|
 | `title` | string | Yes | Key result title |
 | `description` | string | No | Description |
-| `target_value` | number | Yes | Target value |
+| `targetValue` | number | Yes | Target value |
 | `unit` | string | No | Unit of measurement |
 
 ### Response
@@ -570,16 +572,16 @@ Content-Type: application/json
   "success": true,
   "data": {
     "id": "550e8400-e29b-41d4-a716-446655440153",
-    "goal_id": "550e8400-e29b-41d4-a716-446655440100",
+    "goalId": "550e8400-e29b-41d4-a716-446655440100",
     "title": "Reduce bug escape rate",
     "description": "Reduce bugs found in production to under 5%",
-    "target_value": 5,
-    "current_value": 0,
+    "targetValue": 5,
+    "currentValue": 0,
     "unit": "%",
     "progress": 0,
     "status": "in_progress",
-    "created_at": "2026-01-28T10:30:00Z",
-    "updated_at": "2026-01-28T10:30:00Z"
+    "createdAt": "2026-01-28T10:30:00Z",
+    "updatedAt": "2026-01-28T10:30:00Z"
   },
   "meta": {
     "timestamp": "2026-01-28T10:30:00Z"
@@ -603,7 +605,7 @@ Content-Type: application/json
 
 ```json
 {
-  "current_value": 46,
+  "currentValue": 46,
   "status": "in_progress"
 }
 ```
@@ -614,8 +616,8 @@ Content-Type: application/json
 |-------|------|-------------|
 | `title` | string | Key result title |
 | `description` | string | Description |
-| `target_value` | number | Target value |
-| `current_value` | number | Current value |
+| `targetValue` | number | Target value |
+| `currentValue` | number | Current value |
 | `unit` | string | Unit of measurement |
 | `status` | string | `in_progress`, `completed`, `cancelled` |
 
@@ -629,12 +631,12 @@ Content-Type: application/json
   "data": {
     "id": "550e8400-e29b-41d4-a716-446655440150",
     "title": "Average story points per sprint",
-    "target_value": 48,
-    "current_value": 46,
+    "targetValue": 48,
+    "currentValue": 46,
     "unit": "points",
     "progress": 75,
     "status": "in_progress",
-    "updated_at": "2026-01-28T10:35:00Z"
+    "updatedAt": "2026-01-28T10:35:00Z"
   },
   "meta": {
     "timestamp": "2026-01-28T10:35:00Z"
@@ -676,30 +678,30 @@ No response body.
 | `status` | string | draft, active, completed, cancelled |
 | `progress` | integer | Progress percentage (0-100) |
 | `owner` | object | Goal owner info |
-| `parent_goal` | object | Parent goal for alignment |
-| `child_goals` | array | Aligned child goals |
-| `key_results` | array | Key results |
-| `start_date` | date | Start date |
-| `due_date` | date | Due date |
-| `completed_at` | datetime | Completion timestamp |
-| `created_at` | datetime | Creation timestamp |
-| `updated_at` | datetime | Last update timestamp |
+| `parentGoal` | object | Parent goal for alignment |
+| `childGoals` | array | Aligned child goals |
+| `keyResults` | array | Key results |
+| `startDate` | date | Start date |
+| `dueDate` | date | Due date |
+| `completedAt` | datetime | Completion timestamp |
+| `createdAt` | datetime | Creation timestamp |
+| `updatedAt` | datetime | Last update timestamp |
 
 ### Key Result Object
 
 | Field | Type | Description |
 |-------|------|-------------|
 | `id` | uuid | Unique identifier |
-| `goal_id` | uuid | Parent goal ID |
+| `goalId` | uuid | Parent goal ID |
 | `title` | string | Key result title |
 | `description` | string | Description |
-| `target_value` | number | Target value |
-| `current_value` | number | Current progress value |
+| `targetValue` | number | Target value |
+| `currentValue` | number | Current progress value |
 | `unit` | string | Unit of measurement |
 | `progress` | integer | Calculated progress (0-100) |
 | `status` | string | in_progress, completed, cancelled |
-| `created_at` | datetime | Creation timestamp |
-| `updated_at` | datetime | Last update timestamp |
+| `createdAt` | datetime | Creation timestamp |
+| `updatedAt` | datetime | Last update timestamp |
 
 ---
 

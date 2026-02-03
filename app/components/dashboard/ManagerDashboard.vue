@@ -10,6 +10,9 @@ defineEmits<{
   refresh: []
   action: [actionId: string, action: string]
 }>()
+
+// Trigger review modal state
+const showTriggerModal = ref(false)
 </script>
 
 <template>
@@ -136,5 +139,20 @@ defineEmits<{
         </div>
       </template>
     </UCard>
+
+    <!-- Ad-Hoc Reviews Widget -->
+    <DashboardAdhocReviewsWidget
+      title="Direct Report Reviews"
+      variant="triggered"
+      :max-items="5"
+      show-trigger-button
+      @trigger-review="showTriggerModal = true"
+    />
+
+    <!-- Trigger Review Modal -->
+    <ReviewsTriggerReviewModal
+      :is-open="showTriggerModal"
+      @close="showTriggerModal = false"
+    />
   </div>
 </template>

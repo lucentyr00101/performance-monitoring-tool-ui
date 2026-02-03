@@ -8,7 +8,6 @@ definePageMeta({
 
 const route = useRoute()
 const router = useRouter()
-const toast = useToast()
 
 const reviewId = computed(() => route.params.id as string)
 
@@ -56,19 +55,10 @@ async function handleSubmit(data: ReviewUpdateRequest) {
   
   try {
     await submitReview(currentReview.value.id, data)
-    toast.add({
-      title: 'Review Submitted',
-      description: 'Your review has been submitted successfully.',
-      color: 'success'
-    })
-    router.push(`/reviews/cycles/${currentReview.value.cycle_id}`)
+    router.push(`/reviews/cycles/${currentReview.value.cycleId}`)
   }
   catch {
-    toast.add({
-      title: 'Submission Failed',
-      description: 'Failed to submit review. Please try again.',
-      color: 'error'
-    })
+    // Notification handled by store
   }
 }
 
@@ -78,18 +68,9 @@ async function handleSaveDraft(data: ReviewUpdateRequest) {
   
   try {
     await saveDraft(currentReview.value.id, data)
-    toast.add({
-      title: 'Draft Saved',
-      description: 'Your progress has been saved.',
-      color: 'success'
-    })
   }
   catch {
-    toast.add({
-      title: 'Save Failed',
-      description: 'Failed to save draft. Please try again.',
-      color: 'error'
-    })
+    // Notification handled by store
   }
 }
 
@@ -100,22 +81,13 @@ async function handleAcknowledge() {
   isAcknowledging.value = true
   try {
     await acknowledgeReview(currentReview.value.id, { 
-      employee_comments: employeeComments.value.trim() || undefined 
+      employeeComments: employeeComments.value.trim() || undefined 
     })
     isAcknowledgeModalOpen.value = false
-    toast.add({
-      title: 'Review Acknowledged',
-      description: 'You have acknowledged this review.',
-      color: 'success'
-    })
     await loadData()
   }
   catch {
-    toast.add({
-      title: 'Acknowledgment Failed',
-      description: 'Failed to acknowledge review. Please try again.',
-      color: 'error'
-    })
+    // Notification handled by store
   }
   finally {
     isAcknowledging.value = false
@@ -125,7 +97,7 @@ async function handleAcknowledge() {
 // Handle cancel
 function handleCancel() {
   if (currentReview.value) {
-    router.push(`/reviews/cycles/${currentReview.value.cycle_id}`)
+    router.push(`/reviews/cycles/${currentReview.value.cycleId}`)
   } else {
     router.push('/reviews')
   }
@@ -207,7 +179,7 @@ function handleCancel() {
           <!-- Employee Info -->
           <div class="flex items-center gap-4 pb-6 border-b border-gray-800">
             <UAvatar
-              :src="currentReview.employee.avatar_url"
+              :src="currentReview.employee.avatarUrl"
               :alt="formatEmployeeName(currentReview.employee)"
               size="lg"
             />
@@ -215,8 +187,8 @@ function handleCancel() {
               <h2 class="text-xl font-semibold text-white">
                 {{ formatEmployeeName(currentReview.employee) }}
               </h2>
-              <p class="text-gray-400">{{ currentReview.employee.job_title }}</p>
-              <p class="text-sm text-gray-500 mt-1">{{ currentReview.cycle.name }}</p>
+              <p class="text-gray-400">{{ currentReview.employee.jobTitle }}</p>
+              <p v-if="currentReview.cycle" class="text-sm text-gray-500 mt-1">{{ currentReview.cycle.name }}</p>
             </div>
           </div>
 
@@ -236,11 +208,11 @@ function handleCancel() {
           </div>
 
           <!-- Ratings Breakdown -->
-          <div v-if="currentReview.ratings_breakdown" class="space-y-3">
+          <div v-if="currentReview.ratingsBreakdown" class="space-y-3">
             <h3 class="text-sm font-medium text-gray-300">Performance Ratings</h3>
             <div class="grid grid-cols-2 md:grid-cols-3 gap-3">
               <div 
-                v-for="(value, key) in currentReview.ratings_breakdown" 
+                v-for="(value, key) in currentReview.ratingsBreakdown" 
                 :key="key"
                 class="bg-gray-800/50 rounded-lg p-3"
               >
@@ -273,18 +245,18 @@ function handleCancel() {
           </div>
 
           <!-- Employee Comments (if acknowledged) -->
-          <div v-if="currentReview.employee_comments" class="bg-blue-500/10 border border-blue-500/20 rounded-lg p-4">
+          <div v-if="currentReview.employeeComments" class="bg-blue-500/10 border border-blue-500/20 rounded-lg p-4">
             <h3 class="text-sm font-medium text-blue-400 mb-2">Employee Response</h3>
-            <p class="text-gray-300">{{ currentReview.employee_comments }}</p>
+            <p class="text-gray-300">{{ currentReview.employeeComments }}</p>
           </div>
 
           <!-- Timestamps -->
           <div class="flex items-center gap-6 text-xs text-gray-500 pt-4 border-t border-gray-800">
-            <span v-if="currentReview.submitted_at">
-              Submitted: {{ formatDate(currentReview.submitted_at) }}
+            <span v-if="currentReview.submittedAt">
+              Submitted: {{ formatDate(currentReview.submittedAt) }}
             </span>
-            <span v-if="currentReview.acknowledged_at">
-              Acknowledged: {{ formatDate(currentReview.acknowledged_at) }}
+            <span v-if="currentReview.acknowledgedAt">
+              Acknowledged: {{ formatDate(currentReview.acknowledgedAt) }}
             </span>
           </div>
         </div>

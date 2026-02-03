@@ -32,15 +32,15 @@ const emit = defineEmits<{
           @click="emit('viewEmployee', employee.manager.id)"
         >
           <UAvatar
-            :alt="`${employee.manager.first_name} ${employee.manager.last_name}`"
+            :alt="`${employee.manager.firstName} ${employee.manager.lastName}`"
             size="sm"
           />
           <div class="flex-1 min-w-0">
             <p class="font-medium text-white truncate">
-              {{ employee.manager.first_name }} {{ employee.manager.last_name }}
+              {{ employee.manager.firstName }} {{ employee.manager.lastName }}
             </p>
             <p class="text-sm text-gray-400 truncate">
-              {{ employee.manager.job_title || 'Manager' }}
+              {{ employee.manager.jobTitle || 'Manager' }}
             </p>
           </div>
           <UIcon name="i-heroicons-chevron-right" class="w-5 h-5 text-gray-500" />
@@ -55,8 +55,8 @@ const emit = defineEmits<{
         <div class="flex items-center gap-3 p-3 bg-primary-500/10 border border-primary-500/30 rounded-lg">
           <div class="relative">
             <UAvatar
-              :src="employee.avatar_url"
-              :alt="`${employee.first_name} ${employee.last_name}`"
+              :src="employee.avatarUrl"
+              :alt="`${employee.firstName} ${employee.lastName}`"
               size="sm"
             />
             <div class="absolute -bottom-1 -right-1 w-4 h-4 bg-primary-500 rounded-full flex items-center justify-center">
@@ -65,11 +65,11 @@ const emit = defineEmits<{
           </div>
           <div class="flex-1 min-w-0">
             <p class="font-medium text-primary-400 truncate">
-              {{ employee.first_name }} {{ employee.last_name }}
+              {{ employee.firstName }} {{ employee.lastName }}
               <span class="text-xs text-primary-400/60 ml-1">(You)</span>
             </p>
             <p class="text-sm text-gray-400 truncate">
-              {{ employee.job_title || 'Employee' }}
+              {{ employee.jobTitle || 'Employee' }}
             </p>
           </div>
         </div>
@@ -101,24 +101,24 @@ const emit = defineEmits<{
             @click="emit('viewEmployee', report.id)"
           >
             <UAvatar
-              :src="report.avatar_url"
-              :alt="`${report.first_name} ${report.last_name}`"
+              :src="report.avatarUrl"
+              :alt="`${report.firstName} ${report.lastName}`"
               size="sm"
             />
             <div class="flex-1 min-w-0">
               <p class="font-medium text-white truncate">
-                {{ report.first_name }} {{ report.last_name }}
+                {{ report.firstName }} {{ report.lastName }}
               </p>
               <p class="text-sm text-gray-400 truncate">
-                {{ report.job_title || 'Employee' }}
+                {{ report.jobTitle || 'Employee' }}
               </p>
             </div>
             <div class="flex items-center gap-2 text-xs">
-              <span v-if="report.active_goals_count > 0" class="px-2 py-0.5 bg-primary-500/10 text-primary-400 rounded-full">
-                {{ report.active_goals_count }} goals
+              <span v-if="report.activeGoalsCount > 0" class="px-2 py-0.5 bg-primary-500/10 text-primary-400 rounded-full">
+                {{ report.activeGoalsCount }} goals
               </span>
-              <span v-if="report.pending_reviews_count > 0" class="px-2 py-0.5 bg-amber-500/10 text-amber-400 rounded-full">
-                {{ report.pending_reviews_count }} pending
+              <span v-if="report.pendingReviewsCount > 0" class="px-2 py-0.5 bg-amber-500/10 text-amber-400 rounded-full">
+                {{ report.pendingReviewsCount }} pending
               </span>
             </div>
             <UIcon name="i-heroicons-chevron-right" class="w-5 h-5 text-gray-500 flex-shrink-0" />

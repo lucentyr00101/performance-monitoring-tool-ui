@@ -8,7 +8,6 @@ definePageMeta({
 
 const route = useRoute()
 const router = useRouter()
-const toast = useToast()
 
 const goalId = computed(() => route.params.id as string)
 
@@ -75,18 +74,9 @@ async function handleUpdateGoal(data: GoalUpdateRequest) {
   try {
     await updateGoal(goalId.value, data)
     isEditModalOpen.value = false
-    toast.add({
-      title: 'Goal Updated',
-      description: 'Your changes have been saved.',
-      color: 'success'
-    })
   }
   catch {
-    toast.add({
-      title: 'Update Failed',
-      description: 'Failed to update goal. Please try again.',
-      color: 'error'
-    })
+    // Notification handled by store
   }
 }
 
@@ -97,19 +87,10 @@ async function handleDeleteGoal() {
   isDeleting.value = true
   try {
     await deleteGoal(goalId.value)
-    toast.add({
-      title: 'Goal Deleted',
-      description: currentGoal.value.status === 'draft' ? 'The goal has been deleted.' : 'The goal has been cancelled.',
-      color: 'success'
-    })
     router.push('/goals')
   }
   catch {
-    toast.add({
-      title: 'Delete Failed',
-      description: 'Failed to delete goal. Please try again.',
-      color: 'error'
-    })
+    // Notification handled by store
   }
   finally {
     isDeleting.value = false
@@ -120,18 +101,9 @@ async function handleDeleteGoal() {
 async function handleSubmitForApproval() {
   try {
     await submitForApproval(goalId.value)
-    toast.add({
-      title: 'Goal Submitted',
-      description: 'Your goal has been submitted for approval.',
-      color: 'success'
-    })
   }
   catch {
-    toast.add({
-      title: 'Submission Failed',
-      description: 'Failed to submit goal. Please try again.',
-      color: 'error'
-    })
+    // Notification handled by store
   }
 }
 
@@ -140,28 +112,14 @@ async function handleApproval() {
   try {
     if (approvalAction.value === 'approve') {
       await approveGoal(goalId.value, approvalComment.value || undefined)
-      toast.add({
-        title: 'Goal Approved',
-        description: 'The goal has been approved and is now active.',
-        color: 'success'
-      })
     } else {
       await rejectGoal(goalId.value, approvalComment.value)
-      toast.add({
-        title: 'Goal Rejected',
-        description: 'The goal has been returned to draft status.',
-        color: 'warning'
-      })
     }
     isApprovalModalOpen.value = false
     approvalComment.value = ''
   }
   catch {
-    toast.add({
-      title: 'Action Failed',
-      description: 'Failed to process approval. Please try again.',
-      color: 'error'
-    })
+    // Notification handled by store
   }
 }
 
@@ -170,18 +128,9 @@ async function handleAddKeyResult(data: KeyResultCreateRequest) {
   try {
     await addKeyResult(goalId.value, data)
     isKeyResultModalOpen.value = false
-    toast.add({
-      title: 'Key Result Added',
-      description: 'New key result has been added.',
-      color: 'success'
-    })
   }
   catch {
-    toast.add({
-      title: 'Failed',
-      description: 'Failed to add key result.',
-      color: 'error'
-    })
+    // Notification handled by store
   }
 }
 
@@ -192,16 +141,9 @@ async function handleUpdateKeyResult(data: KeyResultUpdateRequest) {
   try {
     await updateKeyResult(goalId.value, editingKeyResult.value.id, data)
     editingKeyResult.value = null
-    toast.add({
-      title: 'Key Result Updated',
-      color: 'success'
-    })
   }
   catch {
-    toast.add({
-      title: 'Update Failed',
-      color: 'error'
-    })
+    // Notification handled by store
   }
 }
 
@@ -214,16 +156,9 @@ function handleEditKeyResult(kr: KeyResult) {
 async function handleDeleteKeyResult(krId: string) {
   try {
     await deleteKeyResult(goalId.value, krId)
-    toast.add({
-      title: 'Key Result Deleted',
-      color: 'success'
-    })
   }
   catch {
-    toast.add({
-      title: 'Delete Failed',
-      color: 'error'
-    })
+    // Notification handled by store
   }
 }
 
@@ -293,14 +228,14 @@ function openApprovalModal(action: 'approve' | 'reject') {
             <div class="flex flex-wrap items-center gap-4 text-sm text-gray-400">
               <!-- Owner -->
               <div class="flex items-center gap-2">
-                <UAvatar :src="currentGoal.owner.avatar_url" :alt="currentGoal.owner.name || `${currentGoal.owner.first_name} ${currentGoal.owner.last_name}`" size="xs" />
-                <span>{{ currentGoal.owner.name || `${currentGoal.owner.first_name} ${currentGoal.owner.last_name}` }}</span>
+                <UAvatar :src="currentGoal.owner.avatarUrl" :alt="currentGoal.owner.name || `${currentGoal.owner.firstName} ${currentGoal.owner.lastName}`" size="xs" />
+                <span>{{ currentGoal.owner.name || `${currentGoal.owner.firstName} ${currentGoal.owner.lastName}` }}</span>
               </div>
 
               <!-- Due Date -->
               <div class="flex items-center gap-1.5" :class="isOverdue(currentGoal) ? 'text-red-400' : ''">
                 <UIcon name="i-heroicons-calendar" class="w-4 h-4" />
-                <span>Due {{ formatDueDate(currentGoal.due_date) }}</span>
+                <span>Due {{ formatDueDate(currentGoal.dueDate) }}</span>
                 <span v-if="currentGoal.status === 'active'" class="text-xs">
                   ({{ getDaysRemaining(currentGoal) }} days left)
                 </span>
@@ -308,12 +243,12 @@ function openApprovalModal(action: 'approve' | 'reject') {
 
               <!-- Parent Goal -->
               <NuxtLink
-                v-if="currentGoal.parent_goal"
-                :to="`/goals/${currentGoal.parent_goal.id}`"
+                v-if="currentGoal.parentGoal"
+                :to="`/goals/${currentGoal.parentGoal.id}`"
                 class="flex items-center gap-1.5 hover:text-primary-400 transition-colors"
               >
                 <UIcon name="i-heroicons-arrow-up-circle" class="w-4 h-4" />
-                <span>{{ currentGoal.parent_goal.title }}</span>
+                <span>{{ currentGoal.parentGoal.title }}</span>
               </NuxtLink>
             </div>
           </div>
@@ -433,9 +368,9 @@ function openApprovalModal(action: 'approve' | 'reject') {
         </div>
 
         <!-- Key Results List -->
-        <div v-if="currentGoal.key_results.length > 0" class="space-y-3">
+        <div v-if="currentGoal.keyResults.length > 0" class="space-y-3">
           <GoalsKeyResultItem
-            v-for="kr in currentGoal.key_results"
+            v-for="kr in currentGoal.keyResults"
             :key="kr.id"
             :key-result="kr"
             :editable="canProgress"

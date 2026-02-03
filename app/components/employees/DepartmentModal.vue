@@ -6,7 +6,7 @@ interface Props {
   isSaving?: boolean
   department?: Department | DepartmentListItem | null
   departments: DepartmentListItem[]
-  managers: Array<{ id: string; first_name: string; last_name: string }>
+  managers: Array<{ id: string; firstName: string; lastName: string }>
 }
 
 const props = defineProps<Props>()
@@ -22,8 +22,8 @@ const isEditMode = computed(() => !!props.department)
 const formData = ref<DepartmentCreateRequest>({
   name: '',
   description: '',
-  parent_id: undefined,
-  manager_id: undefined
+  parentId: undefined,
+  managerId: undefined
 })
 
 // Form validation
@@ -38,15 +38,15 @@ watch(
         formData.value = {
           name: props.department.name,
           description: props.department.description || '',
-          parent_id: props.department.parent?.id,
-          manager_id: props.department.manager?.id
+          parentId: props.department.parent?.id,
+          managerId: props.department.manager?.id
         }
       } else {
         formData.value = {
           name: '',
           description: '',
-          parent_id: undefined,
-          manager_id: undefined
+          parentId: undefined,
+          managerId: undefined
         }
       }
       errors.value = {}
@@ -71,7 +71,7 @@ const parentOptions = computed(() => {
 const managerOptions = computed(() => {
   return props.managers.map(m => ({
     value: m.id,
-    label: `${m.first_name} ${m.last_name}`
+    label: `${m.firstName} ${m.lastName}`
   }))
 })
 
@@ -162,7 +162,7 @@ function handleClose() {
             <div>
               <label class="block text-sm font-medium text-gray-300 mb-1">Parent Department</label>
               <USelectMenu
-                v-model="formData.parent_id"
+                v-model="formData.parentId"
                 :items="[{ value: undefined, label: 'None (Top Level)' }, ...parentOptions]"
                 placeholder="Select parent department"
                 value-key="value"
@@ -175,7 +175,7 @@ function handleClose() {
             <div>
               <label class="block text-sm font-medium text-gray-300 mb-1">Department Head</label>
               <USelectMenu
-                v-model="formData.manager_id"
+                v-model="formData.managerId"
                 :items="[{ value: undefined, label: 'No manager assigned' }, ...managerOptions]"
                 placeholder="Select department head"
                 value-key="value"

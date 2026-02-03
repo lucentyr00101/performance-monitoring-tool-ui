@@ -30,9 +30,9 @@ export const useGoalsStore = defineStore('goals', {
     filters: {},
     pagination: {
       page: 1,
-      per_page: DEFAULT_PER_PAGE,
-      total_items: 0,
-      total_pages: 0
+      perPage: DEFAULT_PER_PAGE,
+      totalItems: 0,
+      totalPages: 0
     },
     sortBy: 'due_date',
     sortOrder: 'asc',
@@ -42,9 +42,9 @@ export const useGoalsStore = defineStore('goals', {
   }),
 
   getters: {
-    totalGoals: (state) => state.pagination.total_items,
+    totalGoals: (state) => state.pagination.totalItems,
     
-    hasNextPage: (state) => state.pagination.page < state.pagination.total_pages,
+    hasNextPage: (state) => state.pagination.page < state.pagination.totalPages,
     
     hasPreviousPage: (state) => state.pagination.page > 1,
     
@@ -71,13 +71,13 @@ export const useGoalsStore = defineStore('goals', {
 
     // Current goal key results summary
     currentGoalKeyResultsCompleted: (state): number => {
-      if (!state.currentGoal?.key_results) return 0
-      return state.currentGoal.key_results.filter(kr => kr.status === 'completed').length
+      if (!state.currentGoal?.keyResults) return 0
+      return state.currentGoal.keyResults.filter(kr => kr.status === 'completed').length
     },
 
     currentGoalKeyResultsTotal: (state): number => {
-      if (!state.currentGoal?.key_results) return 0
-      return state.currentGoal.key_results.length
+      if (!state.currentGoal?.keyResults) return 0
+      return state.currentGoal.keyResults.length
     },
 
     // Progress indicator calculation
@@ -85,10 +85,10 @@ export const useGoalsStore = defineStore('goals', {
       if (!state.currentGoal) return 'behind'
       
       const now = new Date()
-      const start = state.currentGoal.start_date 
-        ? new Date(state.currentGoal.start_date) 
-        : new Date(state.currentGoal.due_date)
-      const end = new Date(state.currentGoal.due_date)
+      const start = state.currentGoal.startDate 
+        ? new Date(state.currentGoal.startDate) 
+        : new Date(state.currentGoal.dueDate)
+      const end = new Date(state.currentGoal.dueDate)
       
       let expectedProgress = 0
       if (now < start) {
@@ -121,9 +121,9 @@ export const useGoalsStore = defineStore('goals', {
       try {
         const listParams: GoalListParams = {
           page: params?.page ?? this.pagination.page,
-          per_page: params?.per_page ?? this.pagination.per_page,
-          sort_by: params?.sort_by ?? this.sortBy,
-          sort_order: params?.sort_order ?? this.sortOrder,
+          perPage: params?.perPage ?? this.pagination.perPage,
+          sortBy: params?.sortBy ?? this.sortBy,
+          sortOrder: params?.sortOrder ?? this.sortOrder,
           ...this.filters,
           ...params
         }
@@ -163,11 +163,13 @@ export const useGoalsStore = defineStore('goals', {
     },
 
     async createGoal(data: GoalCreateRequest): Promise<Goal> {
+      const { created, failed } = useNotification()
       this.isLoading = true
       this.error = null
 
       try {
         const response = await goalsService.create(data)
+        created('Goal')
         // Refresh list after creation
         await this.fetchGoals()
         return response.data
@@ -175,6 +177,7 @@ export const useGoalsStore = defineStore('goals', {
       catch (error) {
         const err = error as { error?: { message?: string } }
         this.error = err?.error?.message || 'Failed to create goal'
+        failed('create', 'goal', 'server')
         throw error
       }
       finally {
@@ -183,11 +186,13 @@ export const useGoalsStore = defineStore('goals', {
     },
 
     async updateGoal(id: string, data: GoalUpdateRequest): Promise<Goal> {
+      const { updated, failed } = useNotification()
       this.isLoading = true
       this.error = null
 
       try {
         const response = await goalsService.update(id, data)
+        updated('Goal')
         
         // Update current goal if it's the one being updated
         if (this.currentGoal?.id === id) {
@@ -213,6 +218,7 @@ export const useGoalsStore = defineStore('goals', {
       catch (error) {
         const err = error as { error?: { message?: string } }
         this.error = err?.error?.message || 'Failed to update goal'
+        failed('update', 'goal', 'server')
         throw error
       }
       finally {
@@ -221,11 +227,13 @@ export const useGoalsStore = defineStore('goals', {
     },
 
     async deleteGoal(id: string): Promise<void> {
+      const { deleted, failed } = useNotification()
       this.isLoading = true
       this.error = null
 
       try {
         await goalsService.delete(id)
+        deleted('Goal')
         
         // Remove from list or update status to cancelled
         const index = this.goals.findIndex(g => g.id === id)
@@ -234,7 +242,7 @@ export const useGoalsStore = defineStore('goals', {
           if (goal.status === 'draft') {
             // Draft goals are permanently deleted
             this.goals.splice(index, 1)
-            this.pagination.total_items--
+            this.pagination.totalItems--
           } else {
             // Other goals are cancelled
             this.goals[index] = { ...goal, status: 'cancelled' as GoalStatus }
@@ -249,6 +257,7 @@ export const useGoalsStore = defineStore('goals', {
       catch (error) {
         const err = error as { error?: { message?: string } }
         this.error = err?.error?.message || 'Failed to delete goal'
+        failed('delete', 'goal', 'server')
         throw error
       }
       finally {
@@ -261,10 +270,12 @@ export const useGoalsStore = defineStore('goals', {
     // ============================================
 
     async updateProgress(id: string, data: GoalProgressRequest): Promise<void> {
+      const { success, failed } = useNotification()
       this.error = null
 
       try {
         const response = await goalsService.updateProgress(id, data)
+        success('Goal progress updated')
         
         // Update current goal progress
         if (this.currentGoal?.id === id) {
@@ -288,6 +299,7 @@ export const useGoalsStore = defineStore('goals', {
       catch (error) {
         const err = error as { error?: { message?: string } }
         this.error = err?.error?.message || 'Failed to update progress'
+        failed('update', 'goal progress', 'server')
         throw error
       }
     },
@@ -383,7 +395,7 @@ export const useGoalsStore = defineStore('goals', {
 
     async fetchProgressHistory(id: string, page = 1): Promise<ProgressHistory[]> {
       try {
-        const response = await goalsService.getHistory(id, { page, per_page: 20 })
+        const response = await goalsService.getHistory(id, { page, perPage: 20 })
         return response.data
       }
       catch (error) {
@@ -405,7 +417,7 @@ export const useGoalsStore = defineStore('goals', {
         
         // Update current goal's key results
         if (this.currentGoal?.id === goalId) {
-          this.currentGoal.key_results.push(response.data)
+          this.currentGoal.keyResults.push(response.data)
         }
         
         return response.data
@@ -425,9 +437,9 @@ export const useGoalsStore = defineStore('goals', {
         
         // Update current goal's key results
         if (this.currentGoal?.id === goalId) {
-          const index = this.currentGoal.key_results.findIndex(kr => kr.id === krId)
+          const index = this.currentGoal.keyResults.findIndex(kr => kr.id === krId)
           if (index !== -1) {
-            this.currentGoal.key_results[index] = response.data
+            this.currentGoal.keyResults[index] = response.data
           }
           
           // Recalculate goal progress from key results
@@ -451,7 +463,7 @@ export const useGoalsStore = defineStore('goals', {
         
         // Remove from current goal's key results
         if (this.currentGoal?.id === goalId) {
-          this.currentGoal.key_results = this.currentGoal.key_results.filter(kr => kr.id !== krId)
+          this.currentGoal.keyResults = this.currentGoal.keyResults.filter(kr => kr.id !== krId)
           
           // Recalculate goal progress
           this.recalculateGoalProgress()
@@ -470,7 +482,7 @@ export const useGoalsStore = defineStore('goals', {
 
     async fetchTemplates(type?: GoalType): Promise<void> {
       try {
-        const response = await goalsService.getTemplates({ type, active_only: true })
+        const response = await goalsService.getTemplates({ type, activeOnly: true })
         this.templates = response.data
       }
       catch (error) {
@@ -511,7 +523,7 @@ export const useGoalsStore = defineStore('goals', {
       this.pagination.page = 1
     },
 
-    setSort(sortBy: GoalListParams['sort_by'], sortOrder?: GoalListParams['sort_order']): void {
+    setSort(sortBy: GoalListParams['sortBy'], sortOrder?: GoalListParams['sortOrder']): void {
       if (this.sortBy === sortBy && !sortOrder) {
         this.sortOrder = this.sortOrder === 'asc' ? 'desc' : 'asc'
       } else {
@@ -561,16 +573,16 @@ export const useGoalsStore = defineStore('goals', {
     },
 
     recalculateGoalProgress(): void {
-      if (!this.currentGoal?.key_results || this.currentGoal.key_results.length === 0) return
+      if (!this.currentGoal?.keyResults || this.currentGoal.keyResults.length === 0) return
       
-      const totalProgress = this.currentGoal.key_results.reduce((sum, kr) => {
-        const progress = kr.target_value > 0 
-          ? Math.min((kr.current_value / kr.target_value) * 100, 100)
+      const totalProgress = this.currentGoal.keyResults.reduce((sum: number, kr: KeyResult) => {
+        const progress = kr.targetValue > 0 
+          ? Math.min((kr.currentValue / kr.targetValue) * 100, 100)
           : 0
         return sum + progress
       }, 0)
       
-      this.currentGoal.progress = Math.round(totalProgress / this.currentGoal.key_results.length)
+      this.currentGoal.progress = Math.round(totalProgress / this.currentGoal.keyResults.length)
     },
 
     calculateExpectedProgress(startDate: string | undefined, dueDate: string): number {

@@ -7,7 +7,6 @@ definePageMeta({
 })
 
 const router = useRouter()
-const toast = useToast()
 
 const {
   goals,
@@ -64,19 +63,10 @@ async function handleCreateGoal(data: GoalCreateRequest) {
   try {
     const goal = await createGoal(data)
     isCreateModalOpen.value = false
-    toast.add({
-      title: 'Goal Created',
-      description: `"${goal.title}" has been created.`,
-      color: 'success'
-    })
     router.push(`/goals/${goal.id}`)
   }
   catch {
-    toast.add({
-      title: 'Creation Failed',
-      description: 'Failed to create goal. Please try again.',
-      color: 'error'
-    })
+    // Error notification handled by store
   }
   finally {
     isCreating.value = false
@@ -223,7 +213,7 @@ const viewModeOptions = [
               <div class="text-xs text-gray-400 text-right mt-1">{{ goal.progress }}%</div>
             </div>
             <div class="flex items-center gap-2">
-              <UAvatar :src="goal.owner.avatar_url" :alt="goal.owner.name || `${goal.owner.first_name} ${goal.owner.last_name}`" size="sm" />
+              <UAvatar :src="goal.owner.avatarUrl" :alt="goal.owner.name || `${goal.owner.firstName} ${goal.owner.lastName}`" size="sm" />
             </div>
           </div>
         </div>
@@ -235,11 +225,11 @@ const viewModeOptions = [
       </div>
 
       <!-- Pagination -->
-      <div v-if="pagination.total_pages > 1" class="mt-6 flex justify-center">
+      <div v-if="pagination.totalPages > 1" class="mt-6 flex justify-center">
         <UPagination
           :model-value="pagination.page"
-          :page-count="pagination.per_page"
-          :total="pagination.total_items"
+          :page-count="pagination.perPage"
+          :total="pagination.totalItems"
           @update:model-value="handlePageChange"
         />
       </div>

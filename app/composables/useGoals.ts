@@ -246,8 +246,8 @@ export function useGoals() {
    */
   function calculateProgressIndicator(goal: Goal | GoalListItem): ProgressIndicator {
     const expectedProgress = store.calculateExpectedProgress(
-      'start_date' in goal ? goal.start_date : undefined,
-      goal.due_date
+      'startDate' in goal ? goal.startDate : undefined,
+      goal.dueDate
     )
     const actualProgress = goal.progress
 
@@ -273,7 +273,7 @@ export function useGoals() {
    */
   function isOverdue(goal: Goal | GoalListItem): boolean {
     if (goal.status === 'completed' || goal.status === 'cancelled') return false
-    return new Date(goal.due_date) < new Date()
+    return new Date(goal.dueDate) < new Date()
   }
 
   /**
@@ -281,7 +281,7 @@ export function useGoals() {
    */
   function getDaysRemaining(goal: Goal | GoalListItem): number {
     const now = new Date()
-    const due = new Date(goal.due_date)
+    const due = new Date(goal.dueDate)
     const diffTime = due.getTime() - now.getTime()
     return Math.ceil(diffTime / (1000 * 60 * 60 * 24))
   }
@@ -379,7 +379,7 @@ export function useGoals() {
   // SORT ACTIONS
   // ============================================
 
-  function setSort(field: GoalListParams['sort_by'], order?: GoalListParams['sort_order']) {
+  function setSort(field: GoalListParams['sortBy'], order?: GoalListParams['sortOrder']) {
     store.setSort(field, order)
   }
 

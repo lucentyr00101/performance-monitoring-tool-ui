@@ -1,56 +1,34 @@
-// API utility with auth interceptor for external microservices
+// API utility with auth interceptor for external API Gateway
 import type { ApiResponse, ApiError } from '~/types/auth'
 import type { NitroFetchOptions } from 'nitropack'
 
 /**
- * API Client for communicating with external microservices
- * Falls back to internal Nuxt server mock endpoints when no external URL is configured
+ * API Client for communicating with the API Gateway
  * 
  * Architecture:
- * Frontend (Nuxt) -> API Gateway -> Auth Service -> MongoDB
- *                                -> Employee Service -> MongoDB
- *                                -> Goals Service -> MongoDB
- *                                -> Reviews Service -> MongoDB
- * 
- * Development Mode (no external URLs):
- * Frontend (Nuxt) -> Nuxt Server (/api/auth/*) -> Mock Data
+ * Frontend (Nuxt) -> API Gateway (localhost:4000) -> Microservices
+ *                                                 -> Auth Service
+ *                                                 -> Employee Service
+ *                                                 -> Goals Service
+ *                                                 -> Reviews Service
  */
 
 interface FetchOptions {
   skipAuth?: boolean
-  service?: 'auth' | 'employees' | 'goals' | 'reviews' | 'analytics'
   method?: 'GET' | 'POST' | 'PUT' | 'PATCH' | 'DELETE'
   body?: unknown
 }
 
 class ApiClient {
-  private getBaseUrl(service: string = 'auth'): string {
+  private getBaseUrl(): string {
     const config = useRuntimeConfig()
-
-    // If API Gateway is configured, use it for all services
-    const gatewayUrl = config.public.apiGatewayUrl as string | undefined
-    if (gatewayUrl) {
-      return `${gatewayUrl}/api/v1`
-    }
-
-    // Service-specific URLs for microservices architecture
-    const serviceUrls: Record<string, string | undefined> = {
-      auth: config.public.authServiceUrl as string | undefined,
-      employees: config.public.employeeServiceUrl as string | undefined,
-      goals: config.public.goalsServiceUrl as string | undefined,
-      reviews: config.public.reviewsServiceUrl as string | undefined,
-      analytics: config.public.analyticsServiceUrl as string | undefined
-    }
-
-    const serviceUrl = serviceUrls[service]
+    const gatewayUrl = config.public.apiGatewayUrl as string
     
-    // If service URL is configured, use external microservice
-    if (serviceUrl) {
-      return `${serviceUrl}/api/v1`
+    if (!gatewayUrl) {
+      throw new Error('API Gateway URL not configured. Set NUXT_PUBLIC_API_GATEWAY_URL environment variable.')
     }
-
-    // Fall back to internal Nuxt server mock endpoints (development mode)
-    return '/api'
+    
+    return `${gatewayUrl}/api/v1`
   }
 
   private getAccessToken(): string | null {
@@ -60,8 +38,8 @@ class ApiClient {
   }
 
   async fetch<T>(endpoint: string, options: FetchOptions = {}): Promise<ApiResponse<T>> {
-    const { skipAuth = false, service = 'auth', method = 'GET', body, ...restOptions } = options
-    const baseUrl = this.getBaseUrl(service)
+    const { skipAuth = false, method = 'GET', body, ...restOptions } = options
+    const baseUrl = this.getBaseUrl()
 
     const headers: Record<string, string> = {
       'Content-Type': 'application/json',
@@ -117,6 +95,62 @@ class ApiClient {
         } as ApiError
       }
 
+      // Handle 400 Bad Request (Validation Errors)
+      if (fetchError?.response?.status === 400) {
+        throw {
+          success: false,
+          error: {
+            code: 'VALIDATION_ERROR',
+            message: fetchError?.data?.error?.message || 'Invalid data. Please check your input.'
+          },
+          meta: {
+            timestamp: new Date().toISOString()
+          }
+        } as ApiError
+      }
+
+      // Handle 403 Forbidden
+      if (fetchError?.response?.status === 403) {
+        throw {
+          success: false,
+          error: {
+            code: 'FORBIDDEN',
+            message: 'You do not have permission to perform this action.'
+          },
+          meta: {
+            timestamp: new Date().toISOString()
+          }
+        } as ApiError
+      }
+
+      // Handle 404 Not Found
+      if (fetchError?.response?.status === 404) {
+        throw {
+          success: false,
+          error: {
+            code: 'NOT_FOUND',
+            message: fetchError?.data?.error?.message || 'The requested resource was not found.'
+          },
+          meta: {
+            timestamp: new Date().toISOString()
+          }
+        } as ApiError
+      }
+
+      // Handle 500+ Server Errors
+      if (fetchError?.response?.status && fetchError.response.status >= 500) {
+        throw {
+          success: false,
+          error: {
+            code: 'SERVER_ERROR',
+            message: 'Server error. Please try again later.'
+          },
+          meta: {
+            timestamp: new Date().toISOString()
+          }
+        } as ApiError
+      }
+
       // Handle other errors
       if (fetchError?.data) {
         throw fetchError.data as ApiError
@@ -127,7 +161,7 @@ class ApiClient {
         success: false,
         error: {
           code: 'NETWORK_ERROR',
-          message: fetchError?.message || 'An unexpected error occurred'
+          message: fetchError?.message || 'An unexpected error occurred. Please check your connection.'
         },
         meta: {
           timestamp: new Date().toISOString()

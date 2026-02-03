@@ -122,12 +122,12 @@ function clearFilters() {
       <div>
         <label class="block text-sm font-medium text-gray-400 mb-1.5">Status</label>
         <USelectMenu
-          :model-value="statusOptions.find(o => o.value === localFilters.employment_status)"
+          :model-value="statusOptions.find(o => o.value === localFilters.employmentStatus)"
           :items="statusOptions"
           value-attribute="value"
           placeholder="All Statuses"
           class="w-full"
-          @update:model-value="updateFilter('employment_status', ($event as { value: string })?.value as EmploymentStatus)"
+          @update:model-value="updateFilter('employmentStatus', ($event as { value: string })?.value as EmploymentStatus)"
         />
       </div>
 
@@ -135,12 +135,12 @@ function clearFilters() {
       <div>
         <label class="block text-sm font-medium text-gray-400 mb-1.5">Department</label>
         <USelectMenu
-          :model-value="departmentOptions.find(o => o.value === localFilters.department_id)"
+          :model-value="departmentOptions.find(o => o.value === localFilters.departmentId)"
           :items="departmentOptions"
           value-attribute="value"
           placeholder="All Departments"
           class="w-full"
-          @update:model-value="updateFilter('department_id', ($event as { value: string })?.value)"
+          @update:model-value="updateFilter('departmentId', ($event as { value: string })?.value)"
         />
       </div>
 
@@ -148,12 +148,12 @@ function clearFilters() {
       <div>
         <label class="block text-sm font-medium text-gray-400 mb-1.5">Manager</label>
         <USelectMenu
-          :model-value="managerOptions.find(o => o.value === localFilters.manager_id)"
+          :model-value="managerOptions.find(o => o.value === localFilters.managerId)"
           :items="managerOptions"
           value-attribute="value"
           placeholder="All Managers"
           class="w-full"
-          @update:model-value="updateFilter('manager_id', ($event as { value: string })?.value)"
+          @update:model-value="updateFilter('managerId', ($event as { value: string })?.value)"
         />
       </div>
 
@@ -161,12 +161,12 @@ function clearFilters() {
       <div>
         <label class="block text-sm font-medium text-gray-400 mb-1.5">Employment Type</label>
         <USelectMenu
-          :model-value="employmentTypeOptions.find(o => o.value === localFilters.employment_type)"
+          :model-value="employmentTypeOptions.find(o => o.value === localFilters.employmentType)"
           :items="employmentTypeOptions"
           value-attribute="value"
           placeholder="All Types"
           class="w-full"
-          @update:model-value="updateFilter('employment_type', ($event as { value: string })?.value as EmploymentType)"
+          @update:model-value="updateFilter('employmentType', ($event as { value: string })?.value as EmploymentType)"
         />
       </div>
 
@@ -174,12 +174,12 @@ function clearFilters() {
       <div>
         <label class="block text-sm font-medium text-gray-400 mb-1.5">Work Location</label>
         <USelectMenu
-          :model-value="workLocationOptions.find(o => o.value === localFilters.work_location)"
+          :model-value="workLocationOptions.find(o => o.value === localFilters.workLocation)"
           :items="workLocationOptions"
           value-attribute="value"
           placeholder="All Locations"
           class="w-full"
-          @update:model-value="updateFilter('work_location', ($event as { value: string })?.value as WorkLocation)"
+          @update:model-value="updateFilter('workLocation', ($event as { value: string })?.value as WorkLocation)"
         />
       </div>
 

@@ -11,23 +11,23 @@ export interface Department {
 
 export interface ManagerInfo {
   id: string
-  first_name: string
-  last_name: string
+  firstName: string
+  lastName: string
 }
 
 export interface Employee {
   id: string
-  employee_code: string
-  first_name: string
-  last_name: string
+  employeeCode: string
+  firstName: string
+  lastName: string
   email: string
   phone?: string
-  job_title: string
+  jobTitle: string
   department: Department
   manager?: ManagerInfo
-  hire_date: string
-  employment_type: string
-  avatar_url?: string
+  hireDate: string
+  employmentType: string
+  avatarUrl?: string
 }
 
 export interface User {
@@ -45,26 +45,29 @@ export interface LoginRequest {
 }
 
 export interface TokensResponse {
-  accessToken: string
-  refreshToken: string
-  tokenType: 'Bearer'
-  expiresIn: number
+  access_token: string
+  refresh_token: string
+  token_type: 'Bearer'
+  expires_in: number
 }
 
 export interface LoginResponse {
+  access_token: string
+  refresh_token: string
+  token_type: 'Bearer'
+  expires_in: number
   user: User
-  tokens: TokensResponse
 }
 
 export interface RefreshRequest {
-  refreshToken: string
+  refresh_token: string
 }
 
 export interface RefreshResponse {
-  accessToken: string
-  refreshToken: string
-  tokenType: 'Bearer'
-  expiresIn: number
+  access_token: string
+  refresh_token: string
+  token_type: 'Bearer'
+  expires_in: number
 }
 
 export interface ForgotPasswordRequest {
@@ -84,9 +87,9 @@ export interface ApiResponse<T> {
     timestamp: string
     pagination?: {
       page: number
-      per_page: number
-      total_items: number
-      total_pages: number
+      perPage: number
+      totalItems: number
+      totalPages: number
     }
   }
 }
@@ -94,7 +97,7 @@ export interface ApiResponse<T> {
 export interface ApiError {
   success: false
   error: {
-    code: 'VALIDATION_ERROR' | 'AUTHENTICATION_ERROR' | 'AUTHORIZATION_ERROR' | 'NOT_FOUND' | 'CONFLICT' | 'RATE_LIMIT_EXCEEDED' | 'INTERNAL_ERROR' | 'NETWORK_ERROR' | 'INVALID_CREDENTIALS' | 'INVALID_TOKEN' | 'TOKEN_EXPIRED' | 'USER_NOT_FOUND' | 'ACCOUNT_INACTIVE'
+    code: 'VALIDATION_ERROR' | 'AUTHENTICATION_ERROR' | 'AUTHORIZATION_ERROR' | 'NOT_FOUND' | 'CONFLICT' | 'RATE_LIMIT_EXCEEDED' | 'INTERNAL_ERROR' | 'NETWORK_ERROR' | 'INVALID_CREDENTIALS' | 'INVALID_TOKEN' | 'TOKEN_EXPIRED' | 'USER_NOT_FOUND' | 'ACCOUNT_INACTIVE' | 'FORBIDDEN' | 'SERVER_ERROR'
     message: string
     details?: Array<{
       field: string

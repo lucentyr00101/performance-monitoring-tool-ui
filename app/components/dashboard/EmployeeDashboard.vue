@@ -163,5 +163,12 @@ const greeting = computed(() => {
         :max-items="5"
       />
     </div>
+
+    <!-- Pending Ad-Hoc Reviews (for employee) -->
+    <DashboardAdhocReviewsWidget
+      title="Pending Reviews"
+      variant="pending"
+      :max-items="3"
+    />
   </div>
 </template>

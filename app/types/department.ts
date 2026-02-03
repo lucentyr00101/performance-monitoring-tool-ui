@@ -16,7 +16,7 @@ export interface DepartmentParent {
 export interface SubDepartment {
   id: string
   name: string
-  employee_count: number
+  employeeCount: number
 }
 
 // Department entity
@@ -24,15 +24,15 @@ export interface Department {
   id: string
   name: string
   description?: string
-  parent_id?: string
+  parentId?: string
   parent?: DepartmentParent
-  manager_id?: string
+  managerId?: string
   manager?: EmployeeManager
-  sub_departments?: SubDepartment[]
-  employee_count: number
+  subDepartments?: SubDepartment[]
+  employeeCount: number
   status: DepartmentStatus
-  created_at: string
-  updated_at: string
+  createdAt: string
+  updatedAt: string
 }
 
 // Department list item (lighter version)
@@ -42,7 +42,7 @@ export interface DepartmentListItem {
   description?: string
   parent?: DepartmentParent
   manager?: EmployeeManager
-  employee_count: number
+  employeeCount: number
   status: DepartmentStatus
 }
 
@@ -50,7 +50,7 @@ export interface DepartmentListItem {
 export interface DepartmentHierarchyNode {
   id: string
   name: string
-  employee_count: number
+  employeeCount: number
   manager?: EmployeeManager
   children: DepartmentHierarchyNode[]
 }
@@ -59,29 +59,29 @@ export interface DepartmentHierarchyNode {
 export interface DepartmentFilters {
   search?: string
   status?: DepartmentStatus
-  parent_id?: string
+  parentId?: string
 }
 
 // Department list params
 export interface DepartmentListParams extends DepartmentFilters {
   page?: number
-  per_page?: number
+  perPage?: number
 }
 
 // Department create request
 export interface DepartmentCreateRequest {
   name: string
   description?: string
-  parent_id?: string
-  manager_id?: string
+  parentId?: string
+  managerId?: string
 }
 
 // Department update request
 export interface DepartmentUpdateRequest {
   name?: string
   description?: string
-  parent_id?: string
-  manager_id?: string
+  parentId?: string
+  managerId?: string
   status?: DepartmentStatus
 }
 
@@ -104,7 +104,7 @@ export interface DepartmentListResponse {
   success: boolean
   data: DepartmentListItem[]
   meta: {
-    total_departments: number
+    totalDepartments: number
     timestamp: string
   }
 }
@@ -121,8 +121,8 @@ export interface DepartmentHierarchyResponse {
   success: boolean
   data: DepartmentHierarchyNode[]
   meta: {
-    total_departments: number
-    max_depth: number
+    totalDepartments: number
+    maxDepth: number
     timestamp: string
   }
 }
@@ -133,9 +133,9 @@ export interface DepartmentEmployeesResponse {
   meta: {
     pagination: {
       page: number
-      per_page: number
-      total_items: number
-      total_pages: number
+      perPage: number
+      totalItems: number
+      totalPages: number
     }
     timestamp: string
   }

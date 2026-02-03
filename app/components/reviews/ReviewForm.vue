@@ -26,11 +26,11 @@ const improvements = ref(props.review.improvements || '')
 const comments = ref(props.review.comments || '')
 
 // Ratings breakdown
-const technicalSkills = ref(props.review.ratings_breakdown?.technical_skills || 0)
-const communication = ref(props.review.ratings_breakdown?.communication || 0)
-const teamwork = ref(props.review.ratings_breakdown?.teamwork || 0)
-const problemSolving = ref(props.review.ratings_breakdown?.problem_solving || 0)
-const initiative = ref(props.review.ratings_breakdown?.initiative || 0)
+const technicalSkills = ref(props.review.ratingsBreakdown?.technicalSkills || 0)
+const communication = ref(props.review.ratingsBreakdown?.communication || 0)
+const teamwork = ref(props.review.ratingsBreakdown?.teamwork || 0)
+const problemSolving = ref(props.review.ratingsBreakdown?.problemSolving || 0)
+const initiative = ref(props.review.ratingsBreakdown?.initiative || 0)
 
 // Auto-calculate overall rating from breakdown
 const calculatedRating = computed(() => {
@@ -56,11 +56,11 @@ const isValid = computed(() => {
 function getFormData(): ReviewUpdateRequest {
   return {
     rating: rating.value,
-    ratings_breakdown: {
-      technical_skills: technicalSkills.value,
+    ratingsBreakdown: {
+      technicalSkills: technicalSkills.value,
       communication: communication.value,
       teamwork: teamwork.value,
-      problem_solving: problemSolving.value,
+      problemSolving: problemSolving.value,
       initiative: initiative.value
     },
     strengths: strengths.value.trim(),
@@ -92,7 +92,7 @@ const ratingCategories = [
     <!-- Header with employee info -->
     <div class="flex items-center gap-4 pb-6 border-b border-gray-800">
       <UAvatar
-        :src="review.employee.avatar_url"
+        :src="review.employee.avatarUrl"
         :alt="formatEmployeeName(review.employee)"
         size="lg"
       />
@@ -100,10 +100,10 @@ const ratingCategories = [
         <h2 class="text-xl font-semibold text-white">
           {{ formatEmployeeName(review.employee) }}
         </h2>
-        <p class="text-gray-400">{{ review.employee.job_title }}</p>
+        <p class="text-gray-400">{{ review.employee.jobTitle }}</p>
         <div class="flex items-center gap-2 mt-1">
           <ReviewsReviewTypeBadge :type="review.type" size="xs" />
-          <span class="text-sm text-gray-500">{{ review.cycle.name }}</span>
+          <span v-if="review.cycle" class="text-sm text-gray-500">{{ review.cycle.name }}</span>
         </div>
       </div>
     </div>

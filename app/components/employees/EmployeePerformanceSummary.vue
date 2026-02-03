@@ -145,7 +145,7 @@ function formatDate(dateStr?: string): string {
               {{ review.rating.toFixed(1) }} ★
             </span>
             <span class="text-sm text-gray-500">
-              {{ formatDate(review.submitted_at) }}
+              {{ formatDate(review.submittedAt) }}
             </span>
           </div>
         </div>

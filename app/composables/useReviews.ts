@@ -376,8 +376,8 @@ export function useReviews() {
   /**
    * Format employee full name
    */
-  function formatEmployeeName(employee: { first_name: string; last_name: string }): string {
-    return `${employee.first_name} ${employee.last_name}`
+  function formatEmployeeName(employee: { firstName: string; lastName: string }): string {
+    return `${employee.firstName} ${employee.lastName}`
   }
 
   // ============================================

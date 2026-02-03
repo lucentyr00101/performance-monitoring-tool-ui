@@ -8,7 +8,6 @@ definePageMeta({
 
 const route = useRoute()
 const router = useRouter()
-const toast = useToast()
 
 const cycleId = computed(() => route.params.id as string)
 
@@ -44,7 +43,7 @@ const isDeleting = ref(false)
 async function loadData() {
   try {
     await fetchCycle(cycleId.value)
-    updateReviewFilter('cycle_id', cycleId.value)
+    updateReviewFilter('cycleId', cycleId.value)
     await fetchReviews()
   }
   catch {
@@ -73,21 +72,12 @@ async function handleLaunch() {
   
   isLaunching.value = true
   try {
-    const result = await launchCycle(currentCycle.value.id)
+    await launchCycle(currentCycle.value.id)
     isLaunchModalOpen.value = false
-    toast.add({
-      title: 'Cycle Launched',
-      description: `Created ${result.reviews_created.total} reviews and sent ${result.notifications_sent} notifications.`,
-      color: 'success'
-    })
     await loadData()
   }
   catch {
-    toast.add({
-      title: 'Launch Failed',
-      description: 'Failed to launch review cycle. Please try again.',
-      color: 'error'
-    })
+    // Notification handled by store
   }
   finally {
     isLaunching.value = false
@@ -102,19 +92,10 @@ async function handleDelete() {
   try {
     await deleteCycle(currentCycle.value.id)
     isDeleteModalOpen.value = false
-    toast.add({
-      title: 'Cycle Deleted',
-      description: 'The review cycle has been deleted.',
-      color: 'success'
-    })
     router.push('/reviews')
   }
   catch {
-    toast.add({
-      title: 'Delete Failed',
-      description: 'Failed to delete review cycle. Please try again.',
-      color: 'error'
-    })
+    // Notification handled by store
   }
   finally {
     isDeleting.value = false
@@ -126,14 +107,14 @@ const daysLeft = computed(() => currentCycle.value ? getCycleDaysRemaining(curre
 const isOverdue = computed(() => currentCycle.value ? isCycleOverdue(currentCycle.value) : false)
 
 const selfProgress = computed(() => {
-  if (!currentCycle.value?.stats.by_type?.self) return 0
-  const { total, completed } = currentCycle.value.stats.by_type.self
+  if (!currentCycle.value?.stats.byType?.self) return 0
+  const { total, completed } = currentCycle.value.stats.byType.self
   return total > 0 ? Math.round((completed / total) * 100) : 0
 })
 
 const managerProgress = computed(() => {
-  if (!currentCycle.value?.stats.by_type?.manager) return 0
-  const { total, completed } = currentCycle.value.stats.by_type.manager
+  if (!currentCycle.value?.stats.byType?.manager) return 0
+  const { total, completed } = currentCycle.value.stats.byType.manager
   return total > 0 ? Math.round((completed / total) * 100) : 0
 })
 </script>
@@ -192,7 +173,7 @@ const managerProgress = computed(() => {
             <div class="flex items-center gap-4 text-sm text-gray-400">
               <span>
                 <UIcon name="i-heroicons-calendar" class="w-4 h-4 inline mr-1" />
-                {{ formatDate(currentCycle.start_date) }} - {{ formatDate(currentCycle.end_date) }}
+                {{ formatDate(currentCycle.startDate) }} - {{ formatDate(currentCycle.endDate) }}
               </span>
               <span v-if="currentCycle.status === 'active'" :class="isOverdue ? 'text-red-400' : daysLeft <= 7 ? 'text-amber-400' : ''">
                 <UIcon name="i-heroicons-clock" class="w-4 h-4 inline mr-1" />
@@ -226,7 +207,7 @@ const managerProgress = computed(() => {
         <div v-if="currentCycle.status !== 'draft'" class="grid grid-cols-2 md:grid-cols-4 gap-4 mt-6 pt-6 border-t border-gray-800">
           <div>
             <p class="text-sm text-gray-400">Total Reviews</p>
-            <p class="text-2xl font-bold text-white">{{ currentCycle.stats.total_reviews }}</p>
+            <p class="text-2xl font-bold text-white">{{ currentCycle.stats.totalReviews }}</p>
           </div>
           <div>
             <p class="text-sm text-gray-400">Completed</p>
@@ -238,7 +219,7 @@ const managerProgress = computed(() => {
           </div>
           <div>
             <p class="text-sm text-gray-400">Completion Rate</p>
-            <p class="text-2xl font-bold text-white">{{ currentCycle.stats.completion_rate }}%</p>
+            <p class="text-2xl font-bold text-white">{{ currentCycle.stats.completionRate }}%</p>
           </div>
         </div>
 
@@ -247,7 +228,7 @@ const managerProgress = computed(() => {
           <div>
             <div class="flex items-center justify-between text-sm mb-2">
               <span class="text-gray-400">Self Assessments</span>
-              <span class="text-white">{{ currentCycle.stats.by_type?.self?.completed || 0 }}/{{ currentCycle.stats.by_type?.self?.total || 0 }}</span>
+              <span class="text-white">{{ currentCycle.stats.byType?.self?.completed || 0 }}/{{ currentCycle.stats.byType?.self?.total || 0 }}</span>
             </div>
             <div class="h-2 bg-gray-800 rounded-full overflow-hidden">
               <div 
@@ -259,7 +240,7 @@ const managerProgress = computed(() => {
           <div>
             <div class="flex items-center justify-between text-sm mb-2">
               <span class="text-gray-400">Manager Reviews</span>
-              <span class="text-white">{{ currentCycle.stats.by_type?.manager?.completed || 0 }}/{{ currentCycle.stats.by_type?.manager?.total || 0 }}</span>
+              <span class="text-white">{{ currentCycle.stats.byType?.manager?.completed || 0 }}/{{ currentCycle.stats.byType?.manager?.total || 0 }}</span>
             </div>
             <div class="h-2 bg-gray-800 rounded-full overflow-hidden">
               <div 
@@ -289,11 +270,11 @@ const managerProgress = computed(() => {
           />
 
           <!-- Pagination -->
-          <div v-if="reviewPagination.total_pages > 1" class="mt-6 flex justify-center">
+          <div v-if="reviewPagination.totalPages > 1" class="mt-6 flex justify-center">
             <UPagination
               :model-value="reviewPagination.page"
-              :page-count="reviewPagination.per_page"
-              :total="reviewPagination.total_items"
+              :page-count="reviewPagination.perPage"
+              :total="reviewPagination.totalItems"
               @update:model-value="handlePageChange"
             />
           </div>

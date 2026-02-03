@@ -45,10 +45,10 @@ watch(typeFilter, (value) => {
   applyReviewFiltersAndFetch()
 })
 
-// Set cycle_id filter if provided
+// Set cycleId filter if provided
 watch(() => props.cycleId, (value) => {
   if (value) {
-    updateReviewFilter('cycle_id', value)
+    updateReviewFilter('cycleId', value)
   }
 }, { immediate: true })
 
@@ -59,7 +59,7 @@ function handleClearFilters() {
   clearReviewFilters()
   // Re-apply cycle filter if present
   if (props.cycleId) {
-    updateReviewFilter('cycle_id', props.cycleId)
+    updateReviewFilter('cycleId', props.cycleId)
   }
   applyReviewFiltersAndFetch()
 }

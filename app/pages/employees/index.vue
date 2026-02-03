@@ -10,7 +10,6 @@ definePageMeta({
 
 const router = useRouter()
 const employeeStore = useEmployeeStore()
-const toast = useToast()
 const { user } = useAuth()
 
 // Check if user can create/export employees
@@ -115,20 +114,11 @@ async function handleCreateEmployee(data: EmployeeCreateRequest) {
   try {
     const employee = await employeeStore.createEmployee(data)
     isCreateModalOpen.value = false
-    toast.add({
-      title: 'Employee Created',
-      description: `${employee.first_name} ${employee.last_name} has been added.`,
-      color: 'success'
-    })
     // Navigate to new employee profile
     router.push(`/employees/${employee.id}`)
   }
   catch {
-    toast.add({
-      title: 'Creation Failed',
-      description: 'Failed to create employee. Please try again.',
-      color: 'error'
-    })
+    // Error notification handled by store
   }
   finally {
     isCreating.value = false

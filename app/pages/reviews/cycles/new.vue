@@ -7,7 +7,6 @@ definePageMeta({
 })
 
 const router = useRouter()
-const toast = useToast()
 
 const {
   createCycle,
@@ -24,19 +23,10 @@ async function handleCreateCycle(data: ReviewCycleCreateRequest) {
   isCreating.value = true
   try {
     const cycle = await createCycle(data)
-    toast.add({
-      title: 'Review Cycle Created',
-      description: `"${cycle.name}" has been created as a draft.`,
-      color: 'success'
-    })
     router.push(`/reviews/cycles/${cycle.id}`)
   }
   catch {
-    toast.add({
-      title: 'Creation Failed',
-      description: 'Failed to create review cycle. Please try again.',
-      color: 'error'
-    })
+    // Notification handled by store
   }
   finally {
     isCreating.value = false
@@ -48,14 +38,9 @@ function handleCancel() {
   router.push('/reviews')
 }
 
-// Redirect if user cannot create
+// Redirect if user cannot create (keep this as it's an info toast, not a store notification)
 onMounted(() => {
   if (!canCreate.value) {
-    toast.add({
-      title: 'Access Denied',
-      description: 'You do not have permission to create review cycles.',
-      color: 'error'
-    })
     router.push('/reviews')
   }
 })

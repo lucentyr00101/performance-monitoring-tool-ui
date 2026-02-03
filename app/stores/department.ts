@@ -106,11 +106,13 @@ export const useDepartmentStore = defineStore('department', {
     },
 
     async createDepartment(data: DepartmentCreateRequest): Promise<Department> {
+      const { created, failed } = useNotification()
       this.isLoading = true
       this.error = null
 
       try {
         const response = await departmentService.create(data)
+        created('Department')
         // Refresh list after creation
         await this.fetchDepartments()
         return response.data
@@ -118,6 +120,7 @@ export const useDepartmentStore = defineStore('department', {
       catch (error) {
         const err = error as { error?: { message?: string } }
         this.error = err?.error?.message || 'Failed to create department'
+        failed('create', 'department', 'server')
         throw error
       }
       finally {
@@ -126,11 +129,13 @@ export const useDepartmentStore = defineStore('department', {
     },
 
     async updateDepartment(id: string, data: DepartmentUpdateRequest): Promise<Department> {
+      const { updated, failed } = useNotification()
       this.isLoading = true
       this.error = null
 
       try {
         const response = await departmentService.update(id, data)
+        updated('Department')
         
         // Update current department if it's the one being updated
         if (this.currentDepartment?.id === id) {
@@ -151,6 +156,7 @@ export const useDepartmentStore = defineStore('department', {
       catch (error) {
         const err = error as { error?: { message?: string } }
         this.error = err?.error?.message || 'Failed to update department'
+        failed('update', 'department', 'server')
         throw error
       }
       finally {
@@ -159,11 +165,13 @@ export const useDepartmentStore = defineStore('department', {
     },
 
     async deleteDepartment(id: string): Promise<void> {
+      const { deleted, failed } = useNotification()
       this.isLoading = true
       this.error = null
 
       try {
         await departmentService.delete(id)
+        deleted('Department')
         
         // Remove from list
         this.departments = this.departments.filter(d => d.id !== id)
@@ -176,6 +184,7 @@ export const useDepartmentStore = defineStore('department', {
       catch (error) {
         const err = error as { error?: { message?: string } }
         this.error = err?.error?.message || 'Failed to delete department'
+        failed('delete', 'department', 'server')
         throw error
       }
       finally {
@@ -185,7 +194,7 @@ export const useDepartmentStore = defineStore('department', {
 
     async fetchDepartmentEmployees(
       id: string,
-      params?: { include_sub?: boolean; status?: string; page?: number; per_page?: number }
+      params?: { includeSub?: boolean; status?: string; page?: number; perPage?: number }
     ): Promise<EmployeeListItem[]> {
       try {
         const response = await departmentService.getEmployees(id, params)

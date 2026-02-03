@@ -30,9 +30,9 @@ export const useReviewsStore = defineStore('reviews', {
     cycleFilters: {},
     cyclePagination: {
       page: 1,
-      per_page: DEFAULT_PER_PAGE,
-      total_items: 0,
-      total_pages: 0
+      perPage: DEFAULT_PER_PAGE,
+      totalItems: 0,
+      totalPages: 0
     },
     
     // Reviews
@@ -41,9 +41,9 @@ export const useReviewsStore = defineStore('reviews', {
     reviewFilters: {},
     reviewPagination: {
       page: 1,
-      per_page: DEFAULT_PER_PAGE,
-      total_items: 0,
-      total_pages: 0
+      perPage: DEFAULT_PER_PAGE,
+      totalItems: 0,
+      totalPages: 0
     },
     
     // Templates
@@ -59,9 +59,9 @@ export const useReviewsStore = defineStore('reviews', {
     // CYCLE GETTERS
     // ============================================
     
-    totalCycles: (state) => state.cyclePagination.total_items,
+    totalCycles: (state) => state.cyclePagination.totalItems,
     
-    hasNextCyclePage: (state) => state.cyclePagination.page < state.cyclePagination.total_pages,
+    hasNextCyclePage: (state) => state.cyclePagination.page < state.cyclePagination.totalPages,
     
     hasPreviousCyclePage: (state) => state.cyclePagination.page > 1,
     
@@ -81,9 +81,9 @@ export const useReviewsStore = defineStore('reviews', {
     // REVIEW GETTERS
     // ============================================
     
-    totalReviews: (state) => state.reviewPagination.total_items,
+    totalReviews: (state) => state.reviewPagination.totalItems,
     
-    hasNextReviewPage: (state) => state.reviewPagination.page < state.reviewPagination.total_pages,
+    hasNextReviewPage: (state) => state.reviewPagination.page < state.reviewPagination.totalPages,
     
     hasPreviousReviewPage: (state) => state.reviewPagination.page > 1,
     
@@ -111,7 +111,7 @@ export const useReviewsStore = defineStore('reviews', {
     // Current cycle completion rate
     currentCycleCompletionRate: (state): number => {
       if (!state.currentCycle?.stats) return 0
-      return state.currentCycle.stats.completion_rate
+      return state.currentCycle.stats.completionRate
     },
 
     // Current review is editable
@@ -133,7 +133,7 @@ export const useReviewsStore = defineStore('reviews', {
       try {
         const listParams: ReviewCycleListParams = {
           page: params?.page ?? this.cyclePagination.page,
-          per_page: params?.per_page ?? this.cyclePagination.per_page,
+          perPage: params?.perPage ?? this.cyclePagination.perPage,
           ...this.cycleFilters,
           ...params
         }
@@ -173,11 +173,13 @@ export const useReviewsStore = defineStore('reviews', {
     },
 
     async createCycle(data: ReviewCycleCreateRequest): Promise<ReviewCycle> {
+      const { created, failed } = useNotification()
       this.isLoading = true
       this.error = null
 
       try {
         const response = await reviewsService.createCycle(data)
+        created('Review cycle')
         // Refresh list after creation
         await this.fetchCycles()
         return response.data
@@ -185,6 +187,7 @@ export const useReviewsStore = defineStore('reviews', {
       catch (error) {
         const err = error as { error?: { message?: string } }
         this.error = err?.error?.message || 'Failed to create review cycle'
+        failed('create', 'review cycle', 'server')
         throw error
       }
       finally {
@@ -193,11 +196,13 @@ export const useReviewsStore = defineStore('reviews', {
     },
 
     async updateCycle(id: string, data: ReviewCycleUpdateRequest): Promise<ReviewCycle> {
+      const { updated, failed } = useNotification()
       this.isLoading = true
       this.error = null
 
       try {
         const response = await reviewsService.updateCycle(id, data)
+        updated('Review cycle')
         
         // Update current cycle if it's the one being updated
         if (this.currentCycle?.id === id) {
@@ -213,8 +218,8 @@ export const useReviewsStore = defineStore('reviews', {
             name: response.data.name,
             description: response.data.description,
             type: response.data.type,
-            start_date: response.data.start_date,
-            end_date: response.data.end_date,
+            startDate: response.data.startDate,
+            endDate: response.data.endDate,
             status: response.data.status
           }
         }
@@ -224,6 +229,7 @@ export const useReviewsStore = defineStore('reviews', {
       catch (error) {
         const err = error as { error?: { message?: string } }
         this.error = err?.error?.message || 'Failed to update review cycle'
+        failed('update', 'review cycle', 'server')
         throw error
       }
       finally {
@@ -232,17 +238,19 @@ export const useReviewsStore = defineStore('reviews', {
     },
 
     async deleteCycle(id: string): Promise<void> {
+      const { deleted, failed } = useNotification()
       this.isLoading = true
       this.error = null
 
       try {
         await reviewsService.deleteCycle(id)
+        deleted('Review cycle')
         
         // Remove from list
         const index = this.reviewCycles.findIndex(c => c.id === id)
         if (index !== -1) {
           this.reviewCycles.splice(index, 1)
-          this.cyclePagination.total_items--
+          this.cyclePagination.totalItems--
         }
         
         // Clear current if deleted
@@ -253,6 +261,7 @@ export const useReviewsStore = defineStore('reviews', {
       catch (error) {
         const err = error as { error?: { message?: string } }
         this.error = err?.error?.message || 'Failed to delete review cycle'
+        failed('delete', 'review cycle', 'server')
         throw error
       }
       finally {
@@ -302,7 +311,7 @@ export const useReviewsStore = defineStore('reviews', {
       try {
         const listParams: ReviewListParams = {
           page: params?.page ?? this.reviewPagination.page,
-          per_page: params?.per_page ?? this.reviewPagination.per_page,
+          perPage: params?.perPage ?? this.reviewPagination.perPage,
           ...this.reviewFilters,
           ...params
         }
@@ -342,11 +351,13 @@ export const useReviewsStore = defineStore('reviews', {
     },
 
     async updateReview(id: string, data: ReviewUpdateRequest): Promise<Review> {
+      const { updated, failed } = useNotification()
       this.isLoading = true
       this.error = null
 
       try {
         const response = await reviewsService.updateReview(id, data)
+        updated('Review')
         
         // Update current review
         if (this.currentReview?.id === id) {
@@ -361,7 +372,7 @@ export const useReviewsStore = defineStore('reviews', {
             ...existing,
             status: response.data.status,
             rating: response.data.rating,
-            submitted_at: response.data.submitted_at
+            submittedAt: response.data.submittedAt
           }
         }
         
@@ -370,6 +381,7 @@ export const useReviewsStore = defineStore('reviews', {
       catch (error) {
         const err = error as { error?: { message?: string } }
         this.error = err?.error?.message || 'Failed to update review'
+        failed('update', 'review', 'server')
         throw error
       }
       finally {
@@ -378,19 +390,27 @@ export const useReviewsStore = defineStore('reviews', {
     },
 
     async submitReview(id: string, data: Omit<ReviewUpdateRequest, 'status'>): Promise<Review> {
-      return this.updateReview(id, { ...data, status: 'submitted' })
+      const { success } = useNotification()
+      const result = await this.updateReview(id, { ...data, status: 'submitted' })
+      success('Review submitted successfully')
+      return result
     },
 
     async saveDraft(id: string, data: Omit<ReviewUpdateRequest, 'status'>): Promise<Review> {
-      return this.updateReview(id, { ...data, status: 'in_progress' })
+      const { success } = useNotification()
+      const result = await this.updateReview(id, { ...data, status: 'in_progress' })
+      success('Draft saved successfully')
+      return result
     },
 
     async acknowledgeReview(id: string, data: ReviewAcknowledgeRequest = {}): Promise<Review> {
+      const { success } = useNotification()
       this.isLoading = true
       this.error = null
 
       try {
         const response = await reviewsService.acknowledgeReview(id, data)
+        success('Review acknowledged successfully')
         
         // Update current review
         if (this.currentReview?.id === id) {
@@ -508,7 +528,7 @@ export const useReviewsStore = defineStore('reviews', {
     // Calculate days remaining for a cycle
     getCycleDaysRemaining(cycle: ReviewCycle | ReviewCycleListItem): number {
       const now = new Date()
-      const end = new Date(cycle.end_date)
+      const end = new Date(cycle.endDate)
       const diffTime = end.getTime() - now.getTime()
       return Math.ceil(diffTime / (1000 * 60 * 60 * 24))
     },
@@ -516,7 +536,7 @@ export const useReviewsStore = defineStore('reviews', {
     // Check if cycle is overdue
     isCycleOverdue(cycle: ReviewCycle | ReviewCycleListItem): boolean {
       if (cycle.status === 'completed' || cycle.status === 'cancelled') return false
-      return new Date(cycle.end_date) < new Date()
+      return new Date(cycle.endDate) < new Date()
     }
   }
 })

@@ -45,7 +45,7 @@ const statusColors: Record<string, string> = {
         <div class="flex items-center gap-4 mt-3 text-sm">
           <div class="flex items-center gap-1 text-gray-400">
             <UIcon name="i-heroicons-users" class="w-4 h-4" />
-            <span>{{ department.employee_count || 0 }} employees</span>
+            <span>{{ department.employeeCount || 0 }} employees</span>
           </div>
           
           <div v-if="department.parent" class="flex items-center gap-1 text-gray-500">
@@ -56,11 +56,11 @@ const statusColors: Record<string, string> = {
         
         <div v-if="department.manager" class="flex items-center gap-2 mt-3">
           <UAvatar
-            :alt="`${department.manager.first_name} ${department.manager.last_name}`"
+            :alt="`${department.manager.firstName} ${department.manager.lastName}`"
             size="xs"
           />
           <span class="text-sm text-gray-400">
-            {{ department.manager.first_name }} {{ department.manager.last_name }}
+            {{ department.manager.firstName }} {{ department.manager.lastName }}
           </span>
         </div>
       </div>

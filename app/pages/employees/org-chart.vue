@@ -5,7 +5,7 @@ definePageMeta({
 })
 
 const employeeStore = useEmployeeStore()
-const toast = useToast()
+const { error: notifyError, info } = useNotification()
 
 // Loading state
 const isLoading = ref(true)
@@ -24,11 +24,11 @@ interface OrgEmployee {
 const orgEmployees = computed<OrgEmployee[]>(() => {
   return employeeStore.employees.map((e) => ({
     id: e.id,
-    name: `${e.first_name} ${e.last_name}`,
-    jobTitle: e.job_title,
-    avatarUrl: e.avatar_url,
+    name: `${e.firstName} ${e.lastName}`,
+    jobTitle: e.jobTitle,
+    avatarUrl: e.avatarUrl,
     managerId: e.manager?.id,
-    directReportsCount: e.direct_reports_count ?? 0,
+    directReportsCount: e.directReportsCount ?? 0,
     department: e.department?.name
   }))
 })
@@ -37,14 +37,10 @@ const orgEmployees = computed<OrgEmployee[]>(() => {
 onMounted(async () => {
   isLoading.value = true
   try {
-    await employeeStore.fetchEmployees({ per_page: 100 })
+    await employeeStore.fetchEmployees({ perPage: 100 })
   }
   catch {
-    toast.add({
-      title: 'Error',
-      description: 'Failed to load organization chart data.',
-      color: 'error'
-    })
+    notifyError('Failed to load organization chart data', 'network')
   }
   finally {
     isLoading.value = false
@@ -54,11 +50,7 @@ onMounted(async () => {
 // Handle export
 async function handleExport() {
   // TODO: Implement PNG export
-  toast.add({
-    title: 'Export',
-    description: 'Export functionality coming soon.',
-    color: 'info'
-  })
+  info('Export', 'Export functionality coming soon.')
 }
 
 // Handle node click
@@ -90,7 +82,7 @@ function handleNodeClick(_id: string) {
       <UIcon name="i-heroicons-exclamation-triangle" class="w-12 h-12 text-red-400 mx-auto mb-4" />
       <h3 class="text-lg font-medium text-white mb-2">Failed to load chart</h3>
       <p class="text-gray-400 mb-4">{{ employeeStore.error }}</p>
-      <UButton variant="solid" color="primary" @click="employeeStore.fetchEmployees({ per_page: 100 })">
+      <UButton variant="solid" color="primary" @click="employeeStore.fetchEmployees({ perPage: 100 })">
         Try Again
       </UButton>
     </div>

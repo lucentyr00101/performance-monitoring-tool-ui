@@ -19,11 +19,11 @@ const emit = defineEmits<{
 const name = ref(props.cycle?.name || '')
 const description = ref(props.cycle?.description || '')
 const type = ref<ReviewCycleType>(props.cycle?.type || 'quarterly')
-const startDate = ref(props.cycle?.start_date || '')
-const endDate = ref(props.cycle?.end_date || '')
-const includeSelfAssessment = ref(props.cycle?.settings?.include_self_assessment ?? true)
-const includeManagerReview = ref(props.cycle?.settings?.include_manager_review ?? true)
-const includePeerReview = ref(props.cycle?.settings?.include_peer_review ?? false)
+const startDate = ref(props.cycle?.startDate || '')
+const endDate = ref(props.cycle?.endDate || '')
+const includeSelfAssessment = ref(props.cycle?.settings?.includeSelfAssessment ?? true)
+const includeManagerReview = ref(props.cycle?.settings?.includeManagerReview ?? true)
+const includePeerReview = ref(props.cycle?.settings?.includePeerReview ?? false)
 
 // Validation
 const errors = ref<Record<string, string>>({})
@@ -70,13 +70,13 @@ function handleSubmit() {
     name: name.value.trim(),
     description: description.value.trim() || undefined,
     type: type.value,
-    start_date: startDate.value,
-    end_date: endDate.value,
+    startDate: startDate.value,
+    endDate: endDate.value,
     settings: {
-      include_self_assessment: includeSelfAssessment.value,
-      include_manager_review: includeManagerReview.value,
-      include_peer_review: includePeerReview.value,
-      rating_scale: { min: 1, max: 5 }
+      includeSelfAssessment: includeSelfAssessment.value,
+      includeManagerReview: includeManagerReview.value,
+      includePeerReview: includePeerReview.value,
+      ratingScale: { min: 1, max: 5 }
     }
   }
   

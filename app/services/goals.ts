@@ -21,9 +21,9 @@ interface PaginatedResponse<T> {
   meta: {
     pagination: {
       page: number
-      per_page: number
-      total_items: number
-      total_pages: number
+      perPage: number
+      totalItems: number
+      totalPages: number
     }
     timestamp: string
   }
@@ -34,138 +34,118 @@ interface GoalApprovalResponse {
   status: string
   action: 'approve' | 'reject'
   comment?: string
-  updated_at: string
+  updatedAt: string
 }
 
 interface ProgressUpdateResponse {
   id: string
   progress: number
   status: string
-  updated_at: string
+  updatedAt: string
 }
 
 /**
- * Goals Service
- * 
- * Communicates with the Goals Microservice
- * In mock mode, routes to server/api/goals/*
+ * Goals Service - Communicates with the API Gateway
  */
 export const goalsService = {
   /**
    * List goals with filtering and pagination
-   * GET /api/goals
+   * GET /api/v1/goals
    */
   async list(params: GoalListParams = {}) {
     const queryParams = new URLSearchParams()
     
+    // Query params stay snake_case per API convention
     if (params.page) queryParams.set('page', String(params.page))
-    if (params.per_page) queryParams.set('per_page', String(params.per_page))
+    if (params.perPage) queryParams.set('per_page', String(params.perPage))
     if (params.search) queryParams.set('search', params.search)
     if (params.type) queryParams.set('type', params.type)
     if (params.status) queryParams.set('status', params.status)
-    if (params.owner_id) queryParams.set('owner_id', params.owner_id)
-    if (params.department_id) queryParams.set('department_id', params.department_id)
-    if (params.parent_goal_id) queryParams.set('parent_goal_id', params.parent_goal_id)
-    if (params.due_before) queryParams.set('due_before', params.due_before)
-    if (params.due_after) queryParams.set('due_after', params.due_after)
+    if (params.ownerId) queryParams.set('owner_id', params.ownerId)
+    if (params.departmentId) queryParams.set('department_id', params.departmentId)
+    if (params.parentGoalId) queryParams.set('parent_goal_id', params.parentGoalId)
+    if (params.dueBefore) queryParams.set('due_before', params.dueBefore)
+    if (params.dueAfter) queryParams.set('due_after', params.dueAfter)
     if (params.priority) queryParams.set('priority', params.priority)
-    if (params.sort_by) queryParams.set('sort_by', params.sort_by)
-    if (params.sort_order) queryParams.set('sort_order', params.sort_order)
+    if (params.sortBy) queryParams.set('sort_by', params.sortBy)
+    if (params.sortOrder) queryParams.set('sort_order', params.sortOrder)
 
     const query = queryParams.toString()
     const endpoint = `/goals${query ? `?${query}` : ''}`
     
-    return api.get<PaginatedResponse<GoalListItem>['data']>(endpoint, {
-      service: 'goals'
-    }) as Promise<PaginatedResponse<GoalListItem>>
+    return api.get<PaginatedResponse<GoalListItem>['data']>(endpoint) as Promise<PaginatedResponse<GoalListItem>>
   },
 
   /**
    * Get goal by ID
-   * GET /api/goals/:id
+   * GET /api/v1/goals/:id
    */
   async get(id: string) {
-    return api.get<Goal>(`/goals/${id}`, {
-      service: 'goals'
-    })
+    return api.get<Goal>(`/goals/${id}`)
   },
 
   /**
    * Create a new goal
-   * POST /api/goals
+   * POST /api/v1/goals
    */
   async create(data: GoalCreateRequest) {
-    return api.post<Goal>('/goals', data, {
-      service: 'goals'
-    })
+    return api.post<Goal>('/goals', data)
   },
 
   /**
    * Update a goal
-   * PUT /api/goals/:id
+   * PUT /api/v1/goals/:id
    */
   async update(id: string, data: GoalUpdateRequest) {
-    return api.put<Goal>(`/goals/${id}`, data, {
-      service: 'goals'
-    })
+    return api.put<Goal>(`/goals/${id}`, data)
   },
 
   /**
    * Delete/cancel a goal
-   * DELETE /api/goals/:id
+   * DELETE /api/v1/goals/:id
    */
   async delete(id: string) {
-    return api.delete<undefined>(`/goals/${id}`, {
-      service: 'goals'
-    })
+    return api.delete<undefined>(`/goals/${id}`)
   },
 
   /**
    * Update goal progress
-   * PATCH /api/goals/:id/progress
+   * PATCH /api/v1/goals/:id/progress
    */
   async updateProgress(id: string, data: GoalProgressRequest) {
-    return api.patch<ProgressUpdateResponse>(`/goals/${id}/progress`, data, {
-      service: 'goals'
-    }) as Promise<ApiResponse<ProgressUpdateResponse>>
+    return api.patch<ProgressUpdateResponse>(`/goals/${id}/progress`, data) as Promise<ApiResponse<ProgressUpdateResponse>>
   },
 
   /**
    * Submit goal for approval
-   * POST /api/goals/:id/submit
+   * POST /api/v1/goals/:id/submit
    */
   async submit(id: string) {
-    return api.post<Goal>(`/goals/${id}/submit`, {}, {
-      service: 'goals'
-    })
+    return api.post<Goal>(`/goals/${id}/submit`, {})
   },
 
   /**
    * Approve or reject a goal (manager action)
-   * POST /api/goals/:id/approve
+   * POST /api/v1/goals/:id/approve
    */
   async approve(id: string, action: 'approve' | 'reject', comment?: string) {
-    return api.post<GoalApprovalResponse>(`/goals/${id}/approve`, { action, comment }, {
-      service: 'goals'
-    }) as Promise<ApiResponse<GoalApprovalResponse>>
+    return api.post<GoalApprovalResponse>(`/goals/${id}/approve`, { action, comment }) as Promise<ApiResponse<GoalApprovalResponse>>
   },
 
   /**
    * Get goal progress history
-   * GET /api/goals/:id/history
+   * GET /api/v1/goals/:id/history
    */
-  async getHistory(id: string, params: { page?: number; per_page?: number } = {}) {
+  async getHistory(id: string, params: { page?: number; perPage?: number } = {}) {
     const queryParams = new URLSearchParams()
     
     if (params.page) queryParams.set('page', String(params.page))
-    if (params.per_page) queryParams.set('per_page', String(params.per_page))
+    if (params.perPage) queryParams.set('per_page', String(params.perPage))
 
     const query = queryParams.toString()
     const endpoint = `/goals/${id}/history${query ? `?${query}` : ''}`
     
-    return api.get<PaginatedResponse<ProgressHistory>['data']>(endpoint, {
-      service: 'goals'
-    }) as Promise<PaginatedResponse<ProgressHistory>>
+    return api.get<PaginatedResponse<ProgressHistory>['data']>(endpoint) as Promise<PaginatedResponse<ProgressHistory>>
   },
 
   // ============================================
@@ -174,42 +154,34 @@ export const goalsService = {
 
   /**
    * Get key results for a goal
-   * GET /api/goals/:id/key-results
+   * GET /api/v1/goals/:id/key-results
    */
   async getKeyResults(goalId: string) {
-    return api.get<KeyResult[]>(`/goals/${goalId}/key-results`, {
-      service: 'goals'
-    }) as Promise<ApiResponse<KeyResult[]>>
+    return api.get<KeyResult[]>(`/goals/${goalId}/key-results`) as Promise<ApiResponse<KeyResult[]>>
   },
 
   /**
    * Add key result to a goal
-   * POST /api/goals/:id/key-results
+   * POST /api/v1/goals/:id/key-results
    */
   async addKeyResult(goalId: string, data: KeyResultCreateRequest) {
-    return api.post<KeyResult>(`/goals/${goalId}/key-results`, data, {
-      service: 'goals'
-    })
+    return api.post<KeyResult>(`/goals/${goalId}/key-results`, data)
   },
 
   /**
    * Update a key result
-   * PUT /api/goals/:id/key-results/:krId
+   * PUT /api/v1/goals/:id/key-results/:krId
    */
   async updateKeyResult(goalId: string, krId: string, data: KeyResultUpdateRequest) {
-    return api.put<KeyResult>(`/goals/${goalId}/key-results/${krId}`, data, {
-      service: 'goals'
-    })
+    return api.put<KeyResult>(`/goals/${goalId}/key-results/${krId}`, data)
   },
 
   /**
    * Delete a key result
-   * DELETE /api/goals/:id/key-results/:krId
+   * DELETE /api/v1/goals/:id/key-results/:krId
    */
   async deleteKeyResult(goalId: string, krId: string) {
-    return api.delete<undefined>(`/goals/${goalId}/key-results/${krId}`, {
-      service: 'goals'
-    })
+    return api.delete<undefined>(`/goals/${goalId}/key-results/${krId}`)
   },
 
   // ============================================
@@ -218,30 +190,26 @@ export const goalsService = {
 
   /**
    * List goal templates
-   * GET /api/goals/templates
+   * GET /api/v1/goals/templates
    */
-  async getTemplates(params: { type?: string; category?: string; active_only?: boolean } = {}) {
+  async getTemplates(params: { type?: string; category?: string; activeOnly?: boolean } = {}) {
     const queryParams = new URLSearchParams()
     
     if (params.type) queryParams.set('type', params.type)
     if (params.category) queryParams.set('category', params.category)
-    if (params.active_only !== undefined) queryParams.set('active_only', String(params.active_only))
+    if (params.activeOnly !== undefined) queryParams.set('active_only', String(params.activeOnly))
 
     const query = queryParams.toString()
     const endpoint = `/goals/templates${query ? `?${query}` : ''}`
     
-    return api.get<GoalTemplate[]>(endpoint, {
-      service: 'goals'
-    }) as Promise<ApiResponse<GoalTemplate[]>>
+    return api.get<GoalTemplate[]>(endpoint) as Promise<ApiResponse<GoalTemplate[]>>
   },
 
   /**
    * Get template by ID
-   * GET /api/goals/templates/:id
+   * GET /api/v1/goals/templates/:id
    */
   async getTemplate(id: string) {
-    return api.get<GoalTemplate>(`/goals/templates/${id}`, {
-      service: 'goals'
-    })
+    return api.get<GoalTemplate>(`/goals/templates/${id}`)
   }
 }

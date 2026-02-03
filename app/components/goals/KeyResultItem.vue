@@ -17,8 +17,8 @@ const emit = defineEmits<{
 }>()
 
 const progress = computed(() => {
-  if (props.keyResult.target_value === 0) return 0
-  return Math.min((props.keyResult.current_value / props.keyResult.target_value) * 100, 100)
+  if (props.keyResult.targetValue === 0) return 0
+  return Math.min((props.keyResult.currentValue / props.keyResult.targetValue) * 100, 100)
 })
 
 // Determine display config based on status and progress
@@ -93,7 +93,7 @@ function formatValue(value: number): string {
         <div class="space-y-2">
           <div class="flex items-center justify-between text-sm">
             <span class="text-gray-400">
-              {{ formatValue(keyResult.current_value) }} / {{ formatValue(keyResult.target_value) }}
+              {{ formatValue(keyResult.currentValue) }} / {{ formatValue(keyResult.targetValue) }}
             </span>
             <span
               class="font-medium"
@@ -113,11 +113,11 @@ function formatValue(value: number): string {
 
         <!-- Due Date -->
         <div
-          v-if="keyResult.due_date"
+          v-if="keyResult.dueDate"
           class="flex items-center gap-1.5 mt-3 text-xs text-gray-500"
         >
           <UIcon name="i-heroicons-calendar" class="w-3.5 h-3.5" />
-          <span>Due {{ new Date(keyResult.due_date).toLocaleDateString('en-US', { month: 'short', day: 'numeric' }) }}</span>
+          <span>Due {{ new Date(keyResult.dueDate).toLocaleDateString('en-US', { month: 'short', day: 'numeric' }) }}</span>
         </div>
       </div>
 

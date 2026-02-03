@@ -4,7 +4,6 @@ import type { EmployeeGoalSummary, EmployeeReviewSummary, EmployeeTeamMember, Em
 const route = useRoute()
 const router = useRouter()
 const employeeStore = useEmployeeStore()
-const toast = useToast()
 
 const employeeId = computed(() => route.params.id as string)
 
@@ -113,18 +112,9 @@ async function handleSaveEmployee(data: EmployeeUpdateRequest) {
   try {
     await employeeStore.updateEmployee(employeeId.value, data)
     isEditModalOpen.value = false
-    toast.add({
-      title: 'Profile Updated',
-      description: 'Employee profile has been successfully updated.',
-      color: 'success'
-    })
   }
   catch {
-    toast.add({
-      title: 'Update Failed',
-      description: 'Failed to update employee profile. Please try again.',
-      color: 'error'
-    })
+    // Error notification handled by store
   }
   finally {
     isSaving.value = false
@@ -146,7 +136,7 @@ watch(
 useHead({
   title: computed(() => {
     if (!employeeStore.currentEmployee) return 'Employee Profile'
-    return `${employeeStore.currentEmployee.first_name} ${employeeStore.currentEmployee.last_name} | Employee Profile`
+    return `${employeeStore.currentEmployee.firstName} ${employeeStore.currentEmployee.lastName} | Employee Profile`
   })
 })
 </script>

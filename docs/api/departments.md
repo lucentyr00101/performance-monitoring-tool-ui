@@ -4,6 +4,8 @@
 
 Department management endpoints for organizational structure.
 
+> **Naming Convention:** JSON request/response bodies use camelCase. URL query parameters use snake_case.
+
 **Base Path:** `/departments`
 
 ---
@@ -59,10 +61,10 @@ Authorization: Bearer <token>
       },
       "manager": {
         "id": "550e8400-e29b-41d4-a716-446655440001",
-        "first_name": "John",
-        "last_name": "Doe"
+        "firstName": "John",
+        "lastName": "Doe"
       },
-      "employee_count": 25,
+      "employeeCount": 25,
       "status": "active"
     },
     {
@@ -75,15 +77,15 @@ Authorization: Bearer <token>
       },
       "manager": {
         "id": "550e8400-e29b-41d4-a716-446655440005",
-        "first_name": "Sarah",
-        "last_name": "Connor"
+        "firstName": "Sarah",
+        "lastName": "Connor"
       },
-      "employee_count": 12,
+      "employeeCount": 12,
       "status": "active"
     }
   ],
   "meta": {
-    "total_departments": 15,
+    "totalDepartments": 15,
     "timestamp": "2026-01-28T10:30:00Z"
   }
 }
@@ -119,32 +121,32 @@ Authorization: Bearer <token>
     },
     "manager": {
       "id": "550e8400-e29b-41d4-a716-446655440001",
-      "first_name": "John",
-      "last_name": "Doe",
+      "firstName": "John",
+      "lastName": "Doe",
       "email": "john.doe@company.com",
-      "job_title": "VP of Engineering"
+      "jobTitle": "VP of Engineering"
     },
-    "sub_departments": [
+    "subDepartments": [
       {
         "id": "550e8400-e29b-41d4-a716-446655440012",
         "name": "Frontend Engineering",
-        "employee_count": 8
+        "employeeCount": 8
       },
       {
         "id": "550e8400-e29b-41d4-a716-446655440013",
         "name": "Backend Engineering",
-        "employee_count": 10
+        "employeeCount": 10
       },
       {
         "id": "550e8400-e29b-41d4-a716-446655440014",
         "name": "DevOps",
-        "employee_count": 5
+        "employeeCount": 5
       }
     ],
-    "employee_count": 25,
+    "employeeCount": 25,
     "status": "active",
-    "created_at": "2020-01-15T09:00:00Z",
-    "updated_at": "2026-01-10T14:30:00Z"
+    "createdAt": "2020-01-15T09:00:00Z",
+    "updatedAt": "2026-01-10T14:30:00Z"
   },
   "meta": {
     "timestamp": "2026-01-28T10:30:00Z"
@@ -170,8 +172,8 @@ Content-Type: application/json
 {
   "name": "Data Science",
   "description": "Data science and machine learning team",
-  "parent_id": "550e8400-e29b-41d4-a716-446655440020",
-  "manager_id": "550e8400-e29b-41d4-a716-446655440006"
+  "parentId": "550e8400-e29b-41d4-a716-446655440020",
+  "managerId": "550e8400-e29b-41d4-a716-446655440006"
 }
 ```
 
@@ -181,8 +183,8 @@ Content-Type: application/json
 |-------|------|----------|-------------|
 | `name` | string | Yes | Department name (max 100 chars) |
 | `description` | string | No | Department description |
-| `parent_id` | uuid | No | Parent department ID |
-| `manager_id` | uuid | No | Department manager's employee ID |
+| `parentId` | uuid | No | Parent department ID |
+| `managerId` | uuid | No | Department manager's employee ID |
 
 ### Response
 
@@ -201,13 +203,13 @@ Content-Type: application/json
     },
     "manager": {
       "id": "550e8400-e29b-41d4-a716-446655440006",
-      "first_name": "Emily",
-      "last_name": "Chen"
+      "firstName": "Emily",
+      "lastName": "Chen"
     },
-    "employee_count": 0,
+    "employeeCount": 0,
     "status": "active",
-    "created_at": "2026-01-28T10:30:00Z",
-    "updated_at": "2026-01-28T10:30:00Z"
+    "createdAt": "2026-01-28T10:30:00Z",
+    "updatedAt": "2026-01-28T10:30:00Z"
   },
   "meta": {
     "timestamp": "2026-01-28T10:30:00Z"
@@ -248,7 +250,7 @@ Content-Type: application/json
 {
   "name": "Software Engineering",
   "description": "Updated description for the engineering team",
-  "manager_id": "550e8400-e29b-41d4-a716-446655440007"
+  "managerId": "550e8400-e29b-41d4-a716-446655440007"
 }
 ```
 
@@ -258,8 +260,8 @@ Content-Type: application/json
 |-------|------|-------------|
 | `name` | string | Department name |
 | `description` | string | Department description |
-| `parent_id` | uuid | Parent department ID |
-| `manager_id` | uuid | Manager's employee ID |
+| `parentId` | uuid | Parent department ID |
+| `managerId` | uuid | Manager's employee ID |
 | `status` | string | `active` or `inactive` |
 
 ### Response
@@ -279,12 +281,12 @@ Content-Type: application/json
     },
     "manager": {
       "id": "550e8400-e29b-41d4-a716-446655440007",
-      "first_name": "Michael",
-      "last_name": "Brown"
+      "firstName": "Michael",
+      "lastName": "Brown"
     },
-    "employee_count": 25,
+    "employeeCount": 25,
     "status": "active",
-    "updated_at": "2026-01-28T10:35:00Z"
+    "updatedAt": "2026-01-28T10:35:00Z"
   },
   "meta": {
     "timestamp": "2026-01-28T10:35:00Z"
@@ -388,29 +390,29 @@ Authorization: Bearer <token>
   "data": [
     {
       "id": "550e8400-e29b-41d4-a716-446655440001",
-      "first_name": "John",
-      "last_name": "Doe",
+      "firstName": "John",
+      "lastName": "Doe",
       "email": "john.doe@company.com",
-      "job_title": "VP of Engineering",
+      "jobTitle": "VP of Engineering",
       "status": "active",
-      "avatar_url": "https://cdn.example.com/avatars/john-doe.jpg"
+      "avatarUrl": "https://cdn.example.com/avatars/john-doe.jpg"
     },
     {
       "id": "550e8400-e29b-41d4-a716-446655440003",
-      "first_name": "Alice",
-      "last_name": "Johnson",
+      "firstName": "Alice",
+      "lastName": "Johnson",
       "email": "alice.johnson@company.com",
-      "job_title": "Senior Developer",
+      "jobTitle": "Senior Developer",
       "status": "active",
-      "avatar_url": null
+      "avatarUrl": null
     }
   ],
   "meta": {
     "pagination": {
       "page": 1,
-      "per_page": 20,
-      "total_items": 25,
-      "total_pages": 2
+      "perPage": 20,
+      "totalItems": 25,
+      "totalPages": 2
     },
     "timestamp": "2026-01-28T10:30:00Z"
   }
@@ -441,45 +443,45 @@ Authorization: Bearer <token>
     {
       "id": "550e8400-e29b-41d4-a716-446655440030",
       "name": "Executive",
-      "employee_count": 5,
+      "employeeCount": 5,
       "manager": {
         "id": "550e8400-e29b-41d4-a716-446655440099",
-        "first_name": "David",
-        "last_name": "CEO"
+        "firstName": "David",
+        "lastName": "CEO"
       },
       "children": []
     },
     {
       "id": "550e8400-e29b-41d4-a716-446655440020",
       "name": "Technology",
-      "employee_count": 50,
+      "employeeCount": 50,
       "manager": {
         "id": "550e8400-e29b-41d4-a716-446655440002",
-        "first_name": "Jane",
-        "last_name": "Smith"
+        "firstName": "Jane",
+        "lastName": "Smith"
       },
       "children": [
         {
           "id": "550e8400-e29b-41d4-a716-446655440010",
           "name": "Engineering",
-          "employee_count": 25,
+          "employeeCount": 25,
           "manager": {
             "id": "550e8400-e29b-41d4-a716-446655440001",
-            "first_name": "John",
-            "last_name": "Doe"
+            "firstName": "John",
+            "lastName": "Doe"
           },
           "children": [
             {
               "id": "550e8400-e29b-41d4-a716-446655440012",
               "name": "Frontend Engineering",
-              "employee_count": 8,
+              "employeeCount": 8,
               "manager": null,
               "children": []
             },
             {
               "id": "550e8400-e29b-41d4-a716-446655440013",
               "name": "Backend Engineering",
-              "employee_count": 10,
+              "employeeCount": 10,
               "manager": null,
               "children": []
             }
@@ -488,11 +490,11 @@ Authorization: Bearer <token>
         {
           "id": "550e8400-e29b-41d4-a716-446655440011",
           "name": "Product",
-          "employee_count": 12,
+          "employeeCount": 12,
           "manager": {
             "id": "550e8400-e29b-41d4-a716-446655440005",
-            "first_name": "Sarah",
-            "last_name": "Connor"
+            "firstName": "Sarah",
+            "lastName": "Connor"
           },
           "children": []
         }
@@ -501,18 +503,18 @@ Authorization: Bearer <token>
     {
       "id": "550e8400-e29b-41d4-a716-446655440040",
       "name": "Human Resources",
-      "employee_count": 8,
+      "employeeCount": 8,
       "manager": {
         "id": "550e8400-e29b-41d4-a716-446655440008",
-        "first_name": "Lisa",
-        "last_name": "HR"
+        "firstName": "Lisa",
+        "lastName": "HR"
       },
       "children": []
     }
   ],
   "meta": {
-    "total_departments": 15,
-    "max_depth": 3,
+    "totalDepartments": 15,
+    "maxDepth": 3,
     "timestamp": "2026-01-28T10:30:00Z"
   }
 }
@@ -531,8 +533,8 @@ Authorization: Bearer <token>
 | `description` | string | Department description |
 | `parent` | object | Parent department (id, name) |
 | `manager` | object | Department manager info |
-| `sub_departments` | array | Child departments |
-| `employee_count` | integer | Number of employees |
+| `subDepartments` | array | Child departments |
+| `employeeCount` | integer | Number of employees |
 | `status` | string | active, inactive |
-| `created_at` | datetime | Creation timestamp |
-| `updated_at` | datetime | Last update timestamp |
+| `createdAt` | datetime | Creation timestamp |
+| `updatedAt` | datetime | Last update timestamp |

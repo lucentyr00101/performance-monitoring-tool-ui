@@ -37,7 +37,7 @@ const dateDisplay = computed(() => {
   if (daysLeft.value === 1) return 'Ends tomorrow'
   if (daysLeft.value <= 7) return `${daysLeft.value} days left`
   
-  return `Ends ${formatDate(props.cycle.end_date)}`
+  return `Ends ${formatDate(props.cycle.endDate)}`
 })
 
 const dateColor = computed(() => {
@@ -49,14 +49,14 @@ const dateColor = computed(() => {
 })
 
 const selfProgress = computed(() => {
-  if (!props.cycle.stats.by_type?.self) return 0
-  const { total, completed } = props.cycle.stats.by_type.self
+  if (!props.cycle.stats.byType?.self) return 0
+  const { total, completed } = props.cycle.stats.byType.self
   return total > 0 ? Math.round((completed / total) * 100) : 0
 })
 
 const managerProgress = computed(() => {
-  if (!props.cycle.stats.by_type?.manager) return 0
-  const { total, completed } = props.cycle.stats.by_type.manager
+  if (!props.cycle.stats.byType?.manager) return 0
+  const { total, completed } = props.cycle.stats.byType.manager
   return total > 0 ? Math.round((completed / total) * 100) : 0
 })
 </script>
@@ -120,12 +120,12 @@ const managerProgress = computed(() => {
     <div v-else-if="cycle.status === 'completed'" class="mb-4">
       <div class="flex items-center justify-between text-xs mb-1">
         <span class="text-gray-400">Completion Rate</span>
-        <span class="text-emerald-400">{{ cycle.stats.completion_rate }}%</span>
+        <span class="text-emerald-400">{{ cycle.stats.completionRate }}%</span>
       </div>
       <div class="h-1.5 bg-gray-800 rounded-full overflow-hidden">
         <div 
           class="h-full bg-emerald-500 rounded-full"
-          :style="{ width: `${cycle.stats.completion_rate}%` }"
+          :style="{ width: `${cycle.stats.completionRate}%` }"
         />
       </div>
     </div>
@@ -134,11 +134,11 @@ const managerProgress = computed(() => {
     <div class="flex items-center gap-4 text-xs text-gray-400 mb-3">
       <div class="flex items-center gap-1">
         <UIcon name="i-heroicons-document-text" class="w-3.5 h-3.5" />
-        <span>{{ cycle.stats.total_reviews }} reviews</span>
+        <span>{{ cycle.stats.totalReviews }} reviews</span>
       </div>
-      <div v-if="cycle.stats.average_rating" class="flex items-center gap-1">
+      <div v-if="cycle.stats.averageRating" class="flex items-center gap-1">
         <UIcon name="i-heroicons-star" class="w-3.5 h-3.5 text-yellow-400" />
-        <span>{{ cycle.stats.average_rating.toFixed(1) }} avg</span>
+        <span>{{ cycle.stats.averageRating.toFixed(1) }} avg</span>
       </div>
     </div>
 
@@ -148,7 +148,7 @@ const managerProgress = computed(() => {
     <!-- Footer: Dates -->
     <div class="flex items-center justify-between text-xs">
       <span class="text-gray-500">
-        {{ formatDate(cycle.start_date) }} - {{ formatDate(cycle.end_date) }}
+        {{ formatDate(cycle.startDate) }} - {{ formatDate(cycle.endDate) }}
       </span>
       <span :class="dateColor">
         {{ dateDisplay }}

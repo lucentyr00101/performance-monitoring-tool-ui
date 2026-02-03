@@ -27,9 +27,9 @@ const form = reactive({
   type: (props.goal?.type || 'individual') as GoalType,
   priority: (props.goal?.priority || 'medium') as GoalPriority,
   visibility: (props.goal?.visibility || 'private') as GoalVisibility,
-  due_date: props.goal?.due_date || '',
-  start_date: props.goal?.start_date || '',
-  parent_goal_id: props.goal?.parent_goal_id || '',
+  dueDate: props.goal?.dueDate || '',
+  startDate: props.goal?.startDate || '',
+  parentGoalId: props.goal?.parentGoalId || '',
   tags: props.goal?.tags || []
 })
 
@@ -57,14 +57,14 @@ const visibilityOptions = [
 // Validation
 const errors = reactive({
   title: '',
-  due_date: '',
-  date_range: ''
+  dueDate: '',
+  dateRange: ''
 })
 
 function validate(): boolean {
   errors.title = ''
-  errors.due_date = ''
-  errors.date_range = ''
+  errors.dueDate = ''
+  errors.dateRange = ''
   
   if (!form.title.trim()) {
     errors.title = 'Title is required'
@@ -72,22 +72,22 @@ function validate(): boolean {
     errors.title = 'Title must be at least 5 characters'
   }
   
-  if (!form.due_date) {
-    errors.due_date = 'Due date is required'
-  } else if (new Date(form.due_date) < new Date()) {
-    errors.due_date = 'Due date must be in the future'
+  if (!form.dueDate) {
+    errors.dueDate = 'Due date is required'
+  } else if (new Date(form.dueDate) < new Date()) {
+    errors.dueDate = 'Due date must be in the future'
   }
   
   // Validate start date is before due date
-  if (form.start_date && form.due_date) {
-    const startDate = new Date(form.start_date)
-    const dueDate = new Date(form.due_date)
+  if (form.startDate && form.dueDate) {
+    const startDate = new Date(form.startDate)
+    const dueDate = new Date(form.dueDate)
     if (startDate >= dueDate) {
-      errors.date_range = 'Start date must be before due date'
+      errors.dateRange = 'Start date must be before due date'
     }
   }
   
-  return !errors.title && !errors.due_date && !errors.date_range
+  return !errors.title && !errors.dueDate && !errors.dateRange
 }
 
 async function handleSubmit() {
@@ -99,12 +99,12 @@ async function handleSubmit() {
       title: form.title.trim(),
       description: form.description.trim() || undefined,
       type: form.type,
-      owner_id: user.value?.id || '',
+      ownerId: user.value?.id || '',
       priority: form.priority,
       visibility: form.visibility,
-      due_date: form.due_date,
-      start_date: form.start_date || undefined,
-      parent_goal_id: form.parent_goal_id || undefined,
+      dueDate: form.dueDate,
+      startDate: form.startDate || undefined,
+      parentGoalId: form.parentGoalId || undefined,
       tags: form.tags.length > 0 ? form.tags : undefined
     }
     emit('submit', data)
@@ -126,7 +126,7 @@ function applyTemplate(templateId: string) {
   if (template) {
     form.title = template.title
     form.description = template.description || ''
-    form.priority = template.default_priority || 'medium'
+    form.priority = template.defaultPriority || 'medium'
     showTemplates.value = false
   }
 }
@@ -222,16 +222,16 @@ const minDate = computed(() => {
 
     <!-- Dates Row -->
     <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-      <UFormField label="Start Date" :error="errors.date_range">
+      <UFormField label="Start Date" :error="errors.dateRange">
         <UInput
-          v-model="form.start_date"
+          v-model="form.startDate"
           type="date"
         />
       </UFormField>
 
-      <UFormField label="Due Date" :error="errors.due_date" required>
+      <UFormField label="Due Date" :error="errors.dueDate" required>
         <UInput
-          v-model="form.due_date"
+          v-model="form.dueDate"
           type="date"
           :min="minDate"
         />
@@ -239,8 +239,8 @@ const minDate = computed(() => {
     </div>
 
     <!-- Date Range Error -->
-    <p v-if="errors.date_range" class="text-red-400 text-sm -mt-4">
-      {{ errors.date_range }}
+    <p v-if="errors.dateRange" class="text-red-400 text-sm -mt-4">
+      {{ errors.dateRange }}
     </p>
 
     <!-- Visibility -->
