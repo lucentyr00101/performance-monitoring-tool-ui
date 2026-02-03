@@ -39,10 +39,10 @@ const showFilters = ref(false)
 
 // Sort options
 const sortOptions = [
-  { label: 'Last Name', value: 'lastName' },
-  { label: 'First Name', value: 'firstName' },
+  { label: 'Last Name', value: 'last_name' },
+  { label: 'First Name', value: 'first_name' },
   { label: 'Department', value: 'department' },
-  { label: 'Hire Date', value: 'hireDate' }
+  { label: 'Hire Date', value: 'hire_date' }
 ]
 
 // Get managers list from employees

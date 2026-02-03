@@ -99,12 +99,12 @@ async function handleSubmit() {
       title: form.title.trim(),
       description: form.description.trim() || undefined,
       type: form.type,
-      ownerId: user.value?.id || '',
+      owner_id: user.value?.id || '',
       priority: form.priority,
       visibility: form.visibility,
-      dueDate: form.dueDate,
-      startDate: form.startDate || undefined,
-      parentGoalId: form.parentGoalId || undefined,
+      due_date: form.dueDate,
+      start_date: form.startDate || undefined,
+      parent_goal_id: form.parentGoalId || undefined,
       tags: form.tags.length > 0 ? form.tags : undefined
     }
     emit('submit', data)

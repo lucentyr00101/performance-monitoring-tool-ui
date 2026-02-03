@@ -22,8 +22,8 @@ const isEditMode = computed(() => !!props.department)
 const formData = ref<DepartmentCreateRequest>({
   name: '',
   description: '',
-  parentId: undefined,
-  managerId: undefined
+  parent_id: undefined,
+  manager_id: undefined
 })
 
 // Form validation
@@ -38,15 +38,15 @@ watch(
         formData.value = {
           name: props.department.name,
           description: props.department.description || '',
-          parentId: props.department.parent?.id,
-          managerId: props.department.manager?.id
+          parent_id: props.department.parent?.id,
+          manager_id: props.department.manager?.id
         }
       } else {
         formData.value = {
           name: '',
           description: '',
-          parentId: undefined,
-          managerId: undefined
+          parent_id: undefined,
+          manager_id: undefined
         }
       }
       errors.value = {}
@@ -162,7 +162,7 @@ function handleClose() {
             <div>
               <label class="block text-sm font-medium text-gray-300 mb-1">Parent Department</label>
               <USelectMenu
-                v-model="formData.parentId"
+                v-model="formData.parent_id"
                 :items="[{ value: undefined, label: 'None (Top Level)' }, ...parentOptions]"
                 placeholder="Select parent department"
                 value-key="value"
@@ -175,7 +175,7 @@ function handleClose() {
             <div>
               <label class="block text-sm font-medium text-gray-300 mb-1">Department Head</label>
               <USelectMenu
-                v-model="formData.managerId"
+                v-model="formData.manager_id"
                 :items="[{ value: undefined, label: 'No manager assigned' }, ...managerOptions]"
                 placeholder="Select department head"
                 value-key="value"

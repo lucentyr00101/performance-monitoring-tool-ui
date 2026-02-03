@@ -126,14 +126,14 @@ export interface GoalCreateRequest {
   title: string
   description?: string
   type: GoalType
-  ownerId: string
-  parentGoalId?: string
+  owner_id: string
+  parent_goal_id?: string
   priority?: GoalPriority
   visibility?: GoalVisibility
-  startDate?: string
-  dueDate: string
+  start_date?: string
+  due_date: string
   tags?: string[]
-  keyResults?: KeyResultCreateRequest[]
+  key_results?: KeyResultCreateRequest[]
 }
 
 // Goal update request
@@ -144,10 +144,10 @@ export interface GoalUpdateRequest {
   status?: GoalStatus
   priority?: GoalPriority
   visibility?: GoalVisibility
-  ownerId?: string
-  parentGoalId?: string | null
-  startDate?: string
-  dueDate?: string
+  owner_id?: string
+  parent_goal_id?: string | null
+  start_date?: string
+  due_date?: string
   tags?: string[]
 }
 
@@ -161,20 +161,20 @@ export interface GoalProgressRequest {
 export interface KeyResultCreateRequest {
   title: string
   description?: string
-  targetValue: number
-  currentValue?: number
+  target_value: number
+  current_value?: number
   unit?: string
-  dueDate?: string
+  due_date?: string
 }
 
 // Key result update request
 export interface KeyResultUpdateRequest {
   title?: string
   description?: string
-  targetValue?: number
-  currentValue?: number
+  target_value?: number
+  current_value?: number
   unit?: string
-  dueDate?: string
+  due_date?: string
   status?: KeyResultStatus
 }
 
@@ -252,13 +252,13 @@ export interface GoalListResponse {
   success: boolean
   data: GoalListItem[]
   meta: {
+    timestamp: string
     pagination: {
       page: number
-      perPage: number
-      totalItems: number
-      totalPages: number
+      per_page: number
+      total_items: number
+      total_pages: number
     }
-    timestamp: string
   }
 }
 
@@ -298,13 +298,13 @@ export interface ProgressHistoryResponse {
   success: boolean
   data: ProgressHistory[]
   meta: {
+    timestamp: string
     pagination: {
       page: number
-      perPage: number
-      totalItems: number
-      totalPages: number
+      per_page: number
+      total_items: number
+      total_pages: number
     }
-    timestamp: string
   }
 }
 

@@ -6,7 +6,8 @@ import type {
   DepartmentListParams,
   DepartmentCreateRequest,
   DepartmentUpdateRequest,
-  DepartmentHierarchyNode
+  DepartmentHierarchyNode,
+  DepartmentEmployeesResponse
 } from '~/types/department'
 import type { EmployeeListItem } from '~/types/employee'
 
@@ -25,20 +26,6 @@ interface DepartmentHierarchyResponse {
   meta: {
     totalDepartments: number
     maxDepth: number
-    timestamp: string
-  }
-}
-
-interface DepartmentEmployeesResponse {
-  success: boolean
-  data: EmployeeListItem[]
-  meta: {
-    pagination: {
-      page: number
-      perPage: number
-      totalItems: number
-      totalPages: number
-    }
     timestamp: string
   }
 }

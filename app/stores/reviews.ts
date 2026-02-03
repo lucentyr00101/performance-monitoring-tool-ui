@@ -141,7 +141,13 @@ export const useReviewsStore = defineStore('reviews', {
         const response = await reviewsService.listCycles(listParams)
         
         this.reviewCycles = response.data
-        this.cyclePagination = response.meta.pagination
+        // Transform snake_case pagination to camelCase
+        this.cyclePagination = {
+          page: response.meta.pagination.page,
+          perPage: response.meta.pagination.per_page,
+          totalItems: response.meta.pagination.total_items,
+          totalPages: response.meta.pagination.total_pages
+        }
       }
       catch (error) {
         const err = error as { error?: { message?: string } }
@@ -319,7 +325,13 @@ export const useReviewsStore = defineStore('reviews', {
         const response = await reviewsService.listReviews(listParams)
         
         this.reviews = response.data
-        this.reviewPagination = response.meta.pagination
+        // Transform snake_case pagination to camelCase
+        this.reviewPagination = {
+          page: response.meta.pagination.page,
+          perPage: response.meta.pagination.per_page,
+          totalItems: response.meta.pagination.total_items,
+          totalPages: response.meta.pagination.total_pages
+        }
       }
       catch (error) {
         const err = error as { error?: { message?: string } }

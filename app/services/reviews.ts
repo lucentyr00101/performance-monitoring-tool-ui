@@ -19,13 +19,13 @@ interface PaginatedResponse<T> {
   success: boolean
   data: T[]
   meta: {
+    timestamp: string
     pagination: {
       page: number
-      perPage: number
-      totalItems: number
-      totalPages: number
+      per_page: number
+      total_items: number
+      total_pages: number
     }
-    timestamp: string
   }
 }
 

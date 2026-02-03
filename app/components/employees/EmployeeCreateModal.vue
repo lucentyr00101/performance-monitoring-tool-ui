@@ -15,16 +15,16 @@ const emit = defineEmits<{
 
 // Form data
 const formData = ref<EmployeeCreateRequest>({
-  firstName: '',
-  lastName: '',
+  first_name: '',
+  last_name: '',
   email: '',
   phone: '',
-  jobTitle: '',
-  departmentId: undefined,
-  hireDate: new Date().toISOString().split('T')[0],
-  employmentType: 'full-time',
-  createUserAccount: false,
-  userRole: 'employee'
+  job_title: '',
+  department_id: undefined,
+  hire_date: new Date().toISOString().split('T')[0],
+  employment_type: 'full-time',
+  create_user_account: false,
+  user_role: 'employee'
 })
 
 // Form validation - declare before watch
@@ -36,16 +36,16 @@ watch(
   (open) => {
     if (open) {
       formData.value = {
-        firstName: '',
-        lastName: '',
+        first_name: '',
+        last_name: '',
         email: '',
         phone: '',
-        jobTitle: '',
-        departmentId: undefined,
-        hireDate: new Date().toISOString().split('T')[0],
-        employmentType: 'full-time',
-        createUserAccount: false,
-        userRole: 'employee'
+        job_title: '',
+        department_id: undefined,
+        hire_date: new Date().toISOString().split('T')[0],
+        employment_type: 'full-time',
+        create_user_account: false,
+        user_role: 'employee'
       }
       errors.value = {}
     }
@@ -65,11 +65,11 @@ onMounted(() => {
 function validateForm(): boolean {
   errors.value = {}
   
-  if (!formData.value.firstName?.trim()) {
+  if (!formData.value.first_name?.trim()) {
     errors.value.firstName = 'First name is required'
   }
   
-  if (!formData.value.lastName?.trim()) {
+  if (!formData.value.last_name?.trim()) {
     errors.value.lastName = 'Last name is required'
   }
   
@@ -83,7 +83,7 @@ function validateForm(): boolean {
     errors.value.phone = 'Invalid phone number format'
   }
   
-  if (!formData.value.hireDate) {
+  if (!formData.value.hire_date) {
     errors.value.hireDate = 'Hire date is required'
   }
   
@@ -147,7 +147,7 @@ const userRoleOptions = [
                   First Name <span class="text-red-400">*</span>
                 </label>
                 <UInput
-                  v-model="formData.firstName"
+                  v-model="formData.first_name"
                   placeholder="First name"
                   :color="errors.firstName ? 'error' : 'neutral'"
                 />
@@ -160,7 +160,7 @@ const userRoleOptions = [
                   Last Name <span class="text-red-400">*</span>
                 </label>
                 <UInput
-                  v-model="formData.lastName"
+                  v-model="formData.last_name"
                   placeholder="Last name"
                   :color="errors.lastName ? 'error' : 'neutral'"
                 />
@@ -209,7 +209,7 @@ const userRoleOptions = [
             <div>
               <label class="block text-sm font-medium text-gray-300 mb-1">Job Title</label>
               <UInput
-                v-model="formData.jobTitle"
+                v-model="formData.job_title"
                 placeholder="e.g., Senior Developer"
               />
             </div>
@@ -217,7 +217,7 @@ const userRoleOptions = [
             <div>
               <label class="block text-sm font-medium text-gray-300 mb-1">Department</label>
               <USelectMenu
-                v-model="formData.departmentId"
+                v-model="formData.department_id"
                 :items="departmentStore.departments.map(d => ({ value: d.id, label: d.name }))"
                 placeholder="Select department"
                 value-key="value"
@@ -230,7 +230,7 @@ const userRoleOptions = [
                   Hire Date <span class="text-red-400">*</span>
                 </label>
                 <UInput
-                  v-model="formData.hireDate"
+                  v-model="formData.hire_date"
                   type="date"
                   :color="errors.hireDate ? 'error' : 'neutral'"
                 />
@@ -241,7 +241,7 @@ const userRoleOptions = [
               <div>
                 <label class="block text-sm font-medium text-gray-300 mb-1">Employment Type</label>
                 <USelectMenu
-                  v-model="formData.employmentType"
+                  v-model="formData.employment_type"
                   :items="employmentTypeOptions"
                   value-key="value"
                 />
@@ -258,7 +258,7 @@ const userRoleOptions = [
           <div class="space-y-4">
             <div class="flex items-center gap-3">
               <UCheckbox
-                v-model="formData.createUserAccount"
+                v-model="formData.create_user_account"
                 name="createUserAccount"
               />
               <label class="text-sm text-gray-300">
@@ -266,10 +266,10 @@ const userRoleOptions = [
               </label>
             </div>
 
-            <div v-if="formData.createUserAccount">
+            <div v-if="formData.create_user_account">
               <label class="block text-sm font-medium text-gray-300 mb-1">User Role</label>
               <USelectMenu
-                v-model="formData.userRole"
+                v-model="formData.user_role"
                 :items="userRoleOptions"
                 value-key="value"
               />

@@ -219,8 +219,8 @@ export interface ReviewCycleCreateRequest {
   name: string
   description?: string
   type: ReviewCycleType
-  startDate: string
-  endDate: string
+  start_date: string
+  end_date: string
   settings?: Partial<CycleSettings>
   departments?: string[]
 }
@@ -230,8 +230,8 @@ export interface ReviewCycleUpdateRequest {
   name?: string
   description?: string
   type?: ReviewCycleType
-  startDate?: string
-  endDate?: string
+  start_date?: string
+  end_date?: string
   settings?: Partial<CycleSettings>
   departments?: string[]
 }
@@ -239,7 +239,7 @@ export interface ReviewCycleUpdateRequest {
 // Review update/submit request
 export interface ReviewUpdateRequest {
   rating?: number
-  ratingsBreakdown?: Record<string, number>
+  ratings_breakdown?: Record<string, number>
   strengths?: string
   improvements?: string
   comments?: string
@@ -248,7 +248,7 @@ export interface ReviewUpdateRequest {
 
 // Review acknowledge request
 export interface ReviewAcknowledgeRequest {
-  employeeComments?: string
+  employee_comments?: string
 }
 
 // Launch cycle response
@@ -334,13 +334,13 @@ export interface ReviewCycleListResponse {
   success: boolean
   data: ReviewCycleListItem[]
   meta: {
+    timestamp: string
     pagination: {
       page: number
-      perPage: number
-      totalItems: number
-      totalPages: number
+      per_page: number
+      total_items: number
+      total_pages: number
     }
-    timestamp: string
   }
 }
 
@@ -356,13 +356,13 @@ export interface ReviewListResponse {
   success: boolean
   data: ReviewListItem[]
   meta: {
+    timestamp: string
     pagination: {
       page: number
-      perPage: number
-      totalItems: number
-      totalPages: number
+      per_page: number
+      total_items: number
+      total_pages: number
     }
-    timestamp: string
   }
 }
 

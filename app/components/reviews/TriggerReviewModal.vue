@@ -117,10 +117,10 @@ async function handleSubmit() {
   try {
     const employeeId = props.employee?.id || selectedEmployeeId.value
     const result = await adhocReviewsStore.triggerAdhocReview({
-      employeeId: employeeId,
-      dueDate: dueDate.value,
+      employee_id: employeeId,
+      due_date: dueDate.value,
       reason: reason.value || undefined,
-      reviewFormId: selectedFormId.value
+      review_form_id: selectedFormId.value
     })
 
     const empName = selectedEmployee.value 

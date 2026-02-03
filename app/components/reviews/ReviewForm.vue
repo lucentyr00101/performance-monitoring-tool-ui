@@ -56,7 +56,7 @@ const isValid = computed(() => {
 function getFormData(): ReviewUpdateRequest {
   return {
     rating: rating.value,
-    ratingsBreakdown: {
+    ratings_breakdown: {
       technicalSkills: technicalSkills.value,
       communication: communication.value,
       teamwork: teamwork.value,

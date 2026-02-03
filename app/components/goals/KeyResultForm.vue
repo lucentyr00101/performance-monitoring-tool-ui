@@ -70,10 +70,10 @@ async function handleSubmit() {
     const data: KeyResultCreateRequest = {
       title: form.title.trim(),
       description: form.description.trim() || undefined,
-      targetValue: Number(form.targetValue),
-      currentValue: Number(form.currentValue),
+      target_value: Number(form.targetValue),
+      current_value: Number(form.currentValue),
       unit: form.unit,
-      dueDate: form.dueDate || undefined
+      due_date: form.dueDate || undefined
     }
     emit('submit', data)
   } finally {

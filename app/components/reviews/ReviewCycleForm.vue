@@ -70,8 +70,8 @@ function handleSubmit() {
     name: name.value.trim(),
     description: description.value.trim() || undefined,
     type: type.value,
-    startDate: startDate.value,
-    endDate: endDate.value,
+    start_date: startDate.value,
+    end_date: endDate.value,
     settings: {
       includeSelfAssessment: includeSelfAssessment.value,
       includeManagerReview: includeManagerReview.value,

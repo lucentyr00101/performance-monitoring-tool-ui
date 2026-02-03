@@ -94,7 +94,13 @@ export const useAdhocReviewsStore = defineStore('adhoc-reviews', {
         const response = await adhocReviewsService.listAdhocReviews(listParams)
         
         this.adhocReviews = response.data
-        this.pagination = response.meta.pagination
+        // Transform snake_case pagination to camelCase
+        this.pagination = {
+          page: response.meta.pagination.page,
+          perPage: response.meta.pagination.per_page,
+          totalItems: response.meta.pagination.total_items,
+          totalPages: response.meta.pagination.total_pages
+        }
       }
       catch (error) {
         const err = error as { error?: { message?: string } }

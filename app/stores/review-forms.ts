@@ -98,7 +98,13 @@ export const useReviewFormsStore = defineStore('review-forms', {
         const response = await reviewFormsService.listForms(listParams)
         
         this.forms = response.data
-        this.pagination = response.meta.pagination
+        // Transform snake_case pagination to camelCase
+        this.pagination = {
+          page: response.meta.pagination.page,
+          perPage: response.meta.pagination.per_page,
+          totalItems: response.meta.pagination.total_items,
+          totalPages: response.meta.pagination.total_pages
+        }
       }
       catch (error) {
         const err = error as { error?: { message?: string } }

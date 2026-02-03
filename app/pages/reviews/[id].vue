@@ -81,7 +81,7 @@ async function handleAcknowledge() {
   isAcknowledging.value = true
   try {
     await acknowledgeReview(currentReview.value.id, { 
-      employeeComments: employeeComments.value.trim() || undefined 
+      employee_comments: employeeComments.value.trim() || undefined 
     })
     isAcknowledgeModalOpen.value = false
     await loadData()

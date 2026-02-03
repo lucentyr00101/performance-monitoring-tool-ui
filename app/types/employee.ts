@@ -110,36 +110,36 @@ export interface EmployeeListParams extends EmployeeFilters {
   sortOrder?: 'asc' | 'desc'
 }
 
-// Employee create/update request
+// Employee create/update request (snake_case for API)
 export interface EmployeeCreateRequest {
-  firstName: string
-  lastName: string
+  first_name: string
+  last_name: string
   email: string
   phone?: string
-  jobTitle?: string
-  departmentId?: string
-  managerId?: string
-  hireDate?: string
-  employmentType?: EmploymentType
-  avatarUrl?: string
-  createUserAccount?: boolean
-  userRole?: UserRole
+  job_title?: string
+  department_id?: string
+  manager_id?: string
+  hire_date?: string
+  employment_type?: EmploymentType
+  avatar_url?: string
+  create_user_account?: boolean
+  user_role?: UserRole
 }
 
 export interface EmployeeUpdateRequest {
-  firstName?: string
-  lastName?: string
+  first_name?: string
+  last_name?: string
   email?: string
   phone?: string
-  jobTitle?: string
-  departmentId?: string
-  managerId?: string
-  hireDate?: string
-  employmentType?: EmploymentType
-  employmentStatus?: EmploymentStatus
-  workLocation?: WorkLocation
-  careerLevel?: string
-  avatarUrl?: string
+  job_title?: string
+  department_id?: string
+  manager_id?: string
+  hire_date?: string
+  employment_type?: EmploymentType
+  employment_status?: EmploymentStatus
+  work_location?: WorkLocation
+  career_level?: string
+  avatar_url?: string
 }
 
 // Employee goals summary
@@ -214,18 +214,18 @@ export interface EmployeeState {
   error: string | null
 }
 
-// API Response types
+// API Response types (snake_case as returned by API)
 export interface EmployeeListResponse {
   success: boolean
   data: EmployeeListItem[]
   meta: {
+    timestamp: string
     pagination: {
       page: number
-      perPage: number
-      totalItems: number
-      totalPages: number
+      per_page: number
+      total_items: number
+      total_pages: number
     }
-    timestamp: string
   }
 }
 
@@ -241,13 +241,13 @@ export interface EmployeeGoalsResponse {
   success: boolean
   data: EmployeeGoalSummary[]
   meta: {
+    timestamp: string
     pagination: {
       page: number
-      perPage: number
-      totalItems: number
-      totalPages: number
+      per_page: number
+      total_items: number
+      total_pages: number
     }
-    timestamp: string
   }
 }
 

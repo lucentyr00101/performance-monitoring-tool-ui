@@ -122,10 +122,10 @@ export interface AdhocReviewListParams extends AdhocReviewFilters {
 
 // Trigger ad-hoc review request
 export interface TriggerAdhocReviewRequest {
-  employeeId: string
-  dueDate?: string
+  employee_id: string
+  due_date?: string
   reason?: string
-  reviewFormId?: string | null
+  review_form_id?: string | null
   settings?: Partial<AdhocReviewSettings>
 }
 
@@ -192,13 +192,13 @@ export interface AdhocReviewListResponse {
   success: boolean
   data: AdhocReviewListItem[]
   meta: {
+    timestamp: string
     pagination: {
       page: number
-      perPage: number
-      totalItems: number
-      totalPages: number
+      per_page: number
+      total_items: number
+      total_pages: number
     }
-    timestamp: string
   }
 }
 

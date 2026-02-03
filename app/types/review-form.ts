@@ -200,9 +200,9 @@ export interface ReviewFormCloneRequest {
 // Assign form to departments request
 export interface ReviewFormAssignRequest {
   departments: {
-    departmentId: string
-    formType?: ReviewerType
-    effectiveDate?: string
+    department_id: string
+    form_type?: ReviewerType
+    effective_date?: string
   }[]
 }
 
@@ -238,13 +238,13 @@ export interface ReviewFormListResponse {
   success: boolean
   data: ReviewFormListItem[]
   meta: {
+    timestamp: string
     pagination: {
       page: number
-      perPage: number
-      totalItems: number
-      totalPages: number
+      per_page: number
+      total_items: number
+      total_pages: number
     }
-    timestamp: string
   }
 }
 

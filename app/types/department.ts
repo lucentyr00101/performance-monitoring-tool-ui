@@ -72,16 +72,16 @@ export interface DepartmentListParams extends DepartmentFilters {
 export interface DepartmentCreateRequest {
   name: string
   description?: string
-  parentId?: string
-  managerId?: string
+  parent_id?: string
+  manager_id?: string
 }
 
 // Department update request
 export interface DepartmentUpdateRequest {
   name?: string
   description?: string
-  parentId?: string
-  managerId?: string
+  parent_id?: string
+  manager_id?: string
   status?: DepartmentStatus
 }
 
@@ -131,12 +131,12 @@ export interface DepartmentEmployeesResponse {
   success: boolean
   data: EmployeeListItem[]
   meta: {
+    timestamp: string
     pagination: {
       page: number
-      perPage: number
-      totalItems: number
-      totalPages: number
+      per_page: number
+      total_items: number
+      total_pages: number
     }
-    timestamp: string
   }
 }
