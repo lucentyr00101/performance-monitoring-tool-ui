@@ -13,6 +13,23 @@ import { dashboardService } from '~/services/dashboard'
 
 const REFRESH_INTERVAL = 5 * 60 * 1000 // 5 minutes
 
+// Reactive clock tick for lastRefreshedText — updates every 60s
+let _tickInterval: ReturnType<typeof setInterval> | null = null
+const _tick = ref(0)
+
+if (import.meta.client) {
+  _tickInterval = setInterval(() => { _tick.value++ }, 60000)
+}
+
+if (import.meta.hot) {
+  import.meta.hot.dispose(() => {
+    if (_tickInterval) {
+      clearInterval(_tickInterval)
+      _tickInterval = null
+    }
+  })
+}
+
 interface DashboardState {
   data: DashboardData | null
   isLoading: boolean
@@ -75,6 +92,8 @@ export const useDashboardStore = defineStore('dashboard', {
 
     // Time since last refresh in human readable format
     lastRefreshedText: (state): string => {
+      // Reference _tick to trigger reactivity on interval
+      void _tick.value
       if (!state.lastRefreshed) return 'Never'
       const seconds = Math.floor((Date.now() - state.lastRefreshed.getTime()) / 1000)
       if (seconds < 60) return 'Just now'

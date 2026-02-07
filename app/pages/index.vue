@@ -100,11 +100,11 @@ const userName = computed(() => {
     </UCard>
 
     <!-- Role-specific dashboards -->
-    <template v-if="!error">
+    <UiErrorBoundary v-if="!error" title="Dashboard failed to load" :show-retry="true" @retry="handleRefresh">
       <!-- Employee Dashboard -->
       <DashboardEmployeeDashboard
-        v-if="userRole === 'employee'"
-        :data="employeeData!"
+        v-if="userRole === 'employee' && employeeData"
+        :data="employeeData"
         :loading="isLoading"
         :user-name="userName"
         @refresh="handleRefresh"
@@ -112,44 +112,53 @@ const userName = computed(() => {
 
       <!-- Manager Dashboard -->
       <DashboardManagerDashboard
-        v-else-if="userRole === 'manager'"
-        :data="managerData!"
+        v-else-if="userRole === 'manager' && managerData"
+        :data="managerData"
         :loading="isLoading"
         @refresh="handleRefresh"
       />
 
       <!-- HR Dashboard -->
       <DashboardHRDashboard
-        v-else-if="userRole === 'hr'"
-        :data="hrData!"
+        v-else-if="userRole === 'hr' && hrData"
+        :data="hrData"
         :loading="isLoading"
         @refresh="handleRefresh"
       />
 
       <!-- C-Suite Dashboard -->
       <DashboardCSuiteDashboard
-        v-else-if="userRole === 'csuite'"
-        :data="csuiteData!"
+        v-else-if="userRole === 'csuite' && csuiteData"
+        :data="csuiteData"
         :loading="isLoading"
         @refresh="handleRefresh"
       />
 
       <!-- Admin Dashboard -->
       <DashboardAdminDashboard
-        v-else-if="userRole === 'admin'"
-        :data="adminData!"
+        v-else-if="userRole === 'admin' && adminData"
+        :data="adminData"
         :loading="isLoading"
         @refresh="handleRefresh"
       />
 
+      <!-- Loading state when data hasn't arrived yet -->
+      <div v-else-if="isLoading" class="space-y-4">
+        <div v-for="i in 3" :key="i" class="bg-gray-900 border border-gray-800 rounded-lg p-6 animate-pulse">
+          <div class="w-48 h-6 bg-gray-800 rounded mb-4" />
+          <div class="w-full h-4 bg-gray-800 rounded mb-2" />
+          <div class="w-3/4 h-4 bg-gray-800 rounded" />
+        </div>
+      </div>
+
       <!-- Fallback to Employee Dashboard for unknown roles -->
       <DashboardEmployeeDashboard
-        v-else
-        :data="employeeData!"
+        v-else-if="employeeData"
+        :data="employeeData"
         :loading="isLoading"
         :user-name="userName"
         @refresh="handleRefresh"
       />
-    </template>
+    </UiErrorBoundary>
   </div>
 </template>

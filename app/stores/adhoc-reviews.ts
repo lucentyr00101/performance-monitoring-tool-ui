@@ -9,7 +9,10 @@ import type {
   AdhocReviewStatus,
   TriggerAdhocReviewRequest,
   TriggerAdhocReviewResponse,
-  AdhocReviewState
+  AdhocReviewState,
+  SelfReviewSubmitRequest,
+  ManagerReviewSubmitRequest,
+  AdhocReviewAcknowledgeRequest
 } from '~/types/adhoc-review'
 
 const DEFAULT_PER_PAGE = 20
@@ -193,6 +196,101 @@ export const useAdhocReviewsStore = defineStore('adhoc-reviews', {
       catch (error) {
         const err = error as { error?: { message?: string } }
         this.error = err?.error?.message || 'Failed to send reminder'
+        throw error
+      }
+      finally {
+        this.isLoading = false
+      }
+    },
+
+    // ============================================
+    // REVIEW SUBMISSION ACTIONS
+    // ============================================
+
+    async submitSelfReview(id: string, data: SelfReviewSubmitRequest): Promise<void> {
+      const { success, failed } = useNotification()
+
+      try {
+        const response = await adhocReviewsService.submitSelfReview(id, data)
+
+        // Update current review state
+        if (this.currentAdhocReview?.id === id) {
+          this.currentAdhocReview.selfReview = {
+            ...this.currentAdhocReview.selfReview,
+            status: response.data.status,
+            submittedAt: response.data.submittedAt
+          }
+        }
+
+        if (data.status === 'submitted') {
+          success('Self-review submitted successfully')
+        } else {
+          success('Draft saved successfully')
+        }
+      }
+      catch (error) {
+        const err = error as { error?: { message?: string } }
+        this.error = err?.error?.message || 'Failed to submit self-review'
+        failed('submit', 'self-review', 'server')
+        throw error
+      }
+    },
+
+    async submitManagerReview(id: string, data: ManagerReviewSubmitRequest): Promise<void> {
+      const { success, failed } = useNotification()
+
+      try {
+        const response = await adhocReviewsService.submitManagerReview(id, data)
+
+        // Update current review state
+        if (this.currentAdhocReview?.id === id) {
+          this.currentAdhocReview.managerReview = {
+            ...this.currentAdhocReview.managerReview,
+            status: response.data.status,
+            submittedAt: response.data.submittedAt
+          }
+        }
+
+        if (data.status === 'submitted') {
+          success('Manager evaluation submitted successfully')
+        } else {
+          success('Draft saved successfully')
+        }
+      }
+      catch (error) {
+        const err = error as { error?: { message?: string } }
+        this.error = err?.error?.message || 'Failed to submit manager evaluation'
+        failed('submit', 'manager evaluation', 'server')
+        throw error
+      }
+    },
+
+    async acknowledgeAdhocReview(id: string, data: AdhocReviewAcknowledgeRequest = {}): Promise<void> {
+      const { success, failed } = useNotification()
+      this.isLoading = true
+      this.error = null
+
+      try {
+        const response = await adhocReviewsService.acknowledgeAdhocReview(id, data)
+
+        // Update current review
+        if (this.currentAdhocReview?.id === id) {
+          this.currentAdhocReview.status = 'completed'
+          this.currentAdhocReview.completedAt = response.data.completedAt
+        }
+
+        // Update in list
+        const index = this.adhocReviews.findIndex(r => r.id === id)
+        if (index !== -1) {
+          this.adhocReviews[index]!.status = 'completed'
+        }
+
+        success('Review acknowledged successfully')
+      }
+      catch (error) {
+        const err = error as { error?: { message?: string } }
+        this.error = err?.error?.message || 'Failed to acknowledge review'
+        failed('acknowledge', 'review', 'server')
         throw error
       }
       finally {

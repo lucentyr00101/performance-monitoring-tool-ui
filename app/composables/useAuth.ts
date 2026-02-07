@@ -17,18 +17,11 @@ export function useAuth() {
     lockoutTimeRemaining
   } = storeToRefs(store)
 
-  // Get refresh token cookie
-  const refreshCookie = useCookie('refresh_token', {
-    maxAge: 7 * 24 * 60 * 60, // 7 days
-    secure: true,
-    sameSite: 'strict'
-  })
-
   /**
    * Login with credentials
    */
   async function login(credentials: LoginRequest) {
-    return store.login(credentials, refreshCookie)
+    return store.login(credentials)
   }
 
   /**
@@ -36,23 +29,20 @@ export function useAuth() {
    */
   async function logout() {
     await store.logout()
-    refreshCookie.value = null
   }
 
   /**
    * Check authentication status
    */
   async function checkAuth() {
-    return store.checkAuth(refreshCookie.value, refreshCookie)
+    return store.checkAuth()
   }
 
   /**
    * Extend current session
    */
   async function extendSession() {
-    if (refreshCookie.value) {
-      return store.extendSession(refreshCookie.value, refreshCookie)
-    }
+    return store.extendSession()
   }
 
   /**

@@ -3,7 +3,6 @@ import { api } from '~/utils/api'
 import type {
   LoginRequest,
   LoginResponse,
-  RefreshRequest,
   RefreshResponse,
   ForgotPasswordRequest,
   ResetPasswordRequest,
@@ -17,27 +16,37 @@ import type {
 export const authService = {
   /**
    * Login with email and password
-   * POST /api/v1/auth/login
+   * Proxied through server route for httpOnly cookie handling
    */
   async login(credentials: LoginRequest) {
-    return api.post<LoginResponse>('/auth/login', credentials, { skipAuth: true })
+    return $fetch<{ data: LoginResponse }>('/api/auth/login', {
+      method: 'POST',
+      body: credentials
+    })
   },
 
   /**
    * Logout current user
-   * POST /api/v1/auth/logout
+   * Proxied through server route to clear httpOnly cookie
    */
   async logout() {
-    return api.post<MessageResponse>('/auth/logout')
+    const authStore = useAuthStore()
+    return $fetch<{ data: MessageResponse }>('/api/auth/logout', {
+      method: 'POST',
+      headers: authStore.accessToken
+        ? { Authorization: `Bearer ${authStore.accessToken}` }
+        : {}
+    })
   },
 
   /**
    * Refresh access token
-   * POST /api/v1/auth/refresh
+   * Proxied through server route — refresh token is in httpOnly cookie
    */
-  async refresh(refreshToken: string) {
-    const body = { refresh_token: refreshToken }
-    return api.post<RefreshResponse>('/auth/refresh', body, { skipAuth: true })
+  async refresh() {
+    return $fetch<{ data: RefreshResponse }>('/api/auth/refresh', {
+      method: 'POST'
+    })
   },
 
   /**

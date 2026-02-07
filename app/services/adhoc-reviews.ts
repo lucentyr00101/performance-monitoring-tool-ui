@@ -7,7 +7,13 @@ import type {
   TriggerAdhocReviewRequest,
   TriggerAdhocReviewResponse,
   AdhocReviewRemindResponse,
-  AdhocReviewCancelResponse
+  AdhocReviewCancelResponse,
+  SelfReviewSubmitRequest,
+  SelfReviewSubmitResponse,
+  ManagerReviewSubmitRequest,
+  ManagerReviewSubmitResponse,
+  AdhocReviewAcknowledgeRequest,
+  AdhocReviewAcknowledgeResponse
 } from '~/types/adhoc-review'
 import type { ApiResponse } from '~/types/auth'
 
@@ -84,25 +90,51 @@ export const adhocReviewsService = {
     return api.post<AdhocReviewRemindResponse>(`/adhoc-reviews/${id}/remind`, {}) as Promise<ApiResponse<AdhocReviewRemindResponse>>
   },
 
+  /**
+   * Submit or save draft for self-review
+   * PUT /api/v1/adhoc-reviews/:id/self-review
+   */
+  async submitSelfReview(id: string, data: SelfReviewSubmitRequest) {
+    return api.put<SelfReviewSubmitResponse>(`/adhoc-reviews/${id}/self-review`, data) as Promise<ApiResponse<SelfReviewSubmitResponse>>
+  },
+
+  /**
+   * Submit or save draft for manager review
+   * PUT /api/v1/adhoc-reviews/:id/manager-review
+   */
+  async submitManagerReview(id: string, data: ManagerReviewSubmitRequest) {
+    return api.put<ManagerReviewSubmitResponse>(`/adhoc-reviews/${id}/manager-review`, data) as Promise<ApiResponse<ManagerReviewSubmitResponse>>
+  },
+
+  /**
+   * Acknowledge an ad-hoc review (employee action)
+   * PUT /api/v1/adhoc-reviews/:id/acknowledge
+   */
+  async acknowledgeAdhocReview(id: string, data: AdhocReviewAcknowledgeRequest = {}) {
+    return api.put<AdhocReviewAcknowledgeResponse>(`/adhoc-reviews/${id}/acknowledge`, data) as Promise<ApiResponse<AdhocReviewAcknowledgeResponse>>
+  },
+
   // ============================================
   // CONVENIENCE METHODS
   // ============================================
 
   /**
-   * Get pending ad-hoc reviews for current user as employee
+   * Get pending ad-hoc reviews for a specific employee (self-review)
    */
-  async getMyPendingSelfReviews() {
+  async getMyPendingSelfReviews(employeeId: string) {
     return this.listAdhocReviews({
-      status: 'initiated'
+      status: 'initiated',
+      employeeId
     })
   },
 
   /**
-   * Get pending ad-hoc reviews for current user as manager
+   * Get pending ad-hoc reviews for a specific manager
    */
-  async getMyPendingManagerReviews() {
+  async getMyPendingManagerReviews(managerId: string) {
     return this.listAdhocReviews({
-      status: 'initiated'
+      status: 'initiated',
+      managerId
     })
   },
 

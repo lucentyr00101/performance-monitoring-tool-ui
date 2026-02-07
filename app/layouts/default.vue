@@ -2,6 +2,7 @@
 import type { UserRole } from '~/types/auth'
 
 const { user, userFullName, userRole, logout, showSessionWarning, extendSession } = useAuth()
+const { unreadCount: notificationCount } = useNotifications()
 
 interface NavItem {
   label: string
@@ -113,11 +114,25 @@ async function handleLogout() {
       <!-- Top header -->
       <header class="sticky top-0 h-16 bg-gray-900/80 backdrop-blur-sm border-b border-gray-800 flex items-center justify-between px-6 z-30">
         <div>
-          <!-- Breadcrumb or page title can go here -->
+          <UiBreadcrumbs />
         </div>
 
         <!-- User menu -->
         <div class="flex items-center gap-4">
+          <!-- Notification bell -->
+          <NuxtLink
+            to="/notifications"
+            class="relative p-2 rounded-lg text-gray-400 hover:text-white hover:bg-gray-800 transition-colors"
+          >
+            <UIcon name="i-heroicons-bell" class="w-5 h-5" />
+            <span
+              v-if="notificationCount > 0"
+              class="absolute top-1 right-1 w-4 h-4 bg-red-500 text-white text-[10px] font-bold rounded-full flex items-center justify-center"
+            >
+              {{ notificationCount > 9 ? '9+' : notificationCount }}
+            </span>
+          </NuxtLink>
+
           <UDropdownMenu :items="userMenuItems">
             <button class="flex items-center gap-3 hover:bg-gray-800 rounded-lg px-3 py-2 transition-colors">
               <UAvatar

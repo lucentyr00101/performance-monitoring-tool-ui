@@ -48,7 +48,8 @@ export interface AdhocReviewSummary {
   isOverdue: boolean
 }
 
-// Notification Item
+// Notification Item — used by dashboard API responses
+// Compatible with NotificationListItem from ~/types/notification via adapter
 export interface NotificationItem {
   id: string
   type: 'review_reminder' | 'goal_update' | 'feedback' | 'approval' | 'system'

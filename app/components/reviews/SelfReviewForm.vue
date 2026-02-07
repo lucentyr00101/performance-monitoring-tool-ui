@@ -121,8 +121,16 @@ onMounted(() => {
 
 <template>
   <div class="space-y-8">
+    <!-- No form snapshot available -->
+    <div v-if="!form" class="bg-yellow-500/10 border border-yellow-500/30 rounded-lg p-8 text-center">
+      <UIcon name="i-heroicons-exclamation-triangle" class="w-12 h-12 text-yellow-400 mx-auto mb-4" />
+      <h2 class="text-xl font-semibold text-white mb-2">Review Form Unavailable</h2>
+      <p class="text-gray-400">The review form data could not be loaded. Please try again later.</p>
+    </div>
+
+    <template v-else>
     <!-- Form Header -->
-    <div v-if="form" class="bg-gray-900 border border-gray-800 rounded-lg p-6">
+    <div class="bg-gray-900 border border-gray-800 rounded-lg p-6">
       <h2 class="text-xl font-semibold text-white mb-2">{{ form.name }}</h2>
       <p v-if="form.description" class="text-gray-400">{{ form.description }}</p>
       <div class="mt-4 flex items-center gap-4 text-sm text-gray-500">
@@ -323,5 +331,6 @@ onMounted(() => {
         </UButton>
       </div>
     </div>
+    </template>
   </div>
 </template>

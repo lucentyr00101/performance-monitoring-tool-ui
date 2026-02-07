@@ -233,3 +233,44 @@ export interface AdhocReviewCancelApiResponse {
     timestamp: string
   }
 }
+
+// Self-review submission request
+export interface SelfReviewSubmitRequest {
+  answers: { questionId: string; value: string | number | boolean | string[] }[]
+  status: 'submitted' | 'in_progress'
+}
+
+// Self-review submission response
+export interface SelfReviewSubmitResponse {
+  id: string
+  status: AdhocReviewItemStatus
+  submittedAt?: string
+}
+
+// Manager review submission request
+export interface ManagerReviewSubmitRequest {
+  answers: { questionId: string; value: string | number | boolean | string[] }[]
+  sectionComments?: Record<string, string>
+  overallComments?: string
+  overallRating?: number
+  status: 'submitted' | 'in_progress'
+}
+
+// Manager review submission response
+export interface ManagerReviewSubmitResponse {
+  id: string
+  status: AdhocReviewItemStatus
+  submittedAt?: string
+}
+
+// Acknowledge request
+export interface AdhocReviewAcknowledgeRequest {
+  comments?: string
+}
+
+// Acknowledge response
+export interface AdhocReviewAcknowledgeResponse {
+  id: string
+  status: 'completed'
+  completedAt: string
+}

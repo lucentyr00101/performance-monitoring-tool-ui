@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import type { AdhocReview } from '~/types/adhoc-review'
-import type { ReviewFormResponse } from '~/types/review-form'
+import type { FormAnswer } from '~/types/review-form'
 
 definePageMeta({
   layout: 'default',
@@ -9,7 +9,6 @@ definePageMeta({
 
 const route = useRoute()
 const router = useRouter()
-const toast = useToast()
 const adhocReviewsStore = useAdhocReviewsStore()
 const authStore = useAuthStore()
 
@@ -18,16 +17,35 @@ const review = ref<AdhocReview | null>(null)
 const isLoading = ref(true)
 const isSubmitting = ref(false)
 const isSavingDraft = ref(false)
+const formDirty = ref(false)
+const lastDraftResponses = ref<FormAnswer[]>([])
 
-// User permissions
+// User permissions — compare employee entity IDs, not user account IDs
 const currentUser = computed(() => authStore.user)
-const isManager = computed(() => review.value?.manager.id === currentUser.value?.id)
+const isManager = computed(() => review.value?.manager.id === currentUser.value?.employee?.id)
 const isHR = computed(() => currentUser.value?.role === 'hr')
 const canView = computed(() => isManager.value || isHR.value)
 const isViewOnly = computed(() => {
   if (!review.value) return true
-  // View only if already submitted or user is not the manager
   return review.value.managerReview?.status === 'submitted' || !isManager.value
+})
+
+// Unsaved changes guard
+useUnsavedChanges(() => formDirty.value && !isViewOnly.value)
+
+// Auto-save
+const { statusText: autoSaveStatus } = useAutoSave({
+  interval: 30000,
+  enabled: computed(() => !isViewOnly.value && lastDraftResponses.value.length > 0),
+  async onSave() {
+    if (lastDraftResponses.value.length > 0) {
+      await adhocReviewsStore.submitManagerReview(reviewId.value, {
+        answers: lastDraftResponses.value,
+        status: 'in_progress'
+      })
+      formDirty.value = false
+    }
+  }
 })
 
 // Load review
@@ -36,7 +54,6 @@ async function loadReview() {
   try {
     review.value = await adhocReviewsStore.fetchAdhocReview(reviewId.value)
   } catch {
-    // Notification handled by store
     router.push('/reviews/adhoc')
   } finally {
     isLoading.value = false
@@ -44,52 +61,42 @@ async function loadReview() {
 }
 
 // Submit manager review
-async function handleSubmit(_responses: ReviewFormResponse[]) {
+async function handleSubmit(responses: FormAnswer[]) {
   isSubmitting.value = true
   try {
-    // In a real app, this would call the API with _responses
-    // For now, simulate a successful submission
-    await new Promise(resolve => setTimeout(resolve, 1000))
-    
-    toast.add({
-      title: 'Manager Evaluation Submitted',
-      description: 'Your evaluation has been submitted successfully',
-      color: 'success'
+    await adhocReviewsStore.submitManagerReview(reviewId.value, {
+      answers: responses,
+      status: 'submitted'
     })
-    
-    // Navigate back to review detail
+    formDirty.value = false
     router.push(`/reviews/adhoc/${reviewId.value}`)
   } catch {
-    toast.add({
-      title: 'Failed to submit',
-      description: 'An error occurred while submitting your evaluation',
-      color: 'error'
-    })
+    // Error handled by store
   } finally {
     isSubmitting.value = false
   }
 }
 
 // Save draft
-async function handleSaveDraft(_responses: ReviewFormResponse[]) {
+async function handleSaveDraft(responses: FormAnswer[]) {
   isSavingDraft.value = true
   try {
-    // In a real app, this would call the API with _responses
-    await new Promise(resolve => setTimeout(resolve, 500))
-    
-    toast.add({
-      title: 'Draft Saved',
-      description: 'Your progress has been saved',
-      color: 'success'
+    await adhocReviewsStore.submitManagerReview(reviewId.value, {
+      answers: responses,
+      status: 'in_progress'
     })
+    formDirty.value = false
   } catch {
-    toast.add({
-      title: 'Failed to save draft',
-      color: 'error'
-    })
+    // Error handled by store
   } finally {
     isSavingDraft.value = false
   }
+}
+
+// Track form changes for auto-save
+function handleFormChange(responses: FormAnswer[]) {
+  formDirty.value = true
+  lastDraftResponses.value = responses
 }
 
 // Load on mount
@@ -112,11 +119,22 @@ onMounted(() => {
     </UButton>
 
     <!-- Loading state -->
-    <div v-if="isLoading" class="space-y-4">
+    <div v-if="isLoading" class="space-y-6">
       <div class="bg-gray-900 border border-gray-800 rounded-lg p-6 animate-pulse">
         <div class="w-48 h-6 bg-gray-800 rounded mb-4" />
         <div class="w-full h-4 bg-gray-800 rounded mb-2" />
         <div class="w-3/4 h-4 bg-gray-800 rounded" />
+      </div>
+      <div v-for="n in 3" :key="n" class="bg-gray-900 border border-gray-800 rounded-lg overflow-hidden animate-pulse">
+        <div class="bg-gray-800/50 px-6 py-4 border-b border-gray-800">
+          <div class="w-32 h-5 bg-gray-700 rounded" />
+        </div>
+        <div class="p-6 space-y-4">
+          <div v-for="q in 2" :key="q" class="space-y-2">
+            <div class="w-40 h-4 bg-gray-800 rounded" />
+            <div class="w-full h-10 bg-gray-800 rounded" />
+          </div>
+        </div>
       </div>
     </div>
 
@@ -132,9 +150,9 @@ onMounted(() => {
       </p>
     </div>
 
-    <!-- Self-review not complete warning -->
+    <!-- Self-review not complete warning (info banner, not blocking) -->
     <div 
-      v-else-if="review && review.selfReview?.status !== 'submitted' && isManager"
+      v-if="!isLoading && review && review.selfReview?.status !== 'submitted' && isManager && canView"
       class="mb-6 bg-yellow-500/10 border border-yellow-500/30 rounded-lg p-4"
     >
       <div class="flex items-center gap-3">
@@ -151,7 +169,7 @@ onMounted(() => {
 
     <!-- View mode notice -->
     <div 
-      v-else-if="review && isViewOnly && review.managerReview?.status === 'submitted'"
+      v-if="!isLoading && review && isViewOnly && review.managerReview?.status === 'submitted' && canView"
       class="mb-6 bg-blue-500/10 border border-blue-500/30 rounded-lg p-4"
     >
       <div class="flex items-center gap-3">
@@ -166,13 +184,18 @@ onMounted(() => {
       </div>
     </div>
 
+    <!-- Auto-save status -->
+    <div v-if="autoSaveStatus && !isViewOnly" class="text-xs text-gray-500 mb-2 text-right">
+      {{ autoSaveStatus }}
+    </div>
+
     <!-- Manager Review Form -->
     <div v-if="review && canView">
       <ManagerReviewForm
         :review="review"
         :disabled="isViewOnly || isSubmitting"
         @submit="handleSubmit"
-        @save-draft="handleSaveDraft"
+        @save-draft="(responses) => { handleFormChange(responses); handleSaveDraft(responses) }"
       />
     </div>
   </div>

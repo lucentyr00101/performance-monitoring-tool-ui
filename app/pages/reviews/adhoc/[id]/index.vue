@@ -18,10 +18,10 @@ const isSendingReminder = ref(false)
 const showCancelModal = ref(false)
 const isCancelling = ref(false)
 
-// User permissions
+// User permissions — compare employee entity IDs, not user account IDs
 const currentUser = computed(() => authStore.user)
-const isEmployee = computed(() => review.value?.employee.id === currentUser.value?.id)
-const isManager = computed(() => review.value?.manager.id === currentUser.value?.id)
+const isEmployee = computed(() => review.value?.employee.id === currentUser.value?.employee?.id)
+const isManager = computed(() => review.value?.manager.id === currentUser.value?.employee?.id)
 const canManageReview = computed(() => {
   const role = currentUser.value?.role
   return role === 'hr' || isManager.value
@@ -330,7 +330,7 @@ onMounted(() => {
               Both your self-review and manager evaluation have been completed. 
               Please review the results and acknowledge to finalize this performance review.
             </p>
-            <UButton color="primary">
+            <UButton color="primary" @click="router.push(`/reviews/adhoc/${review.id}/results`)">
               View Results & Acknowledge
             </UButton>
           </div>
