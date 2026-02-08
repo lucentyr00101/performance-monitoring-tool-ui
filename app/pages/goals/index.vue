@@ -236,7 +236,7 @@ const viewModeOptions = [
     </div>
 
     <!-- Create Goal Modal -->
-    <UModal v-model:open="isCreateModalOpen">
+    <UModal v-model:open="isCreateModalOpen" :ui="{ width: 'max-w-3xl' }">
       <template #content>
         <div class="p-6">
           <h2 class="text-xl font-semibold text-white mb-6">Create New Goal</h2>

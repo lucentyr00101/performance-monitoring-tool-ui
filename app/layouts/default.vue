@@ -27,21 +27,22 @@ const filteredNavItems = computed(() => {
   })
 })
 
-const userMenuItems = [
-  [{
+const userMenuItems = [[
+  {
     label: 'Profile',
     icon: 'i-heroicons-user-circle',
-    to: '/profile'
-  }],
-  [{
+    onSelect() {
+      navigateTo('/profile')
+    }
+  },
+  {
     label: 'Sign out',
     icon: 'i-heroicons-arrow-right-on-rectangle',
-    click: async () => {
-      await logout()
-      navigateTo('/auth/login')
+    onSelect() {
+      handleLogout()
     }
-  }]
-]
+  }
+]]
 
 const roleLabels: Record<UserRole, string> = {
   admin: 'Administrator',
@@ -51,7 +52,9 @@ const roleLabels: Record<UserRole, string> = {
   csuite: 'Executive'
 }
 
-const isSidebarOpen = ref(true)
+// Use useState for proper SSR/client hydration sync (prevents mismatch)
+const isSidebarOpen = useState('sidebar-open', () => true)
+
 const showSessionModal = ref(false)
 
 watch(showSessionWarning, (value) => {
@@ -64,8 +67,11 @@ async function handleExtendSession() {
 }
 
 async function handleLogout() {
-  await logout()
-  navigateTo('/auth/login')
+  try {
+    await logout()
+  } finally {
+    await navigateTo('/auth/login', { replace: true })
+  }
 }
 </script>
 
@@ -110,9 +116,9 @@ async function handleLogout() {
     </aside>
 
     <!-- Main content -->
-    <div :class="isSidebarOpen ? 'pl-64' : 'pl-20'" class="transition-all duration-300">
+    <div :class="isSidebarOpen ? 'pl-64' : 'pl-20'" class="transition-all duration-300 min-h-screen flex flex-col">
       <!-- Top header -->
-      <header class="sticky top-0 h-16 bg-gray-900/80 backdrop-blur-sm border-b border-gray-800 flex items-center justify-between px-6 z-30">
+      <header class="sticky top-0 h-16 bg-gray-900/80 backdrop-blur-sm border-b border-gray-800 flex items-center justify-between px-6 z-30 flex-shrink-0">
         <div>
           <UiBreadcrumbs />
         </div>
@@ -151,7 +157,7 @@ async function handleLogout() {
       </header>
 
       <!-- Page content -->
-      <main class="p-6">
+      <main class="p-6 flex-1">
         <slot />
       </main>
     </div>

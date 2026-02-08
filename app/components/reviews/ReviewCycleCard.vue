@@ -49,16 +49,20 @@ const dateColor = computed(() => {
 })
 
 const selfProgress = computed(() => {
-  if (!props.cycle.stats.byType?.self) return 0
+  if (!props.cycle.stats?.byType?.self) return 0
   const { total, completed } = props.cycle.stats.byType.self
   return total > 0 ? Math.round((completed / total) * 100) : 0
 })
 
 const managerProgress = computed(() => {
-  if (!props.cycle.stats.byType?.manager) return 0
+  if (!props.cycle.stats?.byType?.manager) return 0
   const { total, completed } = props.cycle.stats.byType.manager
   return total > 0 ? Math.round((completed / total) * 100) : 0
 })
+
+const totalReviews = computed(() => props.cycle.stats?.totalReviews ?? 0)
+const completionRate = computed(() => props.cycle.stats?.completionRate ?? 0)
+const averageRating = computed(() => props.cycle.stats?.averageRating)
 </script>
 
 <template>
@@ -120,12 +124,12 @@ const managerProgress = computed(() => {
     <div v-else-if="cycle.status === 'completed'" class="mb-4">
       <div class="flex items-center justify-between text-xs mb-1">
         <span class="text-gray-400">Completion Rate</span>
-        <span class="text-emerald-400">{{ cycle.stats.completionRate }}%</span>
+        <span class="text-emerald-400">{{ completionRate }}%</span>
       </div>
       <div class="h-1.5 bg-gray-800 rounded-full overflow-hidden">
         <div 
           class="h-full bg-emerald-500 rounded-full"
-          :style="{ width: `${cycle.stats.completionRate}%` }"
+          :style="{ width: `${completionRate}%` }"
         />
       </div>
     </div>
@@ -134,11 +138,11 @@ const managerProgress = computed(() => {
     <div class="flex items-center gap-4 text-xs text-gray-400 mb-3">
       <div class="flex items-center gap-1">
         <UIcon name="i-heroicons-document-text" class="w-3.5 h-3.5" />
-        <span>{{ cycle.stats.totalReviews }} reviews</span>
+        <span>{{ totalReviews }} reviews</span>
       </div>
-      <div v-if="cycle.stats.averageRating" class="flex items-center gap-1">
+      <div v-if="averageRating" class="flex items-center gap-1">
         <UIcon name="i-heroicons-star" class="w-3.5 h-3.5 text-yellow-400" />
-        <span>{{ cycle.stats.averageRating.toFixed(1) }} avg</span>
+        <span>{{ averageRating.toFixed(1) }} avg</span>
       </div>
     </div>
 

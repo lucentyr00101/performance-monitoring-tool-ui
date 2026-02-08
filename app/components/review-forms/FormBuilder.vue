@@ -223,14 +223,16 @@ function getQuestionTypeIcon(type: ReviewFormQuestionType): string {
           <label class="block text-sm font-medium text-gray-300 mb-1">
             Form Name <span class="text-red-400">*</span>
           </label>
-          <UInput v-model="formName" placeholder="e.g., Q4 Performance Review" />
+          <UInput v-model="formName" placeholder="e.g., Q4 Performance Review" class="w-full" size="lg" />
         </div>
         <div>
           <label class="block text-sm font-medium text-gray-300 mb-1">Description</label>
           <UTextarea
             v-model="formDescription"
             placeholder="Brief description of this review form..."
-            :rows="2"
+            :rows="3"
+            class="w-full"
+            size="lg"
           />
         </div>
         <div>
@@ -238,7 +240,9 @@ function getQuestionTypeIcon(type: ReviewFormQuestionType): string {
           <UTextarea
             v-model="formInstructions"
             placeholder="Instructions for reviewers..."
-            :rows="3"
+            :rows="4"
+            class="w-full"
+            size="lg"
           />
         </div>
       </div>
@@ -391,7 +395,7 @@ function getQuestionTypeIcon(type: ReviewFormQuestionType): string {
             :items="questionTypes.map(qt => ({
               label: qt.label,
               icon: getQuestionTypeIcon(qt.value),
-              click: () => addQuestion(section.id, qt.value)
+              onSelect: () => addQuestion(section.id, qt.value)
             }))"
           >
             <UButton

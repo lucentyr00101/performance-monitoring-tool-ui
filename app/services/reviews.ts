@@ -30,6 +30,14 @@ interface PaginatedResponse<T> {
 }
 
 /**
+ * Transform MongoDB _id to id for frontend consumption
+ */
+function transformMongoId<T extends Record<string, unknown>>(data: T & { _id?: string }): T & { id: string } {
+  const { _id, ...rest } = data
+  return { ...rest, id: _id || data.id } as T & { id: string }
+}
+
+/**
  * Reviews Service - Communicates with the API Gateway
  */
 export const reviewsService = {
@@ -55,7 +63,12 @@ export const reviewsService = {
     const query = queryParams.toString()
     const endpoint = `/review-cycles${query ? `?${query}` : ''}`
     
-    return api.get<PaginatedResponse<ReviewCycleListItem>['data']>(endpoint) as Promise<PaginatedResponse<ReviewCycleListItem>>
+    const response = await api.get<PaginatedResponse<ReviewCycleListItem>['data']>(endpoint) as PaginatedResponse<ReviewCycleListItem>
+    
+    return {
+      ...response,
+      data: response.data.map(cycle => transformMongoId(cycle))
+    }
   },
 
   /**
@@ -63,7 +76,11 @@ export const reviewsService = {
    * GET /api/v1/review-cycles/:id
    */
   async getCycle(id: string) {
-    return api.get<ReviewCycle>(`/review-cycles/${id}`)
+    const response = await api.get<ReviewCycle>(`/review-cycles/${id}`)
+    return {
+      ...response,
+      data: transformMongoId(response.data)
+    }
   },
 
   /**
@@ -71,7 +88,11 @@ export const reviewsService = {
    * POST /api/v1/review-cycles
    */
   async createCycle(data: ReviewCycleCreateRequest) {
-    return api.post<ReviewCycle>('/review-cycles', data)
+    const response = await api.post<ReviewCycle>('/review-cycles', data)
+    return {
+      ...response,
+      data: transformMongoId(response.data)
+    }
   },
 
   /**
@@ -79,7 +100,11 @@ export const reviewsService = {
    * PUT /api/v1/review-cycles/:id
    */
   async updateCycle(id: string, data: ReviewCycleUpdateRequest) {
-    return api.put<ReviewCycle>(`/review-cycles/${id}`, data)
+    const response = await api.put<ReviewCycle>(`/review-cycles/${id}`, data)
+    return {
+      ...response,
+      data: transformMongoId(response.data)
+    }
   },
 
   /**

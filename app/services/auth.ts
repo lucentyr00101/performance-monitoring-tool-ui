@@ -11,6 +11,21 @@ import type {
 } from '~/types/auth'
 
 /**
+ * Helper to get SSR cookie headers.
+ * During SSR, internal $fetch calls don't forward browser cookies automatically.
+ * This forwards the cookie header so server routes can read httpOnly cookies.
+ */
+function getSSRHeaders(): Record<string, string> {
+  if (import.meta.server) {
+    const headers = useRequestHeaders(['cookie'])
+    if (headers.cookie) {
+      return { cookie: headers.cookie }
+    }
+  }
+  return {}
+}
+
+/**
  * Auth Service - API calls for authentication
  */
 export const authService = {
@@ -21,7 +36,8 @@ export const authService = {
   async login(credentials: LoginRequest) {
     return $fetch<{ data: LoginResponse }>('/api/auth/login', {
       method: 'POST',
-      body: credentials
+      body: credentials,
+      headers: getSSRHeaders()
     })
   },
 
@@ -31,11 +47,15 @@ export const authService = {
    */
   async logout() {
     const authStore = useAuthStore()
+    const ssrHeaders = getSSRHeaders()
     return $fetch<{ data: MessageResponse }>('/api/auth/logout', {
       method: 'POST',
-      headers: authStore.accessToken
-        ? { Authorization: `Bearer ${authStore.accessToken}` }
-        : {}
+      headers: {
+        ...ssrHeaders,
+        ...(authStore.accessToken
+          ? { Authorization: `Bearer ${authStore.accessToken}` }
+          : {})
+      }
     })
   },
 
@@ -45,7 +65,8 @@ export const authService = {
    */
   async refresh() {
     return $fetch<{ data: RefreshResponse }>('/api/auth/refresh', {
-      method: 'POST'
+      method: 'POST',
+      headers: getSSRHeaders()
     })
   },
 

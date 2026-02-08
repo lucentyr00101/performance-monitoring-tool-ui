@@ -71,7 +71,7 @@ function closePreview() {
 
 <template>
   <div class="min-h-screen bg-gray-950 py-8">
-    <div class="container mx-auto px-4 max-w-4xl">
+    <div class="px-4">
       <!-- Header -->
       <div class="mb-8">
         <div class="flex items-center gap-2 text-gray-400 mb-2">

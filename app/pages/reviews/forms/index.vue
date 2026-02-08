@@ -124,7 +124,7 @@ async function handleArchive(id: string) {
 
 <template>
   <div class="min-h-screen bg-gray-950 py-8">
-    <div class="container mx-auto px-4 max-w-6xl">
+    <div class="px-4">
       <!-- Header -->
       <div class="flex items-center justify-between mb-8">
         <div>

@@ -68,7 +68,7 @@ function handlePageChange(page: number) {
 
 // Handle launch
 async function handleLaunch() {
-  if (!currentCycle.value) return
+  if (!currentCycle.value?.id) return
   
   isLaunching.value = true
   try {
@@ -86,7 +86,7 @@ async function handleLaunch() {
 
 // Handle delete
 async function handleDelete() {
-  if (!currentCycle.value) return
+  if (!currentCycle.value?.id) return
   
   isDeleting.value = true
   try {

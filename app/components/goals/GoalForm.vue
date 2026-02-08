@@ -20,6 +20,16 @@ const { user } = useAuth()
 
 const isLoading = ref(false)
 
+// Helper function to convert ISO 8601 date to YYYY-MM-DD
+function formatDateForInput(dateString?: string): string {
+  if (!dateString) return ''
+  // If already in YYYY-MM-DD format, return as is
+  if (/^\d{4}-\d{2}-\d{2}$/.test(dateString)) return dateString
+  // Otherwise, parse and format to YYYY-MM-DD
+  const datePart = dateString.split('T')[0]
+  return datePart || ''
+}
+
 // Form state
 const form = reactive({
   title: props.goal?.title || '',
@@ -27,8 +37,8 @@ const form = reactive({
   type: (props.goal?.type || 'individual') as GoalType,
   priority: (props.goal?.priority || 'medium') as GoalPriority,
   visibility: (props.goal?.visibility || 'private') as GoalVisibility,
-  dueDate: props.goal?.dueDate || '',
-  startDate: props.goal?.startDate || '',
+  dueDate: formatDateForInput(props.goal?.dueDate),
+  startDate: formatDateForInput(props.goal?.startDate),
   parentGoalId: props.goal?.parentGoalId || '',
   tags: props.goal?.tags || []
 })
@@ -56,15 +66,15 @@ const visibilityOptions = [
 
 // Validation
 const errors = reactive({
-  title: '',
-  dueDate: '',
-  dateRange: ''
+  title: undefined as string | undefined,
+  dueDate: undefined as string | undefined,
+  dateRange: undefined as string | undefined
 })
 
 function validate(): boolean {
-  errors.title = ''
-  errors.dueDate = ''
-  errors.dateRange = ''
+  errors.title = undefined
+  errors.dueDate = undefined
+  errors.dateRange = undefined
   
   if (!form.title.trim()) {
     errors.title = 'Title is required'
@@ -74,8 +84,14 @@ function validate(): boolean {
   
   if (!form.dueDate) {
     errors.dueDate = 'Due date is required'
-  } else if (new Date(form.dueDate) < new Date()) {
-    errors.dueDate = 'Due date must be in the future'
+  } else if (props.mode === 'create') {
+    // Only validate future date for new goals
+    const today = new Date()
+    today.setHours(0, 0, 0, 0)
+    const dueDate = new Date(form.dueDate)
+    if (dueDate < today) {
+      errors.dueDate = 'Due date must be in the future'
+    }
   }
   
   // Validate start date is before due date
@@ -102,8 +118,8 @@ async function handleSubmit() {
       owner_id: user.value?.id || '',
       priority: form.priority,
       visibility: form.visibility,
-      due_date: form.dueDate,
-      start_date: form.startDate || undefined,
+      due_date: formatDateForInput(form.dueDate),
+      start_date: form.startDate ? formatDateForInput(form.startDate) : undefined,
       parent_goal_id: form.parentGoalId || undefined,
       tags: form.tags.length > 0 ? form.tags : undefined
     }
@@ -191,6 +207,7 @@ const minDate = computed(() => {
         v-model="form.title"
         placeholder="Enter a clear, measurable goal title"
         size="lg"
+        class="w-full"
       />
     </UFormField>
 
@@ -200,6 +217,7 @@ const minDate = computed(() => {
         v-model="form.description"
         placeholder="Describe the goal, its importance, and success criteria..."
         :rows="3"
+        class="w-full"
       />
     </UFormField>
 
@@ -209,6 +227,7 @@ const minDate = computed(() => {
         <USelect
           v-model="form.type"
           :items="typeOptions"
+          class="w-full"
         />
       </UFormField>
 
@@ -216,6 +235,7 @@ const minDate = computed(() => {
         <USelect
           v-model="form.priority"
           :items="priorityOptions"
+          class="w-full"
         />
       </UFormField>
     </div>
@@ -226,6 +246,7 @@ const minDate = computed(() => {
         <UInput
           v-model="form.startDate"
           type="date"
+          class="w-full"
         />
       </UFormField>
 
@@ -234,6 +255,7 @@ const minDate = computed(() => {
           v-model="form.dueDate"
           type="date"
           :min="minDate"
+          class="w-full"
         />
       </UFormField>
     </div>
@@ -248,6 +270,7 @@ const minDate = computed(() => {
       <USelect
         v-model="form.visibility"
         :items="visibilityOptions"
+        class="w-full"
       />
     </UFormField>
 

@@ -163,7 +163,7 @@ onMounted(() => {
 
     <!-- Reviews list -->
     <div v-else class="space-y-3">
-      <AdhocReviewCard
+      <ReviewsAdhocReviewCard
         v-for="review in filteredReviews"
         :key="review.id"
         :review="review"

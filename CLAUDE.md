@@ -45,6 +45,22 @@ These checks ensure:
 
 Fix all errors and warnings before completing your work.
 
+## Nuxt UI Components
+
+**CRITICAL**: This project uses **@nuxt/ui v4.4.0**. ALWAYS check the official documentation FIRST before using any component:
+
+- **Documentation**: https://ui.nuxt.com/components
+- **Check**: Component names, available props, event handlers, and proper usage patterns
+- **Common mistakes to avoid**:
+  - Using wrong component names (e.g., `UDropdown` instead of `UDropdownMenu`)
+  - Using wrong event handlers (e.g., `click` instead of `onSelect`)
+  - Incorrect prop structures (check docs for exact format)
+
+**When working with components**:
+1. Visit https://ui.nuxt.com/components/[component-name] 
+2. Review the component's API, props, events, and examples
+3. Use the exact component name, props, and structure from the documentation
+
 ## Architecture
 
 ### Three-Tier Architecture

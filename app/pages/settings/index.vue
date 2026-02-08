@@ -13,7 +13,7 @@ if (userRole.value !== 'admin') {
 </script>
 
 <template>
-  <div class="container mx-auto px-4 py-8 max-w-4xl">
+  <div class="px-4 py-8">
     <h1 class="text-2xl font-bold text-white mb-6">Settings</h1>
 
     <div class="space-y-6">

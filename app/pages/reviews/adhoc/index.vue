@@ -24,7 +24,7 @@ function handleReviewTriggered({ reviewId }: { reviewId: string; employeeName: s
 </script>
 
 <template>
-  <div class="container mx-auto px-4 py-8">
+  <div class="px-4 py-8">
     <!-- Header -->
     <div class="flex items-center justify-between mb-8">
       <div>
@@ -103,13 +103,13 @@ function handleReviewTriggered({ reviewId }: { reviewId: string; employeeName: s
     </div>
 
     <!-- Reviews List -->
-    <AdhocReviewList 
+    <ReviewsAdhocReviewList 
       title="All Ad-Hoc Reviews"
       show-filters
     />
 
     <!-- Trigger Review Modal -->
-    <TriggerReviewModal
+    <ReviewsTriggerReviewModal
       :is-open="showTriggerModal"
       @close="showTriggerModal = false"
       @triggered="handleReviewTriggered"

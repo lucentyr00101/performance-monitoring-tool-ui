@@ -204,6 +204,9 @@ export const useAuthStore = defineStore('auth', {
       this.accessToken = null
       this.isAuthenticated = false
       this.sessionExpiresAt = null
+      this.loginAttempts = 0
+      this.isLockedOut = false
+      this.lockoutEndsAt = null
 
       // Clear access token cookie
       if (import.meta.client) {

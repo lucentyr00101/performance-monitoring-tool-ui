@@ -128,7 +128,7 @@ onMounted(() => {
 </script>
 
 <template>
-  <div class="container mx-auto px-4 py-8">
+  <div class="px-4 py-8">
     <!-- Back button -->
     <UButton
       variant="ghost"

@@ -99,7 +99,7 @@ async function handleExportFromModal(options: { format: ExportFormat }) {
 </script>
 
 <template>
-  <div class="max-w-7xl mx-auto px-4 py-8">
+  <div class="px-4 py-8">
     <!-- Error state -->
     <div v-if="error" class="mb-6">
       <UAlert

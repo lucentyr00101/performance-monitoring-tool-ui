@@ -95,7 +95,7 @@ const dueDateColor = computed(() => {
     <!-- Footer: Owner & Due Date -->
     <div class="flex items-center justify-between">
       <!-- Owner -->
-      <div class="flex items-center gap-2">
+      <div v-if="goal.owner" class="flex items-center gap-2">
         <UAvatar
           :src="goal.owner.avatarUrl"
           :alt="goal.owner.name || `${goal.owner.firstName} ${goal.owner.lastName}`"
@@ -104,6 +104,10 @@ const dueDateColor = computed(() => {
         <span class="text-xs text-gray-400 truncate max-w-[100px]">
           {{ goal.owner.name || `${goal.owner.firstName} ${goal.owner.lastName}` }}
         </span>
+      </div>
+      <div v-else class="flex items-center gap-2">
+        <UAvatar size="xs" />
+        <span class="text-xs text-gray-500 truncate max-w-[100px]">No owner</span>
       </div>
 
       <!-- Due Date -->

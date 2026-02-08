@@ -143,7 +143,7 @@ useHead({
 
 <template>
   <div class="min-h-screen bg-gray-950 py-8">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div class="px-4 sm:px-6 lg:px-8">
       <!-- Error State -->
       <div v-if="employeeStore.error" class="text-center py-12">
         <div class="bg-red-500/10 border border-red-500/20 rounded-lg p-6 max-w-md mx-auto">

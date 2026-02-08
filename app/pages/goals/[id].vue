@@ -227,9 +227,13 @@ function openApprovalModal(action: 'approve' | 'reject') {
             <!-- Meta -->
             <div class="flex flex-wrap items-center gap-4 text-sm text-gray-400">
               <!-- Owner -->
-              <div class="flex items-center gap-2">
+              <div v-if="currentGoal.owner" class="flex items-center gap-2">
                 <UAvatar :src="currentGoal.owner.avatarUrl" :alt="currentGoal.owner.name || `${currentGoal.owner.firstName} ${currentGoal.owner.lastName}`" size="xs" />
                 <span>{{ currentGoal.owner.name || `${currentGoal.owner.firstName} ${currentGoal.owner.lastName}` }}</span>
+              </div>
+              <div v-else class="flex items-center gap-2">
+                <UAvatar size="xs" />
+                <span class="text-gray-500">No owner</span>
               </div>
 
               <!-- Due Date -->

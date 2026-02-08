@@ -284,7 +284,7 @@ async function handleCloneForm(id: string) {
 
     <!-- Ad-Hoc Reviews Tab -->
     <template v-if="activeTab === 'adhoc'">
-      <AdhocReviewList show-filters />
+      <ReviewsAdhocReviewList show-filters />
     </template>
 
     <!-- Form Templates Tab (HR/Admin only) -->
