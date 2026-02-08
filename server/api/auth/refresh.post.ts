@@ -17,10 +17,23 @@ export default defineEventHandler(async (event) => {
     headers: { 'Content-Type': 'application/json' }
   })
 
-  // Update httpOnly cookie with new refresh token
   const data = response.data as Record<string, unknown> | undefined
+  const newAccessToken = data?.access_token as string | undefined
   const newRefreshToken = data?.refresh_token as string | undefined
+  const expiresIn = (data?.expires_in as number) || 3600
 
+  // Update access token cookie
+  if (newAccessToken) {
+    setCookie(event, 'access_token', newAccessToken, {
+      httpOnly: false,
+      secure: process.env.NODE_ENV === 'production',
+      sameSite: 'lax',
+      maxAge: expiresIn,
+      path: '/'
+    })
+  }
+
+  // Update httpOnly cookie with new refresh token
   if (newRefreshToken) {
     setCookie(event, 'refresh_token', newRefreshToken, {
       httpOnly: true,

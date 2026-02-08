@@ -163,9 +163,26 @@ export const useAuthStore = defineStore('auth', {
     },
 
     async checkAuth(): Promise<boolean> {
-      // If we have a token in memory, we're authenticated
+      // If we have a token and user in memory, we're authenticated
       if (this.accessToken && this.user) {
         return true
+      }
+
+      // Token restored from cookie but no user data yet — validate and fetch user
+      if (this.accessToken) {
+        try {
+          await this.fetchCurrentUser()
+          if (this.user) {
+            this.isAuthenticated = true
+            this.sessionExpiresAt = Date.now() + _ACCESS_TOKEN_EXPIRY
+            this.startSessionTimer()
+            return true
+          }
+        }
+        catch {
+          // Token from cookie is invalid/expired — clear and try refresh
+          this.accessToken = null
+        }
       }
 
       // Try to refresh using httpOnly cookie (server handles token)
@@ -182,11 +199,16 @@ export const useAuthStore = defineStore('auth', {
     clearAuth(): void {
       // Stop session timer to prevent memory leaks
       this.stopSessionTimer()
-      
+
       this.user = null
       this.accessToken = null
       this.isAuthenticated = false
       this.sessionExpiresAt = null
+
+      // Clear access token cookie
+      if (import.meta.client) {
+        document.cookie = 'access_token=; path=/; max-age=0'
+      }
     },
 
     startSessionTimer(): void {

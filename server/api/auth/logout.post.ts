@@ -18,7 +18,10 @@ export default defineEventHandler(async (event) => {
     // Ignore backend errors — clear cookie regardless
   }
 
-  // Clear the httpOnly cookie
+  // Clear auth cookies
+  deleteCookie(event, 'access_token', {
+    path: '/'
+  })
   deleteCookie(event, 'refresh_token', {
     httpOnly: true,
     secure: process.env.NODE_ENV === 'production',

@@ -32,7 +32,6 @@ class ApiClient {
   }
 
   private getAccessToken(): string | null {
-    if (import.meta.server) return null
     const authStore = useAuthStore()
     return authStore.accessToken
   }

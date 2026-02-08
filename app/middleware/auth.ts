@@ -2,6 +2,16 @@
 import type { UserRole } from '~/types/auth'
 
 export default defineNuxtRouteMiddleware(async (to) => {
+  const authStore = useAuthStore()
+
+  // Restore access token from cookie if not in memory (e.g., after page refresh)
+  if (!authStore.accessToken) {
+    const tokenCookie = useCookie('access_token')
+    if (tokenCookie.value) {
+      authStore.accessToken = tokenCookie.value
+    }
+  }
+
   const auth = useAuth()
 
   // Check authentication
