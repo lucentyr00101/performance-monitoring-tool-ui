@@ -4,7 +4,11 @@
       "Bash(bun add:*)",
       "Bash(bun run lint)",
       "Bash(npx nuxi typecheck:*)",
-      "Bash(timeout 30 bun run:*)"
+      "Bash(timeout 30 bun run:*)",
+      "Bash(bun run --help:*)",
+      "Bash(npx eslint:*)",
+      "Bash(git add:*)",
+      "Bash(git commit:*)"
     ]
   }
 }
