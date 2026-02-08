@@ -183,15 +183,15 @@ onMounted(() => {
       <!-- Employee Info -->
       <div class="mt-4 flex items-center gap-4 p-4 bg-gray-800/50 rounded-lg">
         <UAvatar
-          :alt="`${review.employee.firstName} ${review.employee.lastName}`"
+          :alt="review.employee ? `${review.employee.firstName} ${review.employee.lastName}` : 'Employee'"
           size="lg"
         />
         <div>
           <div class="font-medium text-white">
-            {{ review.employee.firstName }} {{ review.employee.lastName }}
+            {{ review.employee?.firstName }} {{ review.employee?.lastName }}
           </div>
           <div class="text-sm text-gray-400">
-            {{ review.employee.jobTitle }} • {{ review.employee.department?.name }}
+            {{ review.employee?.jobTitle }} • {{ review.employee?.department?.name }}
           </div>
         </div>
       </div>

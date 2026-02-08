@@ -22,7 +22,7 @@ const lastDraftResponses = ref<FormAnswer[]>([])
 
 // User permissions — compare employee entity IDs, not user account IDs
 const currentUser = computed(() => authStore.user)
-const isEmployee = computed(() => review.value?.employee.id === currentUser.value?.employee?.id)
+const isEmployee = computed(() => review.value?.employee?.id === currentUser.value?.employee?.id)
 const isViewOnly = computed(() => {
   if (!review.value) return true
   return review.value.selfReview?.status === 'submitted' || !isEmployee.value

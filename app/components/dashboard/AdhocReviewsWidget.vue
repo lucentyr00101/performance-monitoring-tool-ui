@@ -29,16 +29,16 @@ const reviews = computed((): AdhocReviewListItem[] => {
       filtered = adhocReviewsStore.reviews.filter(r => {
         if (r.status !== 'initiated') return false
         // Employee needs to complete self-review
-        if (r.employee.id === currentUserId && r.selfReviewStatus !== 'submitted') return true
+        if (r.employee?.id === currentUserId && r.selfReviewStatus !== 'submitted') return true
         // Manager needs to complete manager review
-        if (r.manager.id === currentUserId && r.managerReviewStatus !== 'submitted') return true
+        if (r.manager?.id === currentUserId && r.managerReviewStatus !== 'submitted') return true
         return false
       })
       break
     case 'triggered':
       // Reviews triggered by current user
       filtered = adhocReviewsStore.reviews.filter(r => 
-        r.triggeredBy.id === currentUserId
+        r.triggeredBy?.id === currentUserId
       )
       break
     default:
@@ -178,12 +178,12 @@ onMounted(() => {
         <div class="flex items-center justify-between gap-3">
           <div class="flex items-center gap-3 min-w-0">
             <UAvatar
-              :alt="`${review.employee.firstName} ${review.employee.lastName}`"
+              :alt="review.employee ? `${review.employee.firstName} ${review.employee.lastName}` : 'Employee'"
               size="sm"
             />
             <div class="min-w-0">
               <p class="text-sm font-medium text-white truncate">
-                {{ review.employee.firstName }} {{ review.employee.lastName }}
+                {{ review.employee?.firstName }} {{ review.employee?.lastName }}
               </p>
               <p class="text-xs text-gray-400">
                 Due: {{ new Date(review.dueDate).toLocaleDateString('en-US', { month: 'short', day: 'numeric' }) }}

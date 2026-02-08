@@ -20,8 +20,8 @@ const isCancelling = ref(false)
 
 // User permissions — compare employee entity IDs, not user account IDs
 const currentUser = computed(() => authStore.user)
-const isEmployee = computed(() => review.value?.employee.id === currentUser.value?.employee?.id)
-const isManager = computed(() => review.value?.manager.id === currentUser.value?.employee?.id)
+const isEmployee = computed(() => review.value?.employee?.id === currentUser.value?.employee?.id)
+const isManager = computed(() => review.value?.manager?.id === currentUser.value?.employee?.id)
 const canManageReview = computed(() => {
   const role = currentUser.value?.role
   return role === 'hr' || isManager.value
@@ -160,15 +160,15 @@ onMounted(() => {
         <div class="flex items-start justify-between">
           <div class="flex items-center gap-4">
             <UAvatar
-              :alt="`${review.employee.firstName} ${review.employee.lastName}`"
+              :alt="review.employee ? `${review.employee.firstName} ${review.employee.lastName}` : 'Employee'"
               size="xl"
             />
             <div>
               <h1 class="text-2xl font-bold text-white">
-                {{ review.employee.firstName }} {{ review.employee.lastName }}
+                {{ review.employee?.firstName }} {{ review.employee?.lastName }}
               </h1>
               <p class="text-gray-400">
-                {{ review.employee.jobTitle }} • {{ review.employee.department?.name }}
+                {{ review.employee?.jobTitle }} • {{ review.employee?.department?.name }}
               </p>
               <div class="flex items-center gap-3 mt-2">
                 <UBadge
@@ -289,7 +289,7 @@ onMounted(() => {
                 <div>
                   <h3 class="text-lg font-medium text-white">Manager Evaluation</h3>
                   <p class="text-sm text-gray-400">
-                    By {{ review.manager.firstName }} {{ review.manager.lastName }}
+                    By {{ review.manager?.firstName }} {{ review.manager?.lastName }}
                     • {{ review.managerReview?.status === 'submitted' ? 'Completed' : 'Pending' }}
                   </p>
                 </div>
@@ -362,7 +362,7 @@ onMounted(() => {
               <div>
                 <dt class="text-sm text-gray-400">Triggered By</dt>
                 <dd class="text-white">
-                  {{ review.triggeredBy.firstName }} {{ review.triggeredBy.lastName }}
+                  {{ review.triggeredBy?.firstName }} {{ review.triggeredBy?.lastName }}
                 </dd>
               </div>
               <div>

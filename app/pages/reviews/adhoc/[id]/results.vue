@@ -19,7 +19,7 @@ const isAcknowledging = ref(false)
 const acknowledgmentComments = ref('')
 
 const currentUser = computed(() => authStore.user)
-const isEmployee = computed(() => review.value?.employee.id === currentUser.value?.employee?.id)
+const isEmployee = computed(() => review.value?.employee?.id === currentUser.value?.employee?.id)
 const canAcknowledge = computed(() =>
   isEmployee.value && review.value?.status === 'pending_acknowledgment'
 )
@@ -142,8 +142,8 @@ onMounted(() => {
       <div class="bg-gray-900 border border-gray-800 rounded-lg p-6">
         <h1 class="text-2xl font-bold text-white mb-2">Review Results</h1>
         <p class="text-gray-400">
-          {{ review.employee.firstName }} {{ review.employee.lastName }}
-          — {{ review.employee.jobTitle }}
+          {{ review.employee?.firstName }} {{ review.employee?.lastName }}
+          — {{ review.employee?.jobTitle }}
         </p>
         <div class="flex items-center gap-4 mt-4 text-sm text-gray-500">
           <span v-if="review.selfReview?.submittedAt">

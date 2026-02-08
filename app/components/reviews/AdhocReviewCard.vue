@@ -30,6 +30,20 @@ const statusConfig = computed(() => {
   return configs[props.review.status] ?? defaultStatusConfig
 })
 
+// Employee name
+const employeeName = computed(() => {
+  if (!props.review.employee) return 'Unknown Employee'
+  if (!props.review.employee) return 'Unknown Employee'
+  return `${props.review.employee.firstName || ''} ${props.review.employee.lastName || ''}`.trim() || 'Unknown Employee'
+})
+
+// Triggered by name
+const triggeredByName = computed(() => {
+  if (!props.review.triggeredBy) return 'Unknown User'
+  if (!props.review.triggeredBy) return 'Unknown User'
+  return `${props.review.triggeredBy.firstName || ''} ${props.review.triggeredBy.lastName || ''}`.trim() || 'Unknown User'
+})
+
 // Days remaining
 const daysRemaining = computed(() => adhocReviewsStore.getDaysRemaining(props.review))
 
@@ -78,12 +92,12 @@ function handleCancel() {
       <div class="flex items-center justify-between gap-3">
         <div class="flex items-center gap-3 min-w-0">
           <UAvatar
-            :alt="`${review.employee.firstName} ${review.employee.lastName}`"
+            :alt="employeeName"
             size="sm"
           />
           <div class="min-w-0">
             <div class="font-medium text-white truncate">
-              {{ review.employee.firstName }} {{ review.employee.lastName }}
+              {{ employeeName }}
             </div>
             <div class="text-xs text-gray-400">
               Due: {{ dueDateFormatted }}
@@ -120,15 +134,15 @@ function handleCancel() {
       <div class="flex items-start justify-between gap-3 mb-3">
         <div class="flex items-center gap-3">
           <UAvatar
-            :alt="`${review.employee.firstName} ${review.employee.lastName}`"
+            :alt="employeeName"
             size="md"
           />
           <div>
             <div class="font-medium text-white">
-              {{ review.employee.firstName }} {{ review.employee.lastName }}
+              {{ employeeName }}
             </div>
             <div class="text-sm text-gray-400">
-              {{ review.employee.jobTitle }} • {{ review.employee.department?.name }}
+              {{ review.employee?.jobTitle }} • {{ review.employee?.department?.name }}
             </div>
           </div>
         </div>
@@ -174,7 +188,7 @@ function handleCancel() {
       <div class="flex items-center justify-between pt-3 border-t border-gray-800">
         <div class="flex items-center gap-4 text-xs text-gray-500">
           <span>Triggered {{ triggeredDateFormatted }}</span>
-          <span>by {{ review.triggeredBy.firstName }} {{ review.triggeredBy.lastName }}</span>
+          <span>by {{ triggeredByName }}</span>
         </div>
         <div class="flex items-center gap-2">
           <span 
