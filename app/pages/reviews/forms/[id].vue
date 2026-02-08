@@ -149,7 +149,7 @@ function goBack() {
 
 <template>
   <div class="min-h-screen bg-gray-950 py-8">
-    <div class="container mx-auto px-4 max-w-6xl">
+    <div class="px-4">
       <!-- Loading -->
       <div v-if="isLoading" class="space-y-4">
         <USkeleton class="h-12 w-64" />
@@ -298,7 +298,9 @@ function goBack() {
           <div class="flex items-center gap-4 text-sm text-gray-500 mb-8">
             <span>Version {{ form.version }}</span>
             <span>•</span>
-            <span>Created by {{ form.createdBy.firstName }} {{ form.createdBy.lastName }}</span>
+            <span v-if="typeof form.createdBy === 'object'">
+              Created by {{ form.createdBy.firstName }} {{ form.createdBy.lastName }}
+            </span>
             <span>•</span>
             <span>Updated {{ new Date(form.updatedAt).toLocaleDateString() }}</span>
           </div>

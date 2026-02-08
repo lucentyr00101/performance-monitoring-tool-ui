@@ -64,6 +64,35 @@ const actions = computed(() => {
 // Default status config fallback
 const defaultStatusConfig = { label: 'Draft', color: 'neutral' as BadgeColor }
 const currentStatusConfig = computed(() => statusConfig.value ?? defaultStatusConfig)
+
+// Calculate counts from sections array if not provided directly
+const sectionsCount = computed(() => {
+  return props.form.sectionsCount ?? props.form.sections?.length ?? 0
+})
+
+const questionsCount = computed(() => {
+  // If questionsCount is explicitly provided, use it
+  if (props.form.questionsCount !== undefined) return props.form.questionsCount
+  
+  // Try to calculate from sections if they have questions
+  if (props.form.sections && props.form.sections.length > 0) {
+    const calculated = props.form.sections.reduce((total, section) => {
+      return total + (section.questions?.length ?? 0)
+    }, 0)
+    // Only return calculated value if it's greater than 0
+    // If 0, it means sections don't have questions (list endpoint)
+    return calculated
+  }
+  
+  return undefined
+})
+
+const showQuestionsCount = computed(() => questionsCount.value !== undefined)
+
+// Handle both departmentAssignments and assignedDepartments
+const departments = computed(() => {
+  return props.form.assignedDepartments ?? props.form.departmentAssignments ?? []
+})
 </script>
 
 <template>
@@ -90,15 +119,15 @@ const currentStatusConfig = computed(() => statusConfig.value ?? defaultStatusCo
         <div class="flex items-center gap-4 text-sm text-gray-500">
           <span class="flex items-center gap-1">
             <UIcon name="i-heroicons-rectangle-stack" class="w-4 h-4" />
-            {{ form.sectionsCount }} sections
+            {{ sectionsCount }} {{ sectionsCount === 1 ? 'section' : 'sections' }}
           </span>
-          <span class="flex items-center gap-1">
+          <span v-if="showQuestionsCount" class="flex items-center gap-1">
             <UIcon name="i-heroicons-question-mark-circle" class="w-4 h-4" />
-            {{ form.questionsCount }} questions
+            {{ questionsCount }} {{ questionsCount === 1 ? 'question' : 'questions' }}
           </span>
-          <span v-if="form.assignedDepartments.length" class="flex items-center gap-1">
+          <span v-if="departments.length" class="flex items-center gap-1">
             <UIcon name="i-heroicons-building-office" class="w-4 h-4" />
-            {{ form.assignedDepartments.length }} departments
+            {{ departments.length }} {{ departments.length === 1 ? 'department' : 'departments' }}
           </span>
         </div>
 

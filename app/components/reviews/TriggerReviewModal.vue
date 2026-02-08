@@ -51,7 +51,7 @@ const selectedForm = computed(() => {
   const deptId = selectedEmployee.value?.department?.id
   if (deptId) {
     const deptForm = forms.value.find(f => 
-      f.assignedDepartments.some(d => d.id === deptId)
+      (f.assignedDepartments ?? f.departmentAssignments ?? []).some(d => d.id === deptId)
     )
     if (deptForm) return deptForm
   }
@@ -165,7 +165,7 @@ const formOptions = computed(() =>
   forms.value.map(f => ({
     label: f.name,
     value: f.id,
-    description: f.isDefault ? 'Company Default' : `${f.assignedDepartments.length} departments`
+    description: f.isDefault ? 'Company Default' : `${(f.assignedDepartments ?? f.departmentAssignments ?? []).length} departments`
   }))
 )
 </script>

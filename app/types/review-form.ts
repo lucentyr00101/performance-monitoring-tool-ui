@@ -90,7 +90,7 @@ export interface ReviewFormSection {
   order: number
   collapsible?: boolean
   forReviewer: ReviewerType
-  questions: ReviewFormQuestion[]
+  questions?: ReviewFormQuestion[]
 }
 
 // Form settings
@@ -123,13 +123,14 @@ export interface ReviewForm {
   name: string
   description?: string
   instructions?: string
-  version: string
+  version: number | string
   status: ReviewFormStatus
   isDefault: boolean
   sections: ReviewFormSection[]
   settings: ReviewFormSettings
-  assignedDepartments: FormDepartmentAssignment[]
-  createdBy: FormCreator
+  departmentAssignments?: FormDepartmentAssignment[]
+  assignedDepartments?: FormDepartmentAssignment[]
+  createdBy: string | FormCreator
   publishedAt?: string
   createdAt: string
   updatedAt: string
@@ -140,13 +141,17 @@ export interface ReviewFormListItem {
   id: string
   name: string
   description?: string
-  version: string
+  instructions?: string
+  version: number | string
   status: ReviewFormStatus
   isDefault: boolean
-  sectionsCount: number
-  questionsCount: number
-  assignedDepartments: FormDepartmentAssignment[]
-  createdBy: FormCreator
+  sections: ReviewFormSection[]
+  settings: ReviewFormSettings
+  sectionsCount?: number
+  questionsCount?: number
+  departmentAssignments: FormDepartmentAssignment[]
+  assignedDepartments?: FormDepartmentAssignment[]
+  createdBy: string | FormCreator
   publishedAt?: string
   createdAt: string
   updatedAt: string

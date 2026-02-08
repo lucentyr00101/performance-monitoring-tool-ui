@@ -8,6 +8,7 @@ definePageMeta({
 
 const router = useRouter()
 const authStore = useAuthStore()
+const reviewFormsStore = useReviewFormsStore()
 
 const {
   reviewCycles,
@@ -21,6 +22,10 @@ const {
   clearCycleFilters,
   canCreateCycle
 } = useReviews()
+
+// Review Forms state
+const reviewForms = computed(() => reviewFormsStore.forms)
+const formsLoading = computed(() => reviewFormsStore.isLoading)
 
 // Check if user can create cycles
 const canCreate = computed(() => canCreateCycle())
@@ -81,6 +86,13 @@ onMounted(async () => {
   await fetchCycles()
 })
 
+// Watch for tab changes and fetch forms data when needed
+watch(activeTab, async (newTab) => {
+  if (newTab === 'forms' && reviewForms.value.length === 0) {
+    await reviewFormsStore.fetchForms()
+  }
+})
+
 // Handle cycle click - navigate to detail
 function handleCycleClick(cycle: ReviewCycleListItem) {
   router.push(`/reviews/cycles/${cycle.id}`)
@@ -110,6 +122,28 @@ async function handleCreateCycle(data: ReviewCycleCreateRequest) {
   }
   finally {
     isCreating.value = false
+  }
+}
+
+// Review forms handlers
+async function handleDeleteForm(id: string) {
+  await reviewFormsStore.deleteForm(id)
+}
+
+async function handlePublishForm(id: string) {
+  await reviewFormsStore.publishForm(id)
+}
+
+async function handleArchiveForm(id: string) {
+  await reviewFormsStore.archiveForm(id)
+}
+
+async function handleCloneForm(id: string) {
+  const clonedForm = await reviewFormsStore.cloneForm(id, {
+    name: `Copy of ${reviewForms.value.find(f => f.id === id)?.name}`
+  })
+  if (clonedForm) {
+    router.push(`/reviews/forms/${clonedForm.id}?edit=true`)
   }
 }
 </script>
@@ -266,10 +300,16 @@ async function handleCreateCycle(data: ReviewCycleCreateRequest) {
             New Form
           </UButton>
         </div>
-        <FormList
+        <ReviewFormsFormList
+          :forms="reviewForms"
+          :loading="formsLoading"
           @create="navigateTo('/reviews/forms/new')"
           @view="(id: string) => navigateTo(`/reviews/forms/${id}`)"
           @edit="(id: string) => navigateTo(`/reviews/forms/${id}?edit=true`)"
+          @delete="handleDeleteForm"
+          @publish="handlePublishForm"
+          @archive="handleArchiveForm"
+          @clone="handleCloneForm"
         />
       </div>
     </template>

@@ -312,7 +312,7 @@ export const useReviewFormsStore = defineStore('review-forms', {
       }
     },
 
-    async cloneForm(id: string, data: ReviewFormCloneRequest): Promise<string> {
+    async cloneForm(id: string, data: ReviewFormCloneRequest): Promise<ReviewFormListItem | null> {
       this.isLoading = true
       this.error = null
 
@@ -320,7 +320,8 @@ export const useReviewFormsStore = defineStore('review-forms', {
         const response = await reviewFormsService.cloneForm(id, data)
         // Refresh list after cloning
         await this.fetchForms()
-        return response.data.id
+        // Return the cloned form from the list
+        return this.forms.find(f => f.id === response.data.id) || null
       }
       catch (error) {
         const err = error as { error?: { message?: string } }

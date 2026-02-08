@@ -27,6 +27,17 @@ interface PaginatedResponse<T> {
   }
 }
 
+/**
+ * Transform MongoDB _id to id for frontend consumption
+ */
+function transformMongoId<T>(data: T & { _id?: string; id?: string }): T & { id: string } {
+  if ('_id' in data && data._id) {
+    const { _id, ...rest } = data as unknown as Record<string, unknown> & { _id: string }
+    return { ...rest, id: _id } as T & { id: string }
+  }
+  return data as T & { id: string }
+}
+
 interface CreateFormResponse {
   id: string
   name: string
@@ -85,7 +96,12 @@ export const reviewFormsService = {
     const query = queryParams.toString()
     const endpoint = `/review-forms${query ? `?${query}` : ''}`
     
-    return api.get<PaginatedResponse<ReviewFormListItem>['data']>(endpoint) as Promise<PaginatedResponse<ReviewFormListItem>>
+    const response = await api.get<PaginatedResponse<ReviewFormListItem>['data']>(endpoint) as PaginatedResponse<ReviewFormListItem>
+    
+    return {
+      ...response,
+      data: response.data.map(form => transformMongoId(form))
+    }
   },
 
   /**
@@ -93,7 +109,11 @@ export const reviewFormsService = {
    * GET /api/v1/review-forms/:id
    */
   async getForm(id: string) {
-    return api.get<ReviewForm>(`/review-forms/${id}`)
+    const response = await api.get<ReviewForm>(`/review-forms/${id}`)
+    return {
+      ...response,
+      data: transformMongoId(response.data)
+    }
   },
 
   /**
@@ -101,7 +121,11 @@ export const reviewFormsService = {
    * GET /api/v1/review-forms/default
    */
   async getDefaultForm() {
-    return api.get<ReviewForm>('/review-forms/default')
+    const response = await api.get<ReviewForm>('/review-forms/default')
+    return {
+      ...response,
+      data: transformMongoId(response.data)
+    }
   },
 
   /**
@@ -109,7 +133,11 @@ export const reviewFormsService = {
    * POST /api/v1/review-forms
    */
   async createForm(data: ReviewFormCreateRequest) {
-    return api.post<CreateFormResponse>('/review-forms', data) as Promise<ApiResponse<CreateFormResponse>>
+    const response = await api.post<CreateFormResponse>('/review-forms', data) as ApiResponse<CreateFormResponse>
+    return {
+      ...response,
+      data: transformMongoId(response.data)
+    }
   },
 
   /**
@@ -117,7 +145,11 @@ export const reviewFormsService = {
    * PUT /api/v1/review-forms/:id
    */
   async updateForm(id: string, data: ReviewFormUpdateRequest) {
-    return api.put<ReviewForm>(`/review-forms/${id}`, data)
+    const response = await api.put<ReviewForm>(`/review-forms/${id}`, data)
+    return {
+      ...response,
+      data: transformMongoId(response.data)
+    }
   },
 
   /**
