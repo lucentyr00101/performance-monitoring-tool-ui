@@ -18,12 +18,9 @@ function getEmployeeStatus(employee: Employee) {
   return employee.status || employee.employmentStatus || 'active'
 }
 
-// Get department name from either 'departmentId.name' or 'department.name'
+// Get department name from API computed field
 function getDepartmentName(employee: Employee) {
-  if (employee.departmentId && typeof employee.departmentId === 'object') {
-    return employee.departmentId.name
-  }
-  return employee.department?.name || 'Unassigned'
+  return employee.departmentName || 'Unassigned'
 }
 
 const statusColors: Record<string, string> = {

@@ -47,6 +47,8 @@ export interface Employee {
     name: string
   }
   department?: EmployeeDepartment
+  // API returns computed departmentName field
+  departmentName?: string
   managerId?: string | null
   manager?: EmployeeManager
   hireDate?: string

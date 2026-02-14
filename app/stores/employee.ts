@@ -141,15 +141,16 @@ export const useEmployeeStore = defineStore('employee', {
         updated('Employee')
         
         // Update current employee if it's the one being updated
-        if (this.currentEmployee?.id === id) {
+        if (this.currentEmployee?._id === id) {
           this.currentEmployee = response.data
         }
         
         // Update in list if present
-        const index = this.employees.findIndex(e => e.id === id)
+        const index = this.employees.findIndex(e => e._id === id)
         if (index !== -1) {
           // Convert Employee to EmployeeListItem format
           const listItem: _EmployeeListItem = {
+            _id: response.data._id,
             id: response.data.id,
             employeeCode: response.data.employeeCode,
             firstName: response.data.firstName,
@@ -157,10 +158,11 @@ export const useEmployeeStore = defineStore('employee', {
             fullName: response.data.fullName,
             email: response.data.email,
             jobTitle: response.data.jobTitle,
-            departmentId: typeof response.data.departmentId === 'object' 
-              ? response.data.departmentId 
+            departmentId: typeof response.data.departmentId === 'object'
+              ? response.data.departmentId
               : undefined,
             department: response.data.department,
+            departmentName: response.data.departmentName,
             manager: response.data.manager,
             managerId: response.data.managerId,
             hireDate: response.data.hireDate,
@@ -195,10 +197,10 @@ export const useEmployeeStore = defineStore('employee', {
         deleted('Employee')
         
         // Remove from list
-        this.employees = this.employees.filter(e => e.id !== id)
-        
+        this.employees = this.employees.filter(e => e._id !== id)
+
         // Clear current if deleted
-        if (this.currentEmployee?.id === id) {
+        if (this.currentEmployee?._id === id) {
           this.currentEmployee = null
         }
         

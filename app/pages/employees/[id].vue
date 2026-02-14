@@ -35,7 +35,7 @@ const canEdit = computed(() => {
   }
   
   // Users can edit their own profile
-  const isOwnProfile = employeeStore.currentEmployee.id === user.value.employee?.id
+  const isOwnProfile = employeeStore.currentEmployee._id === user.value.employee?.id
   return isOwnProfile
 })
 
