@@ -57,7 +57,7 @@ Fix all errors and warnings before completing your work.
   - Incorrect prop structures (check docs for exact format)
 
 **When working with components**:
-1. Visit https://ui.nuxt.com/components/[component-name] 
+1. Visit https://ui.nuxt.com/components/[component-name]
 2. Review the component's API, props, events, and examples
 3. Use the exact component name, props, and structure from the documentation
 
@@ -165,6 +165,103 @@ File-based routing in `app/pages/`:
 - `/analytics` - Analytics dashboards (goals, performance, reviews, team)
 - `/auth/login`, `/auth/forgot-password`, `/auth/reset-password`
 - `/profile`, `/settings`, `/notifications`
+
+## Nuxt 4 Best Practices
+
+### Composable Context Rules
+
+**CRITICAL**: Nuxt composables can ONLY be called in specific contexts:
+
+✅ **Allowed contexts:**
+- Inside Vue `<script setup>` blocks
+- Inside Nuxt plugins (`plugins/*.ts`)
+- Inside Nuxt middleware (`middleware/*.ts`)
+- Inside other composables (`composables/*.ts`)
+
+❌ **NOT allowed:**
+- Directly in Pinia store actions/getters
+- Outside of Vue/Nuxt lifecycle
+
+**Example - WRONG:**
+```typescript
+// ❌ BAD - Composable in Pinia store
+export const useAuthStore = defineStore('auth', {
+  actions: {
+    async login() {
+      const cookie = useCookie('token') // ❌ ERROR!
+    }
+  }
+})
+```
+
+**Example - CORRECT:**
+```typescript
+// ✅ GOOD - Pass cookie from composable
+export const useAuthStore = defineStore('auth', {
+  actions: {
+    async login(credentials, tokenCookie) {
+      tokenCookie.value = 'new-token' // ✅ Works!
+    }
+  }
+})
+
+// ✅ GOOD - Composable handles cookie
+export function useAuth() {
+  const store = useAuthStore()
+  const tokenCookie = useCookie('token') // ✅ Valid context
+
+  async function login(credentials) {
+    return store.login(credentials, tokenCookie)
+  }
+
+  return { login }
+}
+```
+
+### Auto-Imports
+
+Nuxt auto-imports these without explicit imports:
+- Vue functions: `ref`, `computed`, `watch`, `onMounted`, etc.
+- Nuxt composables: `useCookie`, `useRoute`, `useRouter`, `navigateTo`, `useState`, etc.
+- Components in `components/` directory
+- Utils in `utils/` directory
+
+### Preventing Infinite API Loops
+
+**❌ BAD - Reactive watcher that creates infinite loop:**
+```vue
+<script setup>
+const { pagination, fetchEmployees } = useEmployees()
+
+// BAD: fetchEmployees() updates pagination, triggering this watcher again
+watch(pagination, () => {
+  fetchEmployees() // ❌ Infinite loop!
+})
+</script>
+```
+
+**✅ GOOD - Explicit fetching on user actions:**
+```vue
+<script setup>
+const { pagination, setPage, fetchEmployees } = useEmployees()
+
+// GOOD: Only fetch on mount
+onMounted(() => {
+  fetchEmployees()
+})
+
+// GOOD: Explicit fetch when user changes page
+function handlePageChange(page: number) {
+  setPage(page) // Store action that calls fetchEmployees() internally
+}
+</script>
+```
+
+**Rules:**
+1. Never watch state that your fetch updates (pagination, filters, sort)
+2. Put debounced search watchers in composables, not pages
+3. Let user actions trigger fetches explicitly
+4. Use `onMounted()` for initial fetch only
 
 ## TypeScript Types
 

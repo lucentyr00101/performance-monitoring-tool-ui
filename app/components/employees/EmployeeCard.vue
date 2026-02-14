@@ -24,13 +24,8 @@ const fullName = computed(() => props.employee.fullName || `${props.employee.fir
 // Get status from either 'status' or 'employmentStatus' field (API returns 'status')
 const employeeStatus = computed(() => props.employee.status || props.employee.employmentStatus || 'active')
 
-// Get department name from either 'departmentId.name' or 'department.name'
-const departmentName = computed(() => {
-  if (props.employee.departmentId && typeof props.employee.departmentId === 'object') {
-    return props.employee.departmentId.name
-  }
-  return props.employee.department?.name || 'Unassigned'
-})
+// Get department name from API computed field
+const departmentName = computed(() => props.employee.departmentName || 'Unassigned')
 
 const statusColors: Record<string, string> = {
   active: 'bg-emerald-500/10 text-emerald-400 border-emerald-500/20',

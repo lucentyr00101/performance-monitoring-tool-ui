@@ -66,8 +66,8 @@ onMounted(async () => {
 // - debouncedSearch in useEmployees() triggers fetch
 
 // Handle employee click - navigate to profile
-function handleEmployeeClick(employee: { id: string }) {
-  router.push(`/employees/${employee.id}`)
+function handleEmployeeClick(employee: { _id: string }) {
+  router.push(`/employees/${employee._id}`)
 }
 
 // Handle page change
@@ -115,7 +115,7 @@ async function handleCreateEmployee(data: EmployeeCreateRequest) {
     const employee = await employeeStore.createEmployee(data)
     isCreateModalOpen.value = false
     // Navigate to new employee profile
-    router.push(`/employees/${employee.id}`)
+    router.push(`/employees/${employee._id}`)
   }
   catch {
     // Error notification handled by store

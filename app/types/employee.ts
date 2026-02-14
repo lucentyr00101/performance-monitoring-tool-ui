@@ -30,7 +30,8 @@ export interface EmployeeManager {
 
 // Employee entity
 export interface Employee {
-  id: string
+  _id: string
+  id?: string // Optional for backward compatibility
   userId?: string
   employeeCode: string
   firstName: string
@@ -62,7 +63,8 @@ export interface Employee {
 
 // Employee list item (lighter version for directory)
 export interface EmployeeListItem {
-  id: string
+  _id: string
+  id?: string // Optional for backward compatibility
   employeeCode: string
   firstName: string
   lastName: string
@@ -78,6 +80,8 @@ export interface EmployeeListItem {
     id: string
     name: string
   }
+  // API returns computed departmentName field
+  departmentName?: string
   manager?: {
     id: string
     firstName: string

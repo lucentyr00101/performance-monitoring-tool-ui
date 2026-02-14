@@ -257,7 +257,7 @@ const paginationDisplay = computed(() => {
         <div v-else-if="viewMode === 'grid'" class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-4">
           <EmployeesEmployeeCard
             v-for="employee in employees"
-            :key="employee.id"
+            :key="employee._id"
             :employee="employee"
             :search-query="searchQuery"
             @click="handleEmployeeClick"
@@ -268,7 +268,7 @@ const paginationDisplay = computed(() => {
         <div v-else class="space-y-2">
           <EmployeesEmployeeRow
             v-for="employee in employees"
-            :key="employee.id"
+            :key="employee._id"
             :employee="employee"
             :search-query="searchQuery"
             @click="handleEmployeeClick"
