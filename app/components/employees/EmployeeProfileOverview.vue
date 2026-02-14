@@ -30,11 +30,20 @@ function calculateTenure(hireDate?: string): string {
   const now = new Date()
   const years = now.getFullYear() - hire.getFullYear()
   const months = now.getMonth() - hire.getMonth()
-  
+
   if (years > 0) {
     return `${years} year${years > 1 ? 's' : ''}${months > 0 ? `, ${months} month${months > 1 ? 's' : ''}` : ''}`
   }
   return `${months} month${months !== 1 ? 's' : ''}`
+}
+
+const rankLabels: Record<string, string> = {
+  junior: 'Junior',
+  mid: 'Mid-Level',
+  senior: 'Senior',
+  manager: 'Manager',
+  lead: 'Lead',
+  ceo: 'CEO'
 }
 </script>
 
@@ -132,10 +141,12 @@ function calculateTenure(hireDate?: string): string {
             <p class="mt-1 text-white capitalize">{{ employee.workLocation || 'Not set' }}</p>
           </div>
         </div>
-        
-        <div v-if="employee.careerLevel">
-          <label class="block text-xs font-medium text-gray-500 uppercase tracking-wider">Career Level</label>
-          <p class="mt-1 text-white">{{ employee.careerLevel }}</p>
+
+        <div>
+          <label class="block text-xs font-medium text-gray-500 uppercase tracking-wider">Rank</label>
+          <p class="mt-1 text-white">
+            {{ employee.rank ? rankLabels[employee.rank] || employee.rank : 'Not set' }}
+          </p>
         </div>
       </div>
     </div>

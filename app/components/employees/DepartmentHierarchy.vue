@@ -88,12 +88,6 @@ function isExpanded(id: string): boolean {
                 {{ dept.manager.firstName }} {{ dept.manager.lastName }}
               </p>
             </div>
-
-            <!-- Employee Count -->
-            <div class="flex items-center gap-1 text-sm text-gray-400">
-              <UIcon name="i-heroicons-users" class="w-4 h-4" />
-              <span>{{ dept.employeeCount || 0 }}</span>
-            </div>
           </div>
 
           <!-- Children (nested) -->
@@ -129,11 +123,6 @@ function isExpanded(id: string): boolean {
                       {{ child.manager.firstName }} {{ child.manager.lastName }}
                     </p>
                   </div>
-
-                  <div class="flex items-center gap-1 text-sm text-gray-400">
-                    <UIcon name="i-heroicons-users" class="w-4 h-4" />
-                    <span>{{ child.employeeCount || 0 }}</span>
-                  </div>
                 </div>
 
                 <!-- Third level children -->
@@ -153,10 +142,6 @@ function isExpanded(id: string): boolean {
                     </div>
                     <div class="flex-1 min-w-0">
                       <p class="font-medium text-gray-300 truncate">{{ grandchild.name }}</p>
-                    </div>
-                    <div class="flex items-center gap-1 text-sm text-gray-500">
-                      <UIcon name="i-heroicons-users" class="w-4 h-4" />
-                      <span>{{ grandchild.employeeCount || 0 }}</span>
                     </div>
                   </div>
                 </div>

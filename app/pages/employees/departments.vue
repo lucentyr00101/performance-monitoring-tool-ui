@@ -232,10 +232,6 @@ async function handleSave(data: DepartmentCreateRequest | DepartmentUpdateReques
                 Are you sure you want to delete <strong>{{ departmentToDelete?.name }}</strong>?
                 This action cannot be undone.
               </p>
-              <p v-if="departmentToDelete?.employeeCount" class="text-amber-400 text-sm mt-2">
-                ⚠️ This department has {{ departmentToDelete.employeeCount }} employees.
-                You must reassign them first.
-              </p>
             </div>
           </div>
           
@@ -250,7 +246,6 @@ async function handleSave(data: DepartmentCreateRequest | DepartmentUpdateReques
             <UButton
               variant="solid"
               color="error"
-              :disabled="(departmentToDelete?.employeeCount || 0) > 0"
               @click="handleDelete"
             >
               Delete

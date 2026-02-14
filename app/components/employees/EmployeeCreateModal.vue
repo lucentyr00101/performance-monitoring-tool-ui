@@ -23,6 +23,7 @@ const formData = ref<EmployeeCreateRequest>({
   department_id: undefined,
   hire_date: new Date().toISOString().split('T')[0],
   employment_type: 'full-time',
+  rank: undefined,
   create_user_account: false,
   user_role: 'employee'
 })
@@ -44,6 +45,7 @@ watch(
         department_id: undefined,
         hire_date: new Date().toISOString().split('T')[0],
         employment_type: 'full-time',
+        rank: undefined,
         create_user_account: false,
         user_role: 'employee'
       }
@@ -107,6 +109,15 @@ const employmentTypeOptions = [
   { value: 'contract', label: 'Contract' }
 ]
 
+const rankOptions = [
+  { value: 'junior', label: 'Junior' },
+  { value: 'mid', label: 'Mid' },
+  { value: 'senior', label: 'Senior' },
+  { value: 'manager', label: 'Manager' },
+  { value: 'lead', label: 'Lead' },
+  { value: 'ceo', label: 'CEO' }
+]
+
 const userRoleOptions = [
   { value: 'employee', label: 'Employee' },
   { value: 'manager', label: 'Manager' },
@@ -141,41 +152,43 @@ const userRoleOptions = [
             Personal Information
           </h3>
           <div class="space-y-4">
-            <div class="grid grid-cols-2 gap-4">
-              <div>
-                <label class="block text-sm font-medium text-gray-300 mb-1">
-                  First Name <span class="text-red-400">*</span>
-                </label>
-                <UInput
-                  v-model="formData.first_name"
-                  placeholder="First name"
-                  :color="errors.firstName ? 'error' : 'neutral'"
-                />
-                <p v-if="errors.firstName" class="text-xs text-red-400 mt-1">
-                  {{ errors.firstName }}
-                </p>
-              </div>
-              <div>
-                <label class="block text-sm font-medium text-gray-300 mb-1">
-                  Last Name <span class="text-red-400">*</span>
-                </label>
-                <UInput
-                  v-model="formData.last_name"
-                  placeholder="Last name"
-                  :color="errors.lastName ? 'error' : 'neutral'"
-                />
-                <p v-if="errors.lastName" class="text-xs text-red-400 mt-1">
-                  {{ errors.lastName }}
-                </p>
-              </div>
+            <div class="w-full">
+              <label class="block text-sm font-medium text-gray-300 mb-1">
+                First Name <span class="text-red-400">*</span>
+              </label>
+              <UInput
+                v-model="formData.first_name"
+                class="w-full"
+                placeholder="First name"
+                :color="errors.firstName ? 'error' : 'neutral'"
+              />
+              <p v-if="errors.firstName" class="text-xs text-red-400 mt-1">
+                {{ errors.firstName }}
+              </p>
             </div>
 
-            <div>
+            <div class="w-full">
+              <label class="block text-sm font-medium text-gray-300 mb-1">
+                Last Name <span class="text-red-400">*</span>
+              </label>
+              <UInput
+                v-model="formData.last_name"
+                class="w-full"
+                placeholder="Last name"
+                :color="errors.lastName ? 'error' : 'neutral'"
+              />
+              <p v-if="errors.lastName" class="text-xs text-red-400 mt-1">
+                {{ errors.lastName }}
+              </p>
+            </div>
+
+            <div class="w-full">
               <label class="block text-sm font-medium text-gray-300 mb-1">
                 Email <span class="text-red-400">*</span>
               </label>
               <UInput
                 v-model="formData.email"
+                class="w-full"
                 type="email"
                 placeholder="email@example.com"
                 :color="errors.email ? 'error' : 'neutral'"
@@ -185,10 +198,11 @@ const userRoleOptions = [
               </p>
             </div>
 
-            <div>
+            <div class="w-full">
               <label class="block text-sm font-medium text-gray-300 mb-1">Phone</label>
               <UInput
                 v-model="formData.phone"
+                class="w-full"
                 type="tel"
                 placeholder="+1 (555) 000-0000"
                 :color="errors.phone ? 'error' : 'neutral'"
@@ -206,46 +220,60 @@ const userRoleOptions = [
             Professional Information
           </h3>
           <div class="space-y-4">
-            <div>
+            <div class="w-full">
               <label class="block text-sm font-medium text-gray-300 mb-1">Job Title</label>
               <UInput
                 v-model="formData.job_title"
+                class="w-full"
                 placeholder="e.g., Senior Developer"
               />
             </div>
 
-            <div>
+            <div class="w-full">
               <label class="block text-sm font-medium text-gray-300 mb-1">Department</label>
               <USelectMenu
                 v-model="formData.department_id"
+                class="w-full"
                 :items="departmentStore.departments.map(d => ({ value: d.id, label: d.name }))"
                 placeholder="Select department"
                 value-key="value"
               />
             </div>
 
-            <div class="grid grid-cols-2 gap-4">
-              <div>
-                <label class="block text-sm font-medium text-gray-300 mb-1">
-                  Hire Date <span class="text-red-400">*</span>
-                </label>
-                <UInput
-                  v-model="formData.hire_date"
-                  type="date"
-                  :color="errors.hireDate ? 'error' : 'neutral'"
-                />
-                <p v-if="errors.hireDate" class="text-xs text-red-400 mt-1">
-                  {{ errors.hireDate }}
-                </p>
-              </div>
-              <div>
-                <label class="block text-sm font-medium text-gray-300 mb-1">Employment Type</label>
-                <USelectMenu
-                  v-model="formData.employment_type"
-                  :items="employmentTypeOptions"
-                  value-key="value"
-                />
-              </div>
+            <div class="w-full">
+              <label class="block text-sm font-medium text-gray-300 mb-1">Rank</label>
+              <USelectMenu
+                v-model="formData.rank"
+                class="w-full"
+                :items="rankOptions"
+                placeholder="Select rank"
+                value-key="value"
+              />
+            </div>
+
+            <div class="w-full">
+              <label class="block text-sm font-medium text-gray-300 mb-1">
+                Hire Date <span class="text-red-400">*</span>
+              </label>
+              <UInput
+                v-model="formData.hire_date"
+                class="w-full"
+                type="date"
+                :color="errors.hireDate ? 'error' : 'neutral'"
+              />
+              <p v-if="errors.hireDate" class="text-xs text-red-400 mt-1">
+                {{ errors.hireDate }}
+              </p>
+            </div>
+
+            <div class="w-full">
+              <label class="block text-sm font-medium text-gray-300 mb-1">Employment Type</label>
+              <USelectMenu
+                v-model="formData.employment_type"
+                class="w-full"
+                :items="employmentTypeOptions"
+                value-key="value"
+              />
             </div>
           </div>
         </div>
@@ -266,10 +294,11 @@ const userRoleOptions = [
               </label>
             </div>
 
-            <div v-if="formData.create_user_account">
+            <div v-if="formData.create_user_account" class="w-full">
               <label class="block text-sm font-medium text-gray-300 mb-1">User Role</label>
               <USelectMenu
                 v-model="formData.user_role"
+                class="w-full"
                 :items="userRoleOptions"
                 value-key="value"
               />

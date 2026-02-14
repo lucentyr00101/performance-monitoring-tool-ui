@@ -42,16 +42,9 @@ const statusColors: Record<string, string> = {
           {{ department.description }}
         </p>
         
-        <div class="flex items-center gap-4 mt-3 text-sm">
-          <div class="flex items-center gap-1 text-gray-400">
-            <UIcon name="i-heroicons-users" class="w-4 h-4" />
-            <span>{{ department.employeeCount || 0 }} employees</span>
-          </div>
-          
-          <div v-if="department.parent" class="flex items-center gap-1 text-gray-500">
-            <UIcon name="i-heroicons-arrow-turn-up-right" class="w-4 h-4" />
-            <span>{{ department.parent.name }}</span>
-          </div>
+        <div v-if="department.parent" class="flex items-center gap-1 text-gray-500 mt-3 text-sm">
+          <UIcon name="i-heroicons-arrow-turn-up-right" class="w-4 h-4" />
+          <span>{{ department.parent.name }}</span>
         </div>
         
         <div v-if="department.manager" class="flex items-center gap-2 mt-3">
