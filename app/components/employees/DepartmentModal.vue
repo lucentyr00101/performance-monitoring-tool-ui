@@ -136,6 +136,7 @@ function handleClose() {
                 v-model="formData.name"
                 placeholder="e.g., Engineering, Marketing"
                 :color="errors.name ? 'error' : 'neutral'"
+                class="w-full"
               />
               <p v-if="errors.name" class="text-xs text-red-400 mt-1">
                 {{ errors.name }}
@@ -148,6 +149,7 @@ function handleClose() {
                 v-model="formData.description"
                 placeholder="Brief description of the department's responsibilities..."
                 :rows="3"
+                class="w-full"
               />
             </div>
           </div>
@@ -166,6 +168,7 @@ function handleClose() {
                 :items="[{ value: undefined, label: 'None (Top Level)' }, ...parentOptions]"
                 placeholder="Select parent department"
                 value-key="value"
+                class="w-full"
               />
               <p class="text-xs text-gray-500 mt-1">
                 Leave empty for a top-level department
@@ -179,6 +182,7 @@ function handleClose() {
                 :items="[{ value: undefined, label: 'No manager assigned' }, ...managerOptions]"
                 placeholder="Select department head"
                 value-key="value"
+                class="w-full"
               />
             </div>
           </div>

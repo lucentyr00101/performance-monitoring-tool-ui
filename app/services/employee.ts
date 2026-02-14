@@ -45,7 +45,7 @@ export const employeeService = {
    */
   async list(params: EmployeeListParams = {}) {
     const queryParams = new URLSearchParams()
-    
+
     // Query params stay snake_case per API convention
     if (params.page) queryParams.set('page', String(params.page))
     if (params.perPage) queryParams.set('per_page', String(params.perPage))
@@ -56,12 +56,13 @@ export const employeeService = {
     if (params.employmentType) queryParams.set('employment_type', params.employmentType)
     if (params.workLocation) queryParams.set('work_location', params.workLocation)
     if (params.role) queryParams.set('role', params.role)
+    if (params.rank) queryParams.set('rank', params.rank)
     if (params.sortBy) queryParams.set('sort_by', params.sortBy)
     if (params.sortOrder) queryParams.set('sort_order', params.sortOrder)
 
     const query = queryParams.toString()
     const endpoint = `/employees${query ? `?${query}` : ''}`
-    
+
     return api.get<PaginatedResponse<EmployeeListItem>['data']>(endpoint) as Promise<PaginatedResponse<EmployeeListItem>>
   },
 

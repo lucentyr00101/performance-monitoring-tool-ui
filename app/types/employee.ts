@@ -7,6 +7,7 @@ import type { UserRole } from './auth'
 export type EmploymentType = 'full-time' | 'part-time' | 'contract'
 export type EmploymentStatus = 'active' | 'inactive' | 'on_leave' | 'terminated'
 export type WorkLocation = 'remote' | 'hybrid' | 'office'
+export type EmployeeRank = 'junior' | 'mid' | 'senior' | 'manager' | 'lead' | 'ceo'
 
 // Basic department info (embedded in employee)
 export interface EmployeeDepartment {
@@ -53,7 +54,7 @@ export interface Employee {
   status?: EmploymentStatus
   employmentStatus?: EmploymentStatus
   workLocation?: WorkLocation
-  careerLevel?: string
+  rank?: EmployeeRank
   directReportsCount?: number
   createdAt: string
   updatedAt: string
@@ -87,6 +88,7 @@ export interface EmployeeListItem {
   // API returns 'status' field (not employmentStatus)
   status?: EmploymentStatus
   employmentStatus?: EmploymentStatus
+  rank?: EmployeeRank
   avatarUrl?: string
   directReportsCount?: number
 }
@@ -100,6 +102,7 @@ export interface EmployeeFilters {
   employmentType?: EmploymentType
   workLocation?: WorkLocation
   role?: UserRole
+  rank?: EmployeeRank
 }
 
 // Employee list params (for API calls)
@@ -121,6 +124,7 @@ export interface EmployeeCreateRequest {
   manager_id?: string
   hire_date?: string
   employment_type?: EmploymentType
+  rank?: EmployeeRank
   avatar_url?: string
   create_user_account?: boolean
   user_role?: UserRole
@@ -138,7 +142,7 @@ export interface EmployeeUpdateRequest {
   employment_type?: EmploymentType
   employment_status?: EmploymentStatus
   work_location?: WorkLocation
-  career_level?: string
+  rank?: EmployeeRank
   avatar_url?: string
 }
 

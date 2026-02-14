@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import type { DepartmentListItem, DepartmentCreateRequest, DepartmentUpdateRequest, DepartmentHierarchy } from '~/types/department'
+import { employeeService } from '~/services/employee'
 
 definePageMeta({
   layout: 'default',
@@ -7,7 +8,6 @@ definePageMeta({
 })
 
 const departmentStore = useDepartmentStore()
-const employeeStore = useEmployeeStore()
 const { user } = useAuth()
 
 // Check if user can manage departments
@@ -28,26 +28,40 @@ const selectedDepartment = ref<DepartmentListItem | null>(null)
 const isDeleteDialogOpen = ref(false)
 const departmentToDelete = ref<DepartmentListItem | null>(null)
 
-// Fetch data on mount
-onMounted(async () => {
-  await Promise.all([
-    departmentStore.fetchDepartments(),
-    departmentStore.fetchHierarchy()
-  ])
-  
-  // Load managers for the dropdown
-  await employeeStore.fetchEmployees({ perPage: 100 })
-})
+// Manager list state
+const managers = ref<Array<{ id: string; firstName: string; lastName: string }>>([])
+const isLoadingManagers = ref(false)
 
-// Get managers from employees
-const managers = computed(() => {
-  return employeeStore.employees
-    .filter(e => e.employmentStatus === 'active')
-    .map(e => ({
+// Fetch managers from API
+async function fetchManagers() {
+  isLoadingManagers.value = true
+  try {
+    const response = await employeeService.list({
+      employmentStatus: 'active',
+      rank: 'manager',
+      perPage: 100
+    })
+
+    managers.value = response.data.map(e => ({
       id: e.id,
       firstName: e.firstName,
       lastName: e.lastName
     }))
+  } catch (error) {
+    console.error('Failed to fetch managers:', error)
+    managers.value = []
+  } finally {
+    isLoadingManagers.value = false
+  }
+}
+
+// Fetch data on mount
+onMounted(async () => {
+  await Promise.all([
+    departmentStore.fetchDepartments(),
+    departmentStore.fetchHierarchy(),
+    fetchManagers()
+  ])
 })
 
 // Handle create
