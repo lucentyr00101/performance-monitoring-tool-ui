@@ -47,13 +47,13 @@ const statusColors: Record<string, string> = {
           <span>{{ department.parent.name }}</span>
         </div>
         
-        <div v-if="department.manager" class="flex items-center gap-2 mt-3">
+        <div v-if="department.managerId" class="flex items-center gap-2 mt-3">
           <UAvatar
-            :alt="`${department.manager.firstName} ${department.manager.lastName}`"
+            :alt="`${department.managerId.firstName} ${department.managerId.lastName}`"
             size="xs"
           />
           <span class="text-sm text-gray-400">
-            {{ department.manager.firstName }} {{ department.manager.lastName }}
+            {{ department.managerId.firstName }} {{ department.managerId.lastName }}
           </span>
         </div>
       </div>
