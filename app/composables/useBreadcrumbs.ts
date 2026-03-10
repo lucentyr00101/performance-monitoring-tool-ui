@@ -22,6 +22,12 @@ const ROUTE_LABELS: Record<string, string> = {
   'edit': 'Edit',
   'cycles': 'Review Cycles',
   'templates': 'Templates',
+  'analytics': 'Analytics & Reports',
+  'me': 'My Analytics',
+  'audit': 'Audit Logs',
+  'history': 'Review History',
+  'hierarchy': 'Hierarchy',
+  'forms': 'Review Forms',
 }
 
 export function useBreadcrumbs() {

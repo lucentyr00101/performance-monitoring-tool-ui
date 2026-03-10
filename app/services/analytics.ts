@@ -9,7 +9,10 @@ import type {
   TeamAnalyticsData,
   EmployeeAnalyticsData,
   ExportOptions,
-  ExportResponse
+  ExportResponse,
+  KpisData,
+  DashboardAnalyticsData,
+  DepartmentAnalyticsData
 } from '~/types/analytics'
 
 /**
@@ -77,6 +80,36 @@ export const analyticsService = {
   async getEmployeeAnalytics(employeeId: string, filters: AnalyticsFilters = {}) {
     const query = buildFilterQuery(filters)
     return api.get<EmployeeAnalyticsData>(`/analytics/employee/${employeeId}${query}`) as Promise<AnalyticsResponse<EmployeeAnalyticsData>>
+  },
+
+  /**
+   * Get KPI summary data
+   * GET /api/v1/analytics/kpis
+   */
+  async getKpis(params: { period?: string; department?: string } = {}) {
+    const query = new URLSearchParams()
+    if (params.period) query.set('period', params.period)
+    if (params.department) query.set('department', params.department)
+    const qs = query.toString()
+    return api.get<KpisData>(`/analytics/kpis${qs ? `?${qs}` : ''}`) as Promise<AnalyticsResponse<KpisData>>
+  },
+
+  /**
+   * Get dashboard analytics data
+   * GET /api/v1/analytics/dashboard
+   */
+  async getDashboardAnalytics(filters: AnalyticsFilters = {}) {
+    const query = buildFilterQuery(filters)
+    return api.get<DashboardAnalyticsData>(`/analytics/dashboard${query}`) as Promise<AnalyticsResponse<DashboardAnalyticsData>>
+  },
+
+  /**
+   * Get department analytics data
+   * GET /api/v1/analytics/department/:departmentId
+   */
+  async getDepartmentAnalytics(departmentId: string, filters: AnalyticsFilters = {}) {
+    const query = buildFilterQuery(filters)
+    return api.get<DepartmentAnalyticsData>(`/analytics/department/${departmentId}${query}`) as Promise<AnalyticsResponse<DepartmentAnalyticsData>>
   },
 
   /**

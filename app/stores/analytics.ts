@@ -11,7 +11,10 @@ import type {
   EmployeeAnalyticsData,
   ExportOptions,
   ExportResponse,
-  DateRangePreset
+  DateRangePreset,
+  KpisData,
+  DashboardAnalyticsData,
+  DepartmentAnalyticsData
 } from '~/types/analytics'
 
 export const useAnalyticsStore = defineStore('analytics', {
@@ -22,6 +25,7 @@ export const useAnalyticsStore = defineStore('analytics', {
     reviewCycleAnalytics: null,
     teamAnalytics: null,
     employeeAnalytics: null,
+    kpis: null,
 
     // Filters
     filters: {
@@ -67,6 +71,13 @@ export const useAnalyticsStore = defineStore('analytics', {
     personalGoalCompletion: (state) => state.employeeAnalytics?.summary.goalCompletionRate ?? 0,
     personalAvgRating: (state) => state.employeeAnalytics?.summary.averageRating ?? 0,
     personalRatingTrend: (state) => state.employeeAnalytics?.summary.ratingTrend ?? 'stable',
+
+    // KPI getters
+    kpisEmployeeCount: (state) => state.kpis?.employeeCount ?? 0,
+    kpisGoalsCompletionRate: (state) => state.kpis?.goalsCompletionRate ?? 0,
+    kpisReviewCompletionRate: (state) => state.kpis?.reviewCompletionRate ?? 0,
+    kpisAvgPerformanceScore: (state) => state.kpis?.averagePerformanceScore ?? 0,
+    kpisActiveReviewCycles: (state) => state.kpis?.activeReviewCycles ?? 0,
 
     // Filter helpers
     activeFiltersCount: (state) => {
@@ -190,6 +201,64 @@ export const useAnalyticsStore = defineStore('analytics', {
       }
     },
 
+    async fetchKpis(params: { period?: string; department?: string } = {}): Promise<KpisData> {
+      this.isLoading = true
+      this.error = null
+
+      try {
+        const response = await analyticsService.getKpis(params)
+        this.kpis = response.data
+        this.lastRefreshed = new Date().toISOString()
+        return response.data
+      }
+      catch (error) {
+        const err = error as { error?: { message?: string } }
+        this.error = err?.error?.message || 'Failed to fetch KPIs'
+        throw error
+      }
+      finally {
+        this.isLoading = false
+      }
+    },
+
+    async fetchDashboardAnalytics(): Promise<DashboardAnalyticsData> {
+      this.isLoading = true
+      this.error = null
+
+      try {
+        const response = await analyticsService.getDashboardAnalytics(this.filters)
+        this.lastRefreshed = new Date().toISOString()
+        return response.data
+      }
+      catch (error) {
+        const err = error as { error?: { message?: string } }
+        this.error = err?.error?.message || 'Failed to fetch dashboard analytics'
+        throw error
+      }
+      finally {
+        this.isLoading = false
+      }
+    },
+
+    async fetchDepartmentAnalytics(departmentId: string): Promise<DepartmentAnalyticsData> {
+      this.isLoading = true
+      this.error = null
+
+      try {
+        const response = await analyticsService.getDepartmentAnalytics(departmentId, this.filters)
+        this.lastRefreshed = new Date().toISOString()
+        return response.data
+      }
+      catch (error) {
+        const err = error as { error?: { message?: string } }
+        this.error = err?.error?.message || 'Failed to fetch department analytics'
+        throw error
+      }
+      finally {
+        this.isLoading = false
+      }
+    },
+
     // ============================================
     // EXPORT ACTIONS
     // ============================================
@@ -273,6 +342,7 @@ export const useAnalyticsStore = defineStore('analytics', {
       this.reviewCycleAnalytics = null
       this.teamAnalytics = null
       this.employeeAnalytics = null
+      this.kpis = null
       this.lastRefreshed = null
     },
 

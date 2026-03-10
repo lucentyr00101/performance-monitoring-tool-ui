@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import type { EmployeeDashboardData } from '~/types/dashboard'
 
-defineProps<{
+const props = defineProps<{
   data: EmployeeDashboardData
   loading?: boolean
   userName?: string
@@ -15,8 +15,16 @@ defineEmits<{
 const notificationsStore = useNotificationsStore()
 const { notifications: recentNotifications, isLoading: notifLoading } = storeToRefs(notificationsStore)
 
+let mounted = false
 onMounted(() => {
+  mounted = true
   notificationsStore.fetchNotifications({ perPage: 5 })
+})
+
+watch(() => props.data, () => {
+  if (mounted) {
+    notificationsStore.fetchNotifications({ perPage: 5 })
+  }
 })
 
 async function handleMarkNotificationRead(id: string) {

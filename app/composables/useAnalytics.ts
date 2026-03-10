@@ -11,7 +11,10 @@ import type {
   PerformanceAnalyticsData,
   ReviewCycleAnalyticsData,
   TeamAnalyticsData,
-  EmployeeAnalyticsData
+  EmployeeAnalyticsData,
+  KpisData,
+  DashboardAnalyticsData,
+  DepartmentAnalyticsData
 } from '~/types/analytics'
 
 /**
@@ -25,6 +28,13 @@ export function useAnalytics() {
   // ============================================
   // REACTIVE STATE
   // ============================================
+
+  const kpis = computed(() => store.kpis)
+  const kpisEmployeeCount = computed(() => store.kpisEmployeeCount)
+  const kpisGoalsCompletionRate = computed(() => store.kpisGoalsCompletionRate)
+  const kpisReviewCompletionRate = computed(() => store.kpisReviewCompletionRate)
+  const kpisAvgPerformanceScore = computed(() => store.kpisAvgPerformanceScore)
+  const kpisActiveReviewCycles = computed(() => store.kpisActiveReviewCycles)
 
   const goalAnalytics = computed(() => store.goalAnalytics)
   const performanceAnalytics = computed(() => store.performanceAnalytics)
@@ -244,6 +254,18 @@ export function useAnalytics() {
   // FETCH ACTIONS
   // ============================================
 
+  async function fetchKpis(params?: { period?: string; department?: string }): Promise<KpisData> {
+    return store.fetchKpis(params)
+  }
+
+  async function fetchDashboardAnalytics(): Promise<DashboardAnalyticsData> {
+    return store.fetchDashboardAnalytics()
+  }
+
+  async function fetchDepartmentAnalytics(departmentId: string): Promise<DepartmentAnalyticsData> {
+    return store.fetchDepartmentAnalytics(departmentId)
+  }
+
   async function fetchGoalAnalytics(): Promise<GoalAnalyticsData> {
     return store.fetchGoalAnalytics()
   }
@@ -329,6 +351,12 @@ export function useAnalytics() {
 
   return {
     // State
+    kpis,
+    kpisEmployeeCount,
+    kpisGoalsCompletionRate,
+    kpisReviewCompletionRate,
+    kpisAvgPerformanceScore,
+    kpisActiveReviewCycles,
     goalAnalytics,
     performanceAnalytics,
     reviewCycleAnalytics,
@@ -380,6 +408,9 @@ export function useAnalytics() {
     getExportFormatOptions,
 
     // Fetch actions
+    fetchKpis,
+    fetchDashboardAnalytics,
+    fetchDepartmentAnalytics,
     fetchGoalAnalytics,
     fetchPerformanceAnalytics,
     fetchReviewCycleAnalytics,

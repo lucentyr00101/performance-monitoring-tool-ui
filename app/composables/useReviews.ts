@@ -240,6 +240,7 @@ export function useReviews() {
   function getCycleStatusColor(status: ReviewCycleStatus): BadgeColor {
     const colors: Record<ReviewCycleStatus, BadgeColor> = {
       draft: 'neutral',
+      scheduled: 'warning',
       active: 'info',
       completed: 'success',
       cancelled: 'error'
@@ -253,9 +254,12 @@ export function useReviews() {
   function getCycleTypeColor(type: ReviewCycleType): BadgeColor {
     const colors: Record<ReviewCycleType, BadgeColor> = {
       annual: 'secondary',
-      'semi-annual': 'info',
+      semi_annual: 'info',
       quarterly: 'success',
-      monthly: 'warning'
+      monthly: 'warning',
+      probation: 'error',
+      project: 'primary',
+      ad_hoc: 'neutral'
     }
     return colors[type] || 'neutral'
   }
@@ -266,9 +270,12 @@ export function useReviews() {
   function getCycleTypeLabel(type: ReviewCycleType): string {
     const labels: Record<ReviewCycleType, string> = {
       annual: 'Annual',
-      'semi-annual': 'Semi-Annual',
+      semi_annual: 'Semi-Annual',
       quarterly: 'Quarterly',
-      monthly: 'Monthly'
+      monthly: 'Monthly',
+      probation: 'Probation',
+      project: 'Project',
+      ad_hoc: 'Ad Hoc'
     }
     return labels[type] || type
   }
@@ -310,7 +317,9 @@ export function useReviews() {
       pending: 'neutral',
       in_progress: 'warning',
       submitted: 'info',
-      acknowledged: 'success'
+      acknowledged: 'success',
+      disputed: 'error',
+      finalized: 'secondary'
     }
     return colors[status] || 'neutral'
   }
@@ -323,7 +332,9 @@ export function useReviews() {
       pending: 'Pending',
       in_progress: 'In Progress',
       submitted: 'Submitted',
-      acknowledged: 'Acknowledged'
+      acknowledged: 'Acknowledged',
+      disputed: 'Disputed',
+      finalized: 'Finalized'
     }
     return labels[status] || status
   }
@@ -335,7 +346,8 @@ export function useReviews() {
     const colors: Record<ReviewType, BadgeColor> = {
       self: 'info',
       manager: 'secondary',
-      peer: 'success'
+      peer: 'success',
+      hr: 'error'
     }
     return colors[type] || 'neutral'
   }
@@ -347,7 +359,8 @@ export function useReviews() {
     const labels: Record<ReviewType, string> = {
       self: 'Self Assessment',
       manager: 'Manager Review',
-      peer: 'Peer Review'
+      peer: 'Peer Review',
+      hr: 'HR Review'
     }
     return labels[type] || type
   }
@@ -406,6 +419,10 @@ export function useReviews() {
 
   async function launchCycle(id: string) {
     return store.launchCycle(id)
+  }
+
+  async function completeCycle(id: string) {
+    return store.completeCycle(id)
   }
 
   // ============================================
@@ -600,6 +617,7 @@ export function useReviews() {
     updateCycle,
     deleteCycle,
     launchCycle,
+    completeCycle,
 
     // Review actions
     fetchReviews,

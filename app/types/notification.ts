@@ -53,7 +53,7 @@ export interface NotificationListItem {
   status: NotificationStatus
   createdAt: string
   readAt?: string
-  link?: string
+  actionUrl?: string
 }
 
 // Notification filters

@@ -6,11 +6,26 @@ definePageMeta({
   middleware: ['auth']
 })
 
-const { canViewAnalytics, getAvailableAnalyticsTypes } = useAnalytics()
-const { user } = useAuth()
+const {
+  canViewAnalytics,
+  isLoading,
+  fetchKpis,
+  kpisEmployeeCount,
+  kpisGoalsCompletionRate,
+  kpisAvgPerformanceScore,
+  kpisActiveReviewCycles
+} = useAnalytics()
 
-// Get available analytics for user
-const availableTypes = computed(() => getAvailableAnalyticsTypes())
+onMounted(async () => {
+  if (canViewAnalytics('goals') && canViewAnalytics('performance')) {
+    try {
+      await fetchKpis()
+    }
+    catch {
+      // KPI fetch errors are handled by the store
+    }
+  }
+})
 
 // Analytics type cards configuration
 const analyticsCards: {
@@ -138,22 +153,32 @@ function getColorClasses(color: string) {
     <div v-if="canViewAnalytics('goals') && canViewAnalytics('performance')" class="mt-12">
       <h2 class="text-lg font-semibold text-white mb-4">Quick Overview</h2>
       <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
-        <div class="bg-gray-900 border border-gray-800 rounded-lg p-4 text-center">
-          <p class="text-3xl font-bold text-primary-400">156</p>
-          <p class="text-sm text-gray-400 mt-1">Total Goals</p>
-        </div>
-        <div class="bg-gray-900 border border-gray-800 rounded-lg p-4 text-center">
-          <p class="text-3xl font-bold text-green-400">68%</p>
-          <p class="text-sm text-gray-400 mt-1">Completion Rate</p>
-        </div>
-        <div class="bg-gray-900 border border-gray-800 rounded-lg p-4 text-center">
-          <p class="text-3xl font-bold text-amber-400">3.8</p>
-          <p class="text-sm text-gray-400 mt-1">Avg Rating</p>
-        </div>
-        <div class="bg-gray-900 border border-gray-800 rounded-lg p-4 text-center">
-          <p class="text-3xl font-bold text-blue-400">245</p>
-          <p class="text-sm text-gray-400 mt-1">Reviews</p>
-        </div>
+        <!-- Loading skeleton -->
+        <template v-if="isLoading">
+          <div v-for="i in 4" :key="i" class="bg-gray-900 border border-gray-800 rounded-lg p-4 text-center animate-pulse">
+            <div class="h-9 w-16 bg-gray-800 rounded mx-auto mb-2" />
+            <div class="h-4 w-24 bg-gray-800 rounded mx-auto" />
+          </div>
+        </template>
+        <!-- Live data -->
+        <template v-else>
+          <div class="bg-gray-900 border border-gray-800 rounded-lg p-4 text-center">
+            <p class="text-3xl font-bold text-primary-400">{{ kpisEmployeeCount }}</p>
+            <p class="text-sm text-gray-400 mt-1">Employees</p>
+          </div>
+          <div class="bg-gray-900 border border-gray-800 rounded-lg p-4 text-center">
+            <p class="text-3xl font-bold text-green-400">{{ kpisGoalsCompletionRate }}%</p>
+            <p class="text-sm text-gray-400 mt-1">Goals Completion</p>
+          </div>
+          <div class="bg-gray-900 border border-gray-800 rounded-lg p-4 text-center">
+            <p class="text-3xl font-bold text-amber-400">{{ kpisAvgPerformanceScore.toFixed(1) }}</p>
+            <p class="text-sm text-gray-400 mt-1">Avg Score</p>
+          </div>
+          <div class="bg-gray-900 border border-gray-800 rounded-lg p-4 text-center">
+            <p class="text-3xl font-bold text-blue-400">{{ kpisActiveReviewCycles }}</p>
+            <p class="text-sm text-gray-400 mt-1">Active Cycles</p>
+          </div>
+        </template>
       </div>
     </div>
   </div>

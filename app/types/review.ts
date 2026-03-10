@@ -2,12 +2,12 @@
 // Based on API spec: docs/api/reviews.md and PRD: docs/prd/05-reviews.md
 
 // Review Cycle enums
-export type ReviewCycleType = 'annual' | 'semi-annual' | 'quarterly' | 'monthly'
-export type ReviewCycleStatus = 'draft' | 'active' | 'completed' | 'cancelled'
+export type ReviewCycleType = 'annual' | 'semi_annual' | 'quarterly' | 'monthly' | 'probation' | 'project' | 'ad_hoc'
+export type ReviewCycleStatus = 'draft' | 'scheduled' | 'active' | 'completed' | 'cancelled'
 
 // Review enums
-export type ReviewType = 'self' | 'manager' | 'peer'
-export type ReviewStatus = 'pending' | 'in_progress' | 'submitted' | 'acknowledged'
+export type ReviewType = 'self' | 'manager' | 'peer' | 'hr'
+export type ReviewStatus = 'pending' | 'in_progress' | 'submitted' | 'acknowledged' | 'disputed' | 'finalized'
 
 // Rating scale configuration
 export interface RatingScale {
@@ -267,6 +267,18 @@ export interface LaunchCycleResponse {
   }
   notificationsSent: number
   launchedAt: string
+}
+
+// Complete cycle response
+export interface CompleteCycleResponse {
+  id: string
+  name: string
+  status: 'completed'
+  reviewsCompleted: {
+    total: number
+    acknowledged: number
+  }
+  completedAt: string
 }
 
 // Review Template types (for P1 - templates feature)

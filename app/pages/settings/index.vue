@@ -6,7 +6,7 @@ definePageMeta({
   middleware: ['auth']
 })
 
-const { userRole } = useAuth()
+const { userRole, user } = useAuth()
 const settingsStore = useSettingsStore()
 const reviewFormsStore = useReviewFormsStore()
 
@@ -371,6 +371,19 @@ onMounted(async () => {
             Save Notification Preferences
           </UButton>
         </div>
+      </div>
+      <!-- =============================== -->
+      <!-- SYSTEM AUDIT (admin only)       -->
+      <!-- =============================== -->
+      <div v-if="user?.role === 'admin'" class="bg-gray-900 border border-gray-800 rounded-lg p-6">
+        <div class="flex items-center gap-2 mb-1">
+          <UIcon name="i-heroicons-shield-check" class="w-5 h-5 text-primary-400" />
+          <h2 class="text-lg font-semibold text-white">System Audit</h2>
+        </div>
+        <p class="text-sm text-gray-400 mb-4">View a full log of all administrative actions taken in the system.</p>
+        <UButton variant="outline" color="neutral" to="/settings/audit" trailing-icon="i-heroicons-arrow-right">
+          View Audit Logs
+        </UButton>
       </div>
     </div>
   </div>

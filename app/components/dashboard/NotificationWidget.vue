@@ -134,7 +134,7 @@ const unreadCount = computed(() => {
         <NuxtLink
           v-for="notification in notifications.slice(0, maxItems || 5)"
           :key="notification.id"
-          :to="notification.link || '/notifications'"
+          :to="notification.actionUrl || '/notifications'"
           class="flex items-start gap-3 p-2 -mx-2 rounded-lg hover:bg-gray-800/50 transition-colors group cursor-pointer"
           :class="{ 'opacity-60': notification.status === 'read' }"
           @click="handleMarkRead(notification.id)"

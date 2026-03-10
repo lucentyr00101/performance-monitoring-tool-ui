@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { NotificationType, NotificationStatus } from '~/types/notification'
+import type { NotificationType, NotificationStatus, NotificationListItem } from '~/types/notification'
 
 definePageMeta({
   layout: 'default',
@@ -39,8 +39,13 @@ watch([selectedType, selectedStatus], () => {
   notificationsStore.fetchNotifications()
 })
 
-async function handleMarkRead(id: string) {
-  await notificationsStore.markAsRead(id)
+async function handleNotificationClick(notification: NotificationListItem) {
+  if (!notification.readAt) {
+    await notificationsStore.markAsRead(notification.id)
+  }
+  if (notification.actionUrl) {
+    await navigateTo(notification.actionUrl)
+  }
 }
 
 async function handleMarkAllRead() {
@@ -118,14 +123,17 @@ onMounted(() => {
         :key="notification.id"
         class="bg-gray-900 border border-gray-800 rounded-lg p-4 hover:bg-gray-800/50 transition-colors cursor-pointer"
         :class="{ 'opacity-60': notification.status === 'read' }"
-        @click="handleMarkRead(notification.id)"
+        @click="handleNotificationClick(notification)"
       >
         <div class="flex items-start gap-3">
           <div class="w-2 h-2 mt-2 rounded-full shrink-0" :class="notification.status === 'unread' ? 'bg-primary-500' : 'bg-transparent'" />
           <div class="flex-1 min-w-0">
             <div class="flex items-center justify-between gap-2">
               <p class="text-sm font-medium text-white truncate">{{ notification.title }}</p>
-              <span class="text-xs text-gray-500 shrink-0">{{ formatTimeAgo(notification.createdAt) }}</span>
+              <div class="flex items-center gap-2 shrink-0">
+                <span class="text-xs text-gray-500">{{ formatTimeAgo(notification.createdAt) }}</span>
+                <UIcon v-if="notification.actionUrl" name="i-heroicons-arrow-right" class="w-4 h-4 text-gray-500" />
+              </div>
             </div>
             <p class="text-sm text-gray-400 mt-1">{{ notification.message }}</p>
           </div>

@@ -325,6 +325,33 @@ export interface ExportResponse {
 }
 
 // ============================================
+// KPI / DASHBOARD / DEPARTMENT ANALYTICS
+// ============================================
+
+export interface KpisData {
+  averagePerformanceScore: number
+  goalsCompletionRate: number
+  reviewCompletionRate: number
+  employeeCount: number
+  activeReviewCycles: number
+  trends: {
+    performanceScore: number[]
+    goalsCompletion: number[]
+  }
+}
+
+export type DashboardAnalyticsData = Record<string, unknown>
+
+export interface DepartmentAnalyticsData {
+  departmentId: string
+  departmentName: string
+  employeeCount: number
+  goalCompletionRate: number
+  averagePerformanceScore: number
+  reviewCompletionRate: number
+}
+
+// ============================================
 // STORE STATE
 // ============================================
 
@@ -335,6 +362,7 @@ export interface AnalyticsState {
   reviewCycleAnalytics: ReviewCycleAnalyticsData | null
   teamAnalytics: TeamAnalyticsData | null
   employeeAnalytics: EmployeeAnalyticsData | null
+  kpis: KpisData | null
 
   // Filters
   filters: AnalyticsFilters

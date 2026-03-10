@@ -251,7 +251,7 @@ export function adaptNotificationItem(item: NotificationItem): NotificationListI
     priority: 'normal',
     status: item.isRead ? 'read' : 'unread',
     createdAt: item.createdAt,
-    link: item.link
+    actionUrl: item.link
   }
 }
 
