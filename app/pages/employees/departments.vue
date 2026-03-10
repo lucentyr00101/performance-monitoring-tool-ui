@@ -43,7 +43,7 @@ async function fetchManagers() {
     })
 
     managers.value = response.data.map(e => ({
-      id: e.id,
+      id: e._id,
       firstName: e.firstName,
       lastName: e.lastName
     }))

@@ -39,7 +39,7 @@ watch(
           name: props.department.name,
           description: props.department.description || '',
           parent_id: props.department.parent?.id,
-          manager_id: props.department.managerId?.id
+          manager_id: props.department.manager_id || props.department.manager?.id
         }
       } else {
         formData.value = {

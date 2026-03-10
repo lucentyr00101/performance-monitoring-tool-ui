@@ -26,6 +26,7 @@ export interface Department {
   description?: string
   parentId?: string
   parent?: DepartmentParent
+  manager_id?: string
   managerId?: string
   manager?: EmployeeManager
   subDepartments?: SubDepartment[]
@@ -41,6 +42,7 @@ export interface DepartmentListItem {
   name: string
   description?: string
   parent?: DepartmentParent
+  manager_id?: string
   manager?: EmployeeManager
   employeeCount: number
   status: DepartmentStatus
