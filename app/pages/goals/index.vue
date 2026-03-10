@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { GoalListItem, GoalCreateRequest } from '~/types/goal'
+import type { GoalListItem, GoalCreateRequest, GoalType } from '~/types/goal'
 
 definePageMeta({
   layout: 'default',
@@ -7,6 +7,7 @@ definePageMeta({
 })
 
 const router = useRouter()
+const route = useRoute()
 
 const {
   goals,
@@ -20,6 +21,7 @@ const {
   createGoal,
   setPage,
   setViewMode,
+  setFilters,
   clearFilters,
   canCreateGoal
 } = useGoals()
@@ -31,8 +33,12 @@ const canCreate = computed(() => canCreateGoal('individual'))
 const isCreateModalOpen = ref(false)
 const isCreating = ref(false)
 
-// Initial data fetch
+// Initial data fetch — pre-set filter from route query
 onMounted(async () => {
+  const typeParam = route.query.type as GoalType | undefined
+  if (typeParam && ['individual', 'team', 'department', 'company'].includes(typeParam)) {
+    setFilters({ type: typeParam })
+  }
   await fetchGoals()
 })
 
@@ -219,10 +225,13 @@ const viewModeOptions = [
         </div>
       </div>
 
-      <!-- TODO: Kanban View -->
-      <div v-else-if="viewMode === 'kanban'" class="text-center py-12 text-gray-400">
-        Kanban view coming soon...
-      </div>
+      <!-- Kanban View -->
+      <GoalsKanbanView
+        v-else-if="viewMode === 'kanban'"
+        :goals="goals"
+        :search-query="searchQuery"
+        @goal-click="(goal) => router.push(`/goals/${goal.id}`)"
+      />
 
       <!-- Pagination -->
       <div v-if="pagination.totalPages > 1" class="mt-6 flex justify-center">

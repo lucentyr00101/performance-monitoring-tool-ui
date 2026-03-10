@@ -104,8 +104,31 @@ function handleClearFilters() {
 
 // Handle export
 async function handleExport(format: 'csv' | 'xlsx') {
-  // TODO: Implement export functionality in Phase 4
-  console.log('Export as:', format)
+  const { info } = useNotification()
+  if (format === 'xlsx') {
+    info('Export', 'XLSX export coming soon. Use CSV for now.')
+    return
+  }
+  const rows = employees.value
+  const headers = ['Name', 'Email', 'Job Title', 'Department', 'Status', 'Hire Date']
+  const csvRows = [
+    headers.join(','),
+    ...rows.map(e => [
+      `"${e.firstName} ${e.lastName}"`,
+      `"${e.email}"`,
+      `"${e.jobTitle || ''}"`,
+      `"${e.department?.name || e.departmentName || ''}"`,
+      `"${e.status || e.employmentStatus || ''}"`,
+      `"${e.hireDate ? new Date(e.hireDate).toLocaleDateString() : ''}"`
+    ].join(','))
+  ]
+  const blob = new Blob([csvRows.join('\n')], { type: 'text/csv;charset=utf-8;' })
+  const url = URL.createObjectURL(blob)
+  const link = document.createElement('a')
+  link.href = url
+  link.download = `employees-${new Date().toISOString().split('T')[0]}.csv`
+  link.click()
+  URL.revokeObjectURL(url)
 }
 
 // Handle create employee

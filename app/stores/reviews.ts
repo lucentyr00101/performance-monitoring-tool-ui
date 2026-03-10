@@ -46,9 +46,6 @@ export const useReviewsStore = defineStore('reviews', {
       totalPages: 0
     },
     
-    // Templates
-    templates: [],
-    
     // UI State
     isLoading: false,
     error: null

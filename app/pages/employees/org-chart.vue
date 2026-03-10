@@ -5,7 +5,7 @@ definePageMeta({
 })
 
 const employeeStore = useEmployeeStore()
-const { error: notifyError, info } = useNotification()
+const { error: notifyError } = useNotification()
 
 // Loading state
 const isLoading = ref(true)
@@ -48,9 +48,8 @@ onMounted(async () => {
 })
 
 // Handle export
-async function handleExport() {
-  // TODO: Implement PNG export
-  info('Export', 'Export functionality coming soon.')
+function handleExport() {
+  window.print()
 }
 
 // Handle node click
@@ -88,12 +87,20 @@ function handleNodeClick(_id: string) {
     </div>
 
     <!-- Org Chart -->
-    <EmployeesOrgChart
-      v-else
-      :employees="orgEmployees"
-      :is-loading="isLoading"
-      @node-click="handleNodeClick"
-      @export="handleExport"
-    />
+    <div v-else class="org-chart-print-target">
+      <EmployeesOrgChart
+        :employees="orgEmployees"
+        :is-loading="isLoading"
+        @node-click="handleNodeClick"
+        @export="handleExport"
+      />
+    </div>
   </div>
 </template>
+
+<style scoped>
+@media print {
+  :global(body > *:not(.org-chart-print-target)) { display: none; }
+  .org-chart-print-target { display: block !important; width: 100vw; height: 100vh; }
+}
+</style>

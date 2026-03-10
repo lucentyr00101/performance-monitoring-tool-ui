@@ -79,16 +79,6 @@ export const useAnalyticsStore = defineStore('analytics', {
       return count
     },
 
-    // Date range helpers
-    effectiveDateRange: (state) => {
-      if (state.filters.startDate && state.filters.endDate) {
-        return {
-          start: state.filters.startDate,
-          end: state.filters.endDate
-        }
-      }
-      return getDateRangeFromPreset(state.filters.dateRange || 'last_30_days')
-    }
   },
 
   actions: {
@@ -296,34 +286,3 @@ export const useAnalyticsStore = defineStore('analytics', {
   }
 })
 
-// ============================================
-// HELPER FUNCTIONS
-// ============================================
-
-function getDateRangeFromPreset(preset: DateRangePreset): { start: string; end: string } {
-  const now = new Date()
-  const end = now.toISOString().split('T')[0]!
-  let start: Date
-
-  switch (preset) {
-    case 'last_7_days':
-      start = new Date(now.setDate(now.getDate() - 7))
-      break
-    case 'last_30_days':
-      start = new Date(now.setDate(now.getDate() - 30))
-      break
-    case 'last_quarter':
-      start = new Date(now.setMonth(now.getMonth() - 3))
-      break
-    case 'last_year':
-      start = new Date(now.setFullYear(now.getFullYear() - 1))
-      break
-    default:
-      start = new Date(now.setDate(now.getDate() - 30))
-  }
-
-  return {
-    start: start.toISOString().split('T')[0]!,
-    end
-  }
-}

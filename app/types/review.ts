@@ -223,6 +223,8 @@ export interface ReviewCycleCreateRequest {
   end_date: string
   settings?: Partial<CycleSettings>
   departments?: string[]
+  /** ID of the review form template to use as the default for this cycle */
+  default_form_id?: string
 }
 
 // Review Cycle update request
@@ -234,6 +236,8 @@ export interface ReviewCycleUpdateRequest {
   end_date?: string
   settings?: Partial<CycleSettings>
   departments?: string[]
+  /** ID of the review form template to use as the default for this cycle */
+  default_form_id?: string
 }
 
 // Review update/submit request
@@ -320,9 +324,6 @@ export interface ReviewState {
     totalItems: number
     totalPages: number
   }
-  
-  // Templates (P1)
-  templates: ReviewTemplate[]
   
   // UI State
   isLoading: boolean

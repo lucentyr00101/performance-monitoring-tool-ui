@@ -7,6 +7,7 @@ definePageMeta({
 })
 
 const { user, userRole, userFullName } = useAuth()
+const employeeStore = useEmployeeStore()
 
 const roleLabels: Record<UserRole, string> = {
   admin: 'Administrator',
@@ -17,6 +18,42 @@ const roleLabels: Record<UserRole, string> = {
 }
 
 const employee = computed(() => user.value?.employee)
+
+// Edit mode state
+const isEditing = ref(false)
+const isSaving = ref(false)
+const editForm = reactive({
+  phone: '',
+  jobTitle: ''
+})
+
+function startEdit() {
+  editForm.phone = employee.value?.phone || ''
+  editForm.jobTitle = employee.value?.jobTitle || ''
+  isEditing.value = true
+}
+
+function cancelEdit() {
+  isEditing.value = false
+}
+
+async function saveProfile() {
+  if (!employee.value?.id) return
+  isSaving.value = true
+  try {
+    await employeeStore.updateEmployee(employee.value.id, {
+      phone: editForm.phone || undefined,
+      job_title: editForm.jobTitle || undefined
+    })
+    isEditing.value = false
+  }
+  catch {
+    // Notification handled by store
+  }
+  finally {
+    isSaving.value = false
+  }
+}
 </script>
 
 <template>
@@ -26,57 +63,91 @@ const employee = computed(() => user.value?.employee)
     <div class="space-y-6">
       <!-- Profile header -->
       <div class="bg-gray-900 border border-gray-800 rounded-lg p-6">
-        <div class="flex items-center gap-6">
-          <UAvatar
-            :alt="userFullName"
-            :src="employee?.avatarUrl"
-            size="xl"
-          />
-          <div>
-            <h2 class="text-xl font-semibold text-white">{{ userFullName }}</h2>
-            <p class="text-gray-400">{{ employee?.jobTitle }}</p>
-            <UBadge color="primary" variant="subtle" class="mt-2">
-              {{ roleLabels[userRole as UserRole] || userRole }}
-            </UBadge>
+        <div class="flex items-center justify-between gap-6">
+          <div class="flex items-center gap-6">
+            <UAvatar
+              :alt="userFullName"
+              :src="employee?.avatarUrl"
+              size="xl"
+            />
+            <div>
+              <h2 class="text-xl font-semibold text-white">{{ userFullName }}</h2>
+              <p class="text-gray-400">{{ employee?.jobTitle }}</p>
+              <UBadge color="primary" variant="subtle" class="mt-2">
+                {{ roleLabels[userRole as UserRole] || userRole }}
+              </UBadge>
+            </div>
           </div>
+          <UButton
+            v-if="!isEditing"
+            variant="outline"
+            color="neutral"
+            size="sm"
+            @click="startEdit"
+          >
+            <UIcon name="i-heroicons-pencil" class="w-4 h-4 mr-1" />
+            Edit Profile
+          </UButton>
         </div>
       </div>
 
       <!-- Details -->
       <div class="bg-gray-900 border border-gray-800 rounded-lg p-6">
         <h3 class="text-lg font-medium text-white mb-4">Details</h3>
-        <dl class="grid grid-cols-1 sm:grid-cols-2 gap-x-8 gap-y-4">
-          <div>
-            <dt class="text-sm text-gray-400">Email</dt>
-            <dd class="text-white">{{ user?.email }}</dd>
+
+        <template v-if="isEditing">
+          <div class="space-y-4">
+            <UFormField label="Phone">
+              <UInput v-model="editForm.phone" placeholder="e.g. +1 555-000-0000" class="w-full max-w-sm" />
+            </UFormField>
+            <UFormField label="Job Title">
+              <UInput v-model="editForm.jobTitle" placeholder="e.g. Software Engineer" class="w-full max-w-sm" />
+            </UFormField>
           </div>
-          <div v-if="employee?.phone">
-            <dt class="text-sm text-gray-400">Phone</dt>
-            <dd class="text-white">{{ employee.phone }}</dd>
+          <div class="flex gap-2 mt-6 pt-4 border-t border-gray-800">
+            <UButton color="primary" :loading="isSaving" @click="saveProfile">
+              Save Changes
+            </UButton>
+            <UButton variant="ghost" color="neutral" :disabled="isSaving" @click="cancelEdit">
+              Cancel
+            </UButton>
           </div>
-          <div v-if="employee?.department">
-            <dt class="text-sm text-gray-400">Department</dt>
-            <dd class="text-white">{{ employee.department.name }}</dd>
-          </div>
-          <div v-if="employee?.employeeCode">
-            <dt class="text-sm text-gray-400">Employee Code</dt>
-            <dd class="text-white">{{ employee.employeeCode }}</dd>
-          </div>
-          <div v-if="employee?.hireDate">
-            <dt class="text-sm text-gray-400">Hire Date</dt>
-            <dd class="text-white">
-              {{ new Date(employee.hireDate).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' }) }}
-            </dd>
-          </div>
-          <div v-if="employee?.employmentType">
-            <dt class="text-sm text-gray-400">Employment Type</dt>
-            <dd class="text-white capitalize">{{ employee.employmentType }}</dd>
-          </div>
-          <div v-if="employee?.manager">
-            <dt class="text-sm text-gray-400">Reports To</dt>
-            <dd class="text-white">{{ employee.manager.firstName }} {{ employee.manager.lastName }}</dd>
-          </div>
-        </dl>
+        </template>
+
+        <template v-else>
+          <dl class="grid grid-cols-1 sm:grid-cols-2 gap-x-8 gap-y-4">
+            <div>
+              <dt class="text-sm text-gray-400">Email</dt>
+              <dd class="text-white">{{ user?.email }}</dd>
+            </div>
+            <div v-if="employee?.phone">
+              <dt class="text-sm text-gray-400">Phone</dt>
+              <dd class="text-white">{{ employee.phone }}</dd>
+            </div>
+            <div v-if="employee?.department">
+              <dt class="text-sm text-gray-400">Department</dt>
+              <dd class="text-white">{{ employee.department.name }}</dd>
+            </div>
+            <div v-if="employee?.employeeCode">
+              <dt class="text-sm text-gray-400">Employee Code</dt>
+              <dd class="text-white">{{ employee.employeeCode }}</dd>
+            </div>
+            <div v-if="employee?.hireDate">
+              <dt class="text-sm text-gray-400">Hire Date</dt>
+              <dd class="text-white">
+                {{ new Date(employee.hireDate).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' }) }}
+              </dd>
+            </div>
+            <div v-if="employee?.employmentType">
+              <dt class="text-sm text-gray-400">Employment Type</dt>
+              <dd class="text-white capitalize">{{ employee.employmentType }}</dd>
+            </div>
+            <div v-if="employee?.manager">
+              <dt class="text-sm text-gray-400">Reports To</dt>
+              <dd class="text-white">{{ employee.manager.firstName }} {{ employee.manager.lastName }}</dd>
+            </div>
+          </dl>
+        </template>
       </div>
 
       <!-- Account -->

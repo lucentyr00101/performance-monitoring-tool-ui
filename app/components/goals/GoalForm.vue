@@ -19,6 +19,8 @@ const { canCreateGoal, fetchTemplates, templates } = useGoals()
 const { user } = useAuth()
 
 const isLoading = ref(false)
+const formDirty = ref(false)
+useUnsavedChanges(() => formDirty.value)
 
 // Helper function to convert ISO 8601 date to YYYY-MM-DD
 function formatDateForInput(dateString?: string): string {
@@ -108,8 +110,9 @@ function validate(): boolean {
 
 async function handleSubmit() {
   if (!validate()) return
-  
+
   isLoading.value = true
+  formDirty.value = false
   try {
     const data: GoalCreateRequest = {
       title: form.title.trim(),
@@ -156,7 +159,7 @@ const minDate = computed(() => {
 </script>
 
 <template>
-  <form @submit.prevent="handleSubmit" class="space-y-6">
+  <form class="space-y-6" @submit.prevent="handleSubmit" @change="formDirty = true" @input="formDirty = true">
     <!-- Template Selection (create mode only) -->
     <div v-if="mode === 'create'" class="flex items-center gap-2">
       <UButton
@@ -280,7 +283,7 @@ const minDate = computed(() => {
         type="button"
         variant="ghost"
         color="neutral"
-        @click="emit('cancel')"
+        @click="() => { formDirty = false; emit('cancel') }"
       >
         Cancel
       </UButton>

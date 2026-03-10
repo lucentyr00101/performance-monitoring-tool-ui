@@ -36,21 +36,21 @@ export const useReviewFormsStore = defineStore('review-forms', {
 
   getters: {
     totalForms: (state) => state.pagination.totalItems,
-    
+
     hasNextPage: (state) => state.pagination.page < state.pagination.totalPages,
-    
+
     hasPreviousPage: (state) => state.pagination.page > 1,
-    
-    publishedForms: (state): ReviewFormListItem[] => 
+
+    publishedForms: (state): ReviewFormListItem[] =>
       state.forms.filter(f => f.status === 'published'),
-    
-    draftForms: (state): ReviewFormListItem[] => 
+
+    draftForms: (state): ReviewFormListItem[] =>
       state.forms.filter(f => f.status === 'draft'),
-    
-    archivedForms: (state): ReviewFormListItem[] => 
+
+    archivedForms: (state): ReviewFormListItem[] =>
       state.forms.filter(f => f.status === 'archived'),
 
-    formsByStatus: (state) => (status: ReviewFormStatus): ReviewFormListItem[] => 
+    formsByStatus: (state) => (status: ReviewFormStatus): ReviewFormListItem[] =>
       state.forms.filter(f => f.status === status),
 
     // Get forms that can be assigned (published only)
@@ -66,9 +66,9 @@ export const useReviewFormsStore = defineStore('review-forms', {
     // Check if current form can be published
     canPublishCurrentForm: (state): boolean => {
       if (!state.currentForm) return false
-      return state.currentForm.status === 'draft' && 
-             state.currentForm.sections.length > 0 &&
-             state.currentForm.sections.some(s => s.questions.length > 0)
+      return state.currentForm.status === 'draft' &&
+        state.currentForm.sections.length > 0 &&
+        state.currentForm.sections.some(s => (s.questions?.length ?? 0) > 0)
     },
 
     // Check if current form can be archived
@@ -96,7 +96,7 @@ export const useReviewFormsStore = defineStore('review-forms', {
         }
 
         const response = await reviewFormsService.listForms(listParams)
-        
+
         this.forms = response.data
         // Transform snake_case pagination to camelCase
         this.pagination = {
@@ -185,12 +185,12 @@ export const useReviewFormsStore = defineStore('review-forms', {
       try {
         const response = await reviewFormsService.updateForm(id, data)
         updated('Review form')
-        
+
         // Update current form if it's the one being updated
         if (this.currentForm?.id === id) {
           this.currentForm = response.data
         }
-        
+
         // Update in list if present
         const index = this.forms.findIndex(f => f.id === id)
         if (index !== -1) {
@@ -203,7 +203,7 @@ export const useReviewFormsStore = defineStore('review-forms', {
             updatedAt: response.data.updatedAt
           }
         }
-        
+
         return response.data
       }
       catch (error) {
@@ -225,14 +225,14 @@ export const useReviewFormsStore = defineStore('review-forms', {
       try {
         await reviewFormsService.deleteForm(id)
         deleted('Review form')
-        
+
         // Remove from list
         const index = this.forms.findIndex(f => f.id === id)
         if (index !== -1) {
           this.forms.splice(index, 1)
           this.pagination.totalItems--
         }
-        
+
         // Clear current if deleted
         if (this.currentForm?.id === id) {
           this.currentForm = null
@@ -257,14 +257,14 @@ export const useReviewFormsStore = defineStore('review-forms', {
       try {
         const response = await reviewFormsService.publishForm(id)
         success('Review form published successfully')
-        
+
         // Update current form status
         if (this.currentForm?.id === id) {
           this.currentForm.status = 'published'
           this.currentForm.version = response.data.version
           this.currentForm.publishedAt = response.data.publishedAt
         }
-        
+
         // Update in list
         const index = this.forms.findIndex(f => f.id === id)
         if (index !== -1) {
@@ -290,12 +290,12 @@ export const useReviewFormsStore = defineStore('review-forms', {
 
       try {
         await reviewFormsService.archiveForm(id)
-        
+
         // Update current form status
         if (this.currentForm?.id === id) {
           this.currentForm.status = 'archived'
         }
-        
+
         // Update in list
         const index = this.forms.findIndex(f => f.id === id)
         if (index !== -1) {
@@ -305,6 +305,35 @@ export const useReviewFormsStore = defineStore('review-forms', {
       catch (error) {
         const err = error as { error?: { message?: string } }
         this.error = err?.error?.message || 'Failed to archive review form'
+        throw error
+      }
+      finally {
+        this.isLoading = false
+      }
+    },
+
+    async setDefault(id: string): Promise<void> {
+      const { success, failed } = useNotification()
+      this.isLoading = true
+      this.error = null
+
+      try {
+        await reviewFormsService.setDefault(id)
+
+        // Unset previous default in list
+        this.forms.forEach(f => { f.isDefault = f.id === id })
+
+        // Update current form if it's the one being set
+        if (this.currentForm?.id === id) {
+          this.currentForm.isDefault = true
+        }
+
+        success('Form set as company default')
+      }
+      catch (error) {
+        const err = error as { error?: { message?: string } }
+        this.error = err?.error?.message || 'Failed to set default form'
+        failed('set', 'default form', 'server')
         throw error
       }
       finally {
@@ -358,7 +387,7 @@ export const useReviewFormsStore = defineStore('review-forms', {
 
       try {
         const response = await reviewFormsService.assignToDepartments(id, data)
-        
+
         // Refresh the form to get updated assignments
         if (this.currentForm?.id === id) {
           await this.fetchForm(id)

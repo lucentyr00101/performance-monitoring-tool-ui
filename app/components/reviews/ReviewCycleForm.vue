@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import type { ReviewCycleCreateRequest, ReviewCycleType, ReviewCycle } from '~/types/review'
+import type { ReviewFormListItem } from '~/types/review-form'
 
 interface Props {
   mode: 'create' | 'edit'
@@ -24,9 +25,22 @@ const endDate = ref(props.cycle?.endDate || '')
 const includeSelfAssessment = ref(props.cycle?.settings?.includeSelfAssessment ?? true)
 const includeManagerReview = ref(props.cycle?.settings?.includeManagerReview ?? true)
 const includePeerReview = ref(props.cycle?.settings?.includePeerReview ?? false)
+const defaultFormId = ref<string>(props.cycle?.templateId || '')
 
 // Validation
 const errors = ref<Record<string, string>>({})
+
+/** Load available review forms for the template selector */
+const reviewFormsStore = useReviewFormsStore()
+const { forms: reviewForms, isLoading: formsLoading } = storeToRefs(reviewFormsStore)
+
+const formOptions = computed(() => [
+  { label: 'No default form (use per-department forms)', value: '' },
+  ...reviewForms.value.map((f: ReviewFormListItem) => ({
+    label: `${f.name}${f.isDefault ? ' (Company Default)' : ''}`,
+    value: f.id
+  }))
+])
 
 const typeOptions = [
   { label: 'Annual', value: 'annual' as ReviewCycleType },
@@ -45,33 +59,34 @@ const isValid = computed(() => {
 
 function validate(): boolean {
   errors.value = {}
-  
+
   if (!name.value.trim()) {
     errors.value.name = 'Name is required'
   }
-  
+
   if (!startDate.value) {
     errors.value.startDate = 'Start date is required'
   }
-  
+
   if (!endDate.value) {
     errors.value.endDate = 'End date is required'
   } else if (startDate.value && new Date(endDate.value) <= new Date(startDate.value)) {
     errors.value.endDate = 'End date must be after start date'
   }
-  
+
   return Object.keys(errors.value).length === 0
 }
 
 function handleSubmit() {
   if (!validate()) return
-  
+
   const data: ReviewCycleCreateRequest = {
     name: name.value.trim(),
     description: description.value.trim() || undefined,
     type: type.value,
     start_date: startDate.value,
     end_date: endDate.value,
+    default_form_id: defaultFormId.value || undefined,
     settings: {
       includeSelfAssessment: includeSelfAssessment.value,
       includeManagerReview: includeManagerReview.value,
@@ -79,7 +94,7 @@ function handleSubmit() {
       ratingScale: { min: 1, max: 5 }
     }
   }
-  
+
   emit('submit', data)
 }
 
@@ -88,18 +103,23 @@ function setQuarterlyDates() {
   const now = new Date()
   const quarter = Math.floor(now.getMonth() / 3) + 1
   const year = now.getFullYear()
-  
+
   // Next quarter start
   const nextQuarterMonth = quarter * 3
   const startYear = nextQuarterMonth >= 12 ? year + 1 : year
   const startMonth = nextQuarterMonth >= 12 ? 0 : nextQuarterMonth
-  
+
   const start = new Date(startYear, startMonth, 1)
   const end = new Date(startYear, startMonth + 1, 0) // Last day of month
-  
+
   startDate.value = start.toISOString().split('T')[0]!
   endDate.value = end.toISOString().split('T')[0]!
 }
+
+// Fetch review forms on mount
+onMounted(() => {
+  reviewFormsStore.fetchForms({ status: 'published', perPage: 100 })
+})
 </script>
 
 <template>
@@ -143,7 +163,7 @@ function setQuarterlyDates() {
           class="w-full"
         />
       </UFormField>
-      
+
       <UFormField label="End Date" required :error="errors.endDate">
         <UInput
           v-model="endDate"
@@ -167,21 +187,36 @@ function setQuarterlyDates() {
       </UButton>
     </div>
 
+    <!-- Default Review Form -->
+    <UFormField
+      label="Default Review Form"
+      hint="Used for all departments that don't have a specific form assigned."
+    >
+      <USelect
+        v-model="defaultFormId"
+        :items="formOptions"
+        value-key="value"
+        :loading="formsLoading"
+        placeholder="No default form"
+        class="w-full"
+      />
+    </UFormField>
+
     <!-- Review Settings -->
     <div class="space-y-3">
       <label class="block text-sm font-medium text-gray-300">Review Types</label>
-      
+
       <div class="space-y-2">
         <UCheckbox
           v-model="includeSelfAssessment"
           label="Include Self Assessments"
         />
-        
+
         <UCheckbox
           v-model="includeManagerReview"
           label="Include Manager Reviews"
         />
-        
+
         <UCheckbox
           v-model="includePeerReview"
           label="Include Peer Reviews"

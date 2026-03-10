@@ -85,7 +85,7 @@ export const reviewFormsService = {
    */
   async listForms(params: ReviewFormListParams = {}) {
     const queryParams = new URLSearchParams()
-    
+
     // Query params stay snake_case per API convention
     if (params.page) queryParams.set('page', String(params.page))
     if (params.perPage) queryParams.set('per_page', String(params.perPage))
@@ -95,9 +95,9 @@ export const reviewFormsService = {
 
     const query = queryParams.toString()
     const endpoint = `/review-forms${query ? `?${query}` : ''}`
-    
+
     const response = await api.get<PaginatedResponse<ReviewFormListItem>['data']>(endpoint) as PaginatedResponse<ReviewFormListItem>
-    
+
     return {
       ...response,
       data: response.data.map(form => transformMongoId(form))
@@ -174,6 +174,14 @@ export const reviewFormsService = {
    */
   async archiveForm(id: string) {
     return api.post<ArchiveFormResponse>(`/review-forms/${id}/archive`, {}) as Promise<ApiResponse<ArchiveFormResponse>>
+  },
+
+  /**
+   * Set a review form as the company-wide default.
+   * PUT /api/v1/review-forms/:id/set-default
+   */
+  async setDefault(id: string) {
+    return api.put<{ id: string; isDefault: true }>(`/review-forms/${id}/set-default`, {})
   },
 
   /**

@@ -20,6 +20,10 @@ const canManageForms = computed(() => {
 const showPreview = ref(false)
 const previewForm = ref<Partial<ReviewForm> | null>(null)
 
+// Unsaved changes guard
+const formDirty = ref(false)
+useUnsavedChanges(() => formDirty.value)
+
 // Check permissions on mount (keep access denied as info message)
 onMounted(() => {
   if (!canManageForms.value) {
@@ -29,6 +33,7 @@ onMounted(() => {
 
 // Handlers
 async function handleSave(formData: Partial<ReviewForm>) {
+  formDirty.value = false
   try {
     const newFormId = await reviewFormsStore.createForm({
       name: formData.name!,
@@ -57,10 +62,12 @@ async function handleSave(formData: Partial<ReviewForm>) {
 }
 
 function handleCancel() {
+  formDirty.value = false
   router.push('/reviews/forms')
 }
 
 function handlePreview() {
+  formDirty.value = true
   showPreview.value = true
 }
 

@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import type { ReviewListItem } from '~/types/review'
+import type { AdhocReviewListItem } from '~/types/adhoc-review'
 
 definePageMeta({
   layout: 'default',
@@ -16,31 +17,86 @@ const {
   fetchReviews,
   updateReviewFilter,
   setReviewPage,
-  clearReviewFilters,
   formatDate,
   formatEmployeeName
 } = useReviews()
 
+const adhocReviewsStore = useAdhocReviewsStore()
 const { user } = useAuthStore()
 
-// Filter to only show acknowledged/completed reviews for current user
-onMounted(async () => {
-  if (user?.id) {
-    updateReviewFilter('employeeId', user.id)
-    updateReviewFilter('status', 'acknowledged')
-  }
-  await fetchReviews()
+// Loading state covers both fetches
+const isLoadingAdhoc = ref(true)
+
+/**
+ * A combined timeline entry that can represent either a cycle review or an ad-hoc review.
+ */
+interface TimelineEntry {
+  id: string
+  label: string
+  subtitle: string
+  date: string
+  rating?: number
+  isAdhoc: boolean
+  link: string
+}
+
+const adhocEntries = computed((): TimelineEntry[] => {
+  return adhocReviewsStore.completedReviews.map((r: AdhocReviewListItem) => ({
+    id: `adhoc-${r.id}`,
+    label: 'Ad-Hoc Performance Review',
+    subtitle: `${r.employee?.firstName || ''} ${r.employee?.lastName || ''}`.trim() || 'Employee',
+    date: r.triggeredAt,
+    isAdhoc: true,
+    link: `/reviews/adhoc/${r.id}`
+  }))
 })
 
+const cycleEntries = computed((): TimelineEntry[] => {
+  return reviews.value.map((r: ReviewListItem) => ({
+    id: `cycle-${r.id}`,
+    label: r.cycle?.name ?? 'Performance Review',
+    subtitle: `Reviewed by ${formatEmployeeName(r.reviewer)}`,
+    date: r.submittedAt ?? '',
+    rating: r.rating,
+    isAdhoc: false,
+    link: `/reviews/${r.id}`
+  }))
+})
+
+/** Combined, sorted by date descending */
+const combinedTimeline = computed((): TimelineEntry[] => {
+  return [...cycleEntries.value, ...adhocEntries.value]
+    .filter(e => e.date)
+    .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())
+})
+
+const combinedIsLoading = computed(() => isLoading.value || isLoadingAdhoc.value)
+
 // Handle review click
-function handleReviewClick(review: ReviewListItem) {
-  router.push(`/reviews/${review.id}`)
+function handleEntryClick(entry: TimelineEntry) {
+  router.push(entry.link)
 }
 
 // Handle page change
 function handlePageChange(page: number) {
   setReviewPage(page)
 }
+
+onMounted(async () => {
+  // Filter cycle reviews to current user's acknowledged/completed reviews
+  if (user?.id) {
+    updateReviewFilter('employeeId', user.id)
+    updateReviewFilter('status', 'acknowledged')
+  }
+
+  // Fetch both in parallel
+  await Promise.all([
+    fetchReviews(),
+    adhocReviewsStore.fetchAdhocReviews({ status: 'completed', perPage: 100 }).finally(() => {
+      isLoadingAdhoc.value = false
+    })
+  ])
+})
 </script>
 
 <template>
@@ -78,7 +134,7 @@ function handlePageChange(page: number) {
     </div>
 
     <!-- Loading State -->
-    <div v-else-if="isLoading && reviews.length === 0" class="flex items-center justify-center py-12">
+    <div v-else-if="combinedIsLoading && combinedTimeline.length === 0" class="flex items-center justify-center py-12">
       <div class="flex items-center gap-3 text-gray-400">
         <UIcon name="i-heroicons-arrow-path" class="w-5 h-5 animate-spin" />
         <span>Loading review history...</span>
@@ -86,7 +142,7 @@ function handlePageChange(page: number) {
     </div>
 
     <!-- Empty State -->
-    <div v-else-if="reviews.length === 0" class="text-center py-12">
+    <div v-else-if="combinedTimeline.length === 0" class="text-center py-12">
       <div class="bg-gray-800/50 rounded-full w-16 h-16 flex items-center justify-center mx-auto mb-4">
         <UIcon name="i-heroicons-document-text" class="w-8 h-8 text-gray-500" />
       </div>
@@ -99,37 +155,48 @@ function handlePageChange(page: number) {
     <!-- Reviews Timeline -->
     <div v-else class="space-y-4">
       <div
-        v-for="review in reviews"
-        :key="review.id"
+        v-for="entry in combinedTimeline"
+        :key="entry.id"
         class="bg-gray-900 border border-gray-800 rounded-lg p-4 hover:border-gray-700 cursor-pointer transition-colors"
-        @click="handleReviewClick(review)"
+        @click="handleEntryClick(entry)"
       >
         <div class="flex items-start gap-4">
           <!-- Timeline Indicator -->
           <div class="flex flex-col items-center">
-            <div class="w-3 h-3 rounded-full bg-emerald-500" />
+            <div
+              class="w-3 h-3 rounded-full"
+              :class="entry.isAdhoc ? 'bg-amber-500' : 'bg-emerald-500'"
+            />
             <div class="w-0.5 h-full bg-gray-700 mt-2" />
           </div>
 
           <!-- Content -->
           <div class="flex-1">
             <div class="flex items-center justify-between mb-2">
-              <h3 class="font-medium text-white">{{ review.cycle?.name ?? 'Ad-Hoc Review' }}</h3>
+              <h3 class="font-medium text-white">{{ entry.label }}</h3>
               <div class="flex items-center gap-2">
-                <ReviewsReviewTypeBadge :type="review.type" size="xs" />
-                <span v-if="review.rating" class="flex items-center gap-1 text-sm">
+                <!-- Ad-Hoc badge -->
+                <UBadge
+                  v-if="entry.isAdhoc"
+                  color="warning"
+                  variant="subtle"
+                  size="xs"
+                >
+                  Ad-Hoc
+                </UBadge>
+                <span v-if="entry.rating" class="flex items-center gap-1 text-sm">
                   <UIcon name="i-heroicons-star-solid" class="w-4 h-4 text-yellow-400" />
-                  <span class="text-white">{{ review.rating.toFixed(1) }}</span>
+                  <span class="text-white">{{ entry.rating.toFixed(1) }}</span>
                 </span>
               </div>
             </div>
 
             <p class="text-sm text-gray-400 mb-2">
-              Reviewed by {{ formatEmployeeName(review.reviewer) }}
+              {{ entry.subtitle }}
             </p>
 
             <p class="text-xs text-gray-500">
-              {{ review.submittedAt ? formatDate(review.submittedAt) : 'N/A' }}
+              {{ entry.date ? formatDate(entry.date) : 'N/A' }}
             </p>
           </div>
 
@@ -138,7 +205,7 @@ function handlePageChange(page: number) {
         </div>
       </div>
 
-      <!-- Pagination -->
+      <!-- Pagination (cycle reviews only — adhoc reviews load all at once) -->
       <div v-if="reviewPagination.totalPages > 1" class="mt-6 flex justify-center">
         <UPagination
           :model-value="reviewPagination.page"

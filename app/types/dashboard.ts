@@ -1,5 +1,6 @@
 // Dashboard Types
 import type { UserRole } from './auth'
+import type { NotificationListItem, NotificationType } from './notification'
 
 // KPI Card Types
 export interface KpiCard {
@@ -231,6 +232,27 @@ export interface DashboardState {
   error: string | null
   lastRefreshed: Date | null
   userRole: UserRole | null
+}
+
+// Adapter: maps dashboard NotificationItem to the canonical NotificationListItem
+export function adaptNotificationItem(item: NotificationItem): NotificationListItem {
+  const typeMap: Record<NotificationItem['type'], NotificationType> = {
+    review_reminder: 'review_reminder',
+    goal_update: 'goal_assigned',
+    feedback: 'system',
+    approval: 'system',
+    system: 'system'
+  }
+  return {
+    id: item.id,
+    type: typeMap[item.type],
+    title: item.title,
+    message: item.message,
+    priority: 'normal',
+    status: item.isRead ? 'read' : 'unread',
+    createdAt: item.createdAt,
+    link: item.link
+  }
 }
 
 // API Response wrapper

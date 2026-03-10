@@ -11,6 +11,18 @@ defineEmits<{
   refresh: []
 }>()
 
+// Source notifications from the dedicated store rather than dashboard payload
+const notificationsStore = useNotificationsStore()
+const { notifications: recentNotifications, isLoading: notifLoading } = storeToRefs(notificationsStore)
+
+onMounted(() => {
+  notificationsStore.fetchNotifications({ perPage: 5 })
+})
+
+async function handleMarkNotificationRead(id: string) {
+  await notificationsStore.markAsRead(id)
+}
+
 const greeting = computed(() => {
   const hour = new Date().getHours()
   if (hour < 12) return 'Good morning'
@@ -157,10 +169,11 @@ const greeting = computed(() => {
 
       <!-- Notifications -->
       <DashboardNotificationWidget
-        :notifications="data?.notifications || []"
-        :loading="loading"
+        :notifications="recentNotifications"
+        :loading="notifLoading"
         view-all-link="/notifications"
         :max-items="5"
+        @mark-read="handleMarkNotificationRead"
       />
     </div>
 

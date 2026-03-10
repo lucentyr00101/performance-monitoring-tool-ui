@@ -3,6 +3,7 @@ const POLL_INTERVAL = 60 * 1000 // 60 seconds
 
 export function useNotifications() {
   const store = useNotificationsStore()
+  const authStore = useAuthStore()
   let pollTimer: ReturnType<typeof setInterval> | null = null
 
   const unreadCount = computed(() => store.unreadCount)
@@ -42,12 +43,24 @@ export function useNotifications() {
   // Auto-start/stop polling with component lifecycle
   if (import.meta.client) {
     onMounted(() => {
-      fetchCounts()
-      startPolling()
+      if (authStore.isAuthenticated) {
+        fetchCounts()
+        startPolling()
+      }
     })
 
     onUnmounted(() => {
       stopPolling()
+    })
+
+    watch(() => authStore.isAuthenticated, (authenticated) => {
+      if (authenticated) {
+        fetchCounts()
+        startPolling()
+      }
+      else {
+        stopPolling()
+      }
     })
   }
 

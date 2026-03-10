@@ -172,7 +172,7 @@ function getGoalProgressClass(status: 'on_track' | 'at_risk' | 'behind' | 'compl
           <div class="flex items-center justify-between">
             <h3 class="font-semibold text-white">Strategic Goals</h3>
             <NuxtLink
-              to="/goals?type=strategic"
+              to="/goals?type=company"
               class="text-sm text-primary-500 hover:text-primary-400 transition-colors"
             >
               View All →

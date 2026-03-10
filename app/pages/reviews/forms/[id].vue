@@ -29,6 +29,26 @@ const isLoading = ref(true)
 const showPreview = ref(false)
 const isEditing = ref(false)
 
+// Dirty tracking + unsaved changes guard
+const formDirty = ref(false)
+useUnsavedChanges(() => formDirty.value && isEditing.value)
+
+// Auto-save every 30s when editing a draft form
+useAutoSave({
+  interval: 30000,
+  enabled: computed(() => !!form.value?.id && isEditing.value && form.value.status === 'draft'),
+  async onSave() {
+    if (!form.value) return
+    await reviewFormsStore.updateForm(form.value.id, {
+      name: form.value.name,
+      description: form.value.description,
+      instructions: form.value.instructions,
+      sections: form.value.sections
+    })
+    formDirty.value = false
+  }
+})
+
 // Load form on mount (keep access denied as info message)
 onMounted(async () => {
   if (!canManageForms.value) {
@@ -70,9 +90,11 @@ const statusConfig = computed(() => {
 // Handlers
 function handleEdit() {
   isEditing.value = true
+  formDirty.value = true
 }
 
 function handleCancelEdit() {
+  formDirty.value = false
   isEditing.value = false
   loadForm() // Reload to discard changes
 }
@@ -88,6 +110,7 @@ async function handleSave(formData: Partial<ReviewForm>) {
       sections: formData.sections as ReviewFormSection[]
     })
 
+    formDirty.value = false
     isEditing.value = false
     await loadForm()
   } catch {
@@ -123,6 +146,20 @@ async function handleClone() {
   try {
     const newFormId = await reviewFormsStore.cloneForm(form.value.id, { name: `${form.value.name} (Copy)` })
     router.push(`/reviews/forms/${newFormId}`)
+  } catch {
+    // Notification handled by store
+  }
+}
+
+/**
+ * Marks this form as the company-wide default.
+ * Only available to HR/Admin on published forms.
+ */
+async function handleSetDefault() {
+  if (!form.value) return
+  try {
+    await reviewFormsStore.setDefault(form.value.id)
+    form.value.isDefault = true
   } catch {
     // Notification handled by store
   }
@@ -217,7 +254,18 @@ function goBack() {
               >
                 Clone
               </UButton>
-              
+
+              <!-- Set as Default — only for published non-default forms, HR/Admin only -->
+              <UButton
+                v-if="canManageForms && form.status === 'published' && !form.isDefault"
+                variant="outline"
+                color="primary"
+                icon="i-heroicons-star"
+                @click="handleSetDefault"
+              >
+                Set as Default
+              </UButton>
+
               <template v-if="form.status === 'draft'">
                 <UButton
                   variant="outline"
@@ -275,7 +323,7 @@ function goBack() {
                 </div>
                 <div>
                   <p class="text-2xl font-bold text-white">
-                    {{ form.sections.reduce((sum, s) => sum + s.questions.length, 0) }}
+                    {{ form.sections.reduce((sum, s) => sum + (s.questions?.length ?? 0), 0) }}
                   </p>
                   <p class="text-sm text-gray-400">Questions</p>
                 </div>
@@ -310,6 +358,12 @@ function goBack() {
             <h2 class="text-lg font-semibold text-white mb-4">Form Preview</h2>
             <ReviewFormsFormPreview :form="form" :show-header="false" />
           </div>
+
+          <!-- Version History -->
+          <VersionHistoryPanel
+            v-if="canManageForms"
+            :form-id="form.id"
+          />
         </template>
       </template>
     </div>

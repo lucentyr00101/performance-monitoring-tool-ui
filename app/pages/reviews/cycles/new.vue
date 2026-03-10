@@ -17,16 +17,20 @@ const {
 const canCreate = computed(() => canCreateCycle())
 
 const isCreating = ref(false)
+const formDirty = ref(false)
+useUnsavedChanges(() => formDirty.value)
 
 // Handle create cycle
 async function handleCreateCycle(data: ReviewCycleCreateRequest) {
   isCreating.value = true
+  formDirty.value = false
   try {
     const cycle = await createCycle(data)
     router.push(`/reviews/cycles/${cycle.id}`)
   }
   catch {
     // Notification handled by store
+    formDirty.value = true
   }
   finally {
     isCreating.value = false
@@ -35,6 +39,7 @@ async function handleCreateCycle(data: ReviewCycleCreateRequest) {
 
 // Handle cancel
 function handleCancel() {
+  formDirty.value = false
   router.push('/reviews')
 }
 
@@ -81,7 +86,7 @@ onMounted(() => {
     </div>
 
     <!-- Form -->
-    <div v-else class="max-w-2xl">
+    <div v-else class="max-w-2xl" @change="formDirty = true" @input="formDirty = true">
       <UCard class="bg-gray-900 ring-gray-800">
         <ReviewsReviewCycleForm
           mode="create"
